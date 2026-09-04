@@ -348,19 +348,42 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 10. If current page is already an entity detail page, preserve it
+  // 10. Platform Overview, Navigation, and General Exploration queries
+  const isPlatformOverview = 
+    /\b(yaha|yahan|kya kya|dekh|dekhne|portal|website|platform|polaris|feature|features|explore|help|madad|overview|sakte|sakate|mil|milega|available|about|namaste|hello|hi)\b/i.test(q) ||
+    q.includes('kya kya') || q.includes('what can i') || q.includes('what is here') || q.includes('kya dekh') || (q.includes('kya hai') && (q.includes('polaris') || q.includes('yaha') || q.includes('ye')))
+
+  if (isPlatformOverview) {
+    return {
+      page: 'home',
+      title: "POLARIS · India's National Polar Knowledge Platform",
+      type: 'National Scientific Portal',
+      sourceName: 'POLARIS Repository · Platform Guide',
+      sourceUrl: '/',
+      context: `POLARIS (Polar Knowledge & Outreach Platform) is India's sovereign digital repository developed under MoES (Ministry of Earth Sciences) and NCPOR (National Centre for Polar and Ocean Research).
+Key sections & features visitors can explore here:
+1. Polar Expeditions (/expeditions): Logs and data of 44 Indian Scientific Expeditions to Antarctica (ISEA), Arctic IndARC campaigns, and Southern Ocean missions from 1981 to 2025.
+2. Permanent Research Stations (/explore & /about): Interactive 3D Polar Map covering Maitri (1989) & Bharati (2012) in Antarctica; historic Dakshin Gangotri (1983); Himadri station & IndARC mooring in Arctic (Svalbard); and Himansh in the Himalayas.
+3. Scientific Datasets (/datasets): Open research data including atmospheric black carbon time-series, marine CTD depth profiles, ice-core glaciology, and sea-ice concentration arrays.
+4. Research Publications (/publications): Peer-reviewed papers by Indian polar scientists with DOI links and verified citation tools.
+5. Dual-Lens Smart Education (/education): Interactive polar learning modules, visual experiments, and quizzes for students and teachers.
+6. AI Science Communicator (/communicator): Tool that translates complex scientific research papers into simple summaries, news articles, and classroom scripts.`,
+    }
+  }
+
+  // 11. If current page is already an entity detail page, preserve it
   if (baseCtx.page.endsWith('-detail')) {
     return baseCtx
   }
 
-  // 11. Unrelated / Non-polar query check
-  const isPolarRelated = /\b(polar|antarctica|antarctic|arctic|ncpor|moes|ice|snow|glacier|climate|expedition|station|monsoon|sea|ocean)\b/i.test(q)
-  if (!isPolarRelated) {
+  // 12. Truly off-topic query check (e.g. baking, recipes, sports, cinema)
+  const isOffTopic = /\b(recipe|cake|cook|baking|cricket|ipl|football|movie|film|cinema|song|lyrics|joke|shayari|game|bollywood|politics)\b/i.test(q)
+  if (isOffTopic) {
     return {
       ...baseCtx,
       sourceName: 'General Information (Non-POLARIS)',
       sourceUrl: undefined,
-      context: `[Note for POLARIS AI: The user's query "${query}" is not found in the POLARIS polar science repository. Clearly state: "I couldn't find this information in the POLARIS repository." Then provide a brief general explanation while distinguishing it from POLARIS data.]`,
+      context: `[Note for POLARIS AI: The user's query "${query}" is unrelated to polar science or POLARIS. Politely say you specialize in polar science and couldn't find this in POLARIS, then guide them to ask about polar expeditions, stations, datasets, etc.]`,
     }
   }
 
@@ -404,6 +427,44 @@ export function getPageSuggestions(ctx: PageContext, isHindi = false): string[] 
 function generateGroundedFallback(query: string, ctx: PageContext, audience: Audience): { text: string; source: string; sourceUrl?: string } {
   const q = query.toLowerCase().trim()
   const isHindi = /[\u0900-\u097F]/.test(query) || /\b(kya|hai|kaise|kyun|batao|kripya|kahan|samjhao|antar|kis|ka|ke|ki|yeh|ye|isko)\b/i.test(query)
+
+  // 0. Platform Overview / Exploration ("yaha ham kya kya dekh sakte hai", "POLARIS kya hai", etc.)
+  if (
+    /\b(yaha|yahan|kya kya|dekh|dekhne|portal|website|platform|polaris|feature|features|explore|help|madad|overview|sakte|sakate|mil|milega|available|about|namaste|hello|hi)\b/i.test(q) ||
+    q.includes('kya kya') || q.includes('what can i') || q.includes('what is here') || q.includes('kya dekh') || (q.includes('kya hai') && (q.includes('polaris') || q.includes('yaha') || q.includes('ye')))
+  ) {
+    if (isHindi) {
+      return {
+        text: `**पोलारिस (POLARIS) पोर्टल पर आप क्या-क्या देख और एक्सप्लोर कर सकते हैं:**
+
+1. **ध्रुवीय वैज्ञानिक अभियान (Polar Expeditions)**: भारत के अंटार्कटिका (44th ISEA), आर्कटिक (IndARC) और दक्षिणी महासागर अभियानों (1981–2025) का पूरा इतिहास और वैज्ञानिक लॉग्स।
+2. **अनुसंधान केंद्र एवं 3D Polar Map**: अंटार्कटिका में स्थित **मैत्री (Maitri)**, **भारती (Bharati)**, ऐतिहासिक **दक्षिण गंगोत्री**, और आर्कटिक स्थित **हिमाद्री (Himadri)** का इंटरएक्टिव 3D मैप और सुविधाएं।
+3. **ओपन साइंटिफिक डेटासेट्स (Open Datasets)**: वायुमंडलीय ब्लैक कार्बन (Black Carbon), समुद्र की गहराई का सीटीडी (CTD) डेटा, और बर्फ के ग्लेशियर संबंधी डेटासेट्स (CSV/NetCDF में डाउनलोड योग्य)।
+4. **शोध पत्र (Publications)**: भारतीय वैज्ञानिकों के 44+ वर्षों के पीयर-रिव्यूड रिसर्च पेपर्स व DOI लिंक्स।
+5. **स्मार्ट एजुकेशन (Smart Education)**: पोलर साइंस से जुड़े इंटरएक्टिव मॉडल्स और क्विज़।
+6. **AI साइंस कम्युनिकेटर (AI Communicator)**: रिसर्च पेपर्स को आम भाषा, समाचार और स्कूल प्रोजेक्ट्स में समझाने वाला टूल।
+
+आप मुझसे किसी भी स्टेशन, डेटासेट या 44वें अंटार्कटिक अभियान के बारे में बेझिझक पूछ सकते हैं!`,
+        source: 'POLARIS Repository · Platform Guide',
+        sourceUrl: '/',
+      }
+    }
+
+    return {
+      text: `**What you can explore on the POLARIS Platform:**
+
+1. **Polar Expeditions**: Archives of 44 Indian Scientific Expeditions to Antarctica (ISEA), Arctic IndARC campaigns, and Southern Ocean expeditions (1981–2025).
+2. **Sovereign Polar Stations**: Interactive 3D Polar Map covering **Maitri Base** (1989), **Bharati Station** (2012), historic **Dakshin Gangotri**, and Arctic base **Himadri** (Svalbard).
+3. **Open Research Datasets**: Direct access to atmospheric aerosol/black carbon time-series, marine CTD depth profiles, ice-core glaciology, and sea-ice concentration arrays.
+4. **Peer-Reviewed Publications**: Research papers authored by Indian scientists from NCPOR, NIO, and IITM with DOI links and verified citation tools.
+5. **Dual-Lens Smart Education**: Interactive modules, visual science experiments, and quizzes for students and educators.
+6. **AI Science Communicator**: Translates dense research into accessible summaries and classroom talking points.
+
+Ask me about any station, expedition, or scientific topic to explore further!`,
+      source: 'POLARIS Repository · Platform Guide',
+      sourceUrl: '/',
+    }
+  }
 
   // 1. Black Carbon queries
   if (q.includes('black carbon') || q.includes('carbon') || q.includes('aethalometer') || q.includes('soot')) {

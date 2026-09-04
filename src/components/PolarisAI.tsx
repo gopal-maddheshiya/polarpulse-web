@@ -134,6 +134,11 @@ export default function PolarisAI() {
   const location = useLocation()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const targetBufferRef = useRef('')
+  const displayedBufferRef = useRef('')
+  const typingTimerRef = useRef<any>(null)
+  const isCompleteRef = useRef(false)
+  const pendingDoneRef = useRef<{ fullText: string; source: string; sourceUrl?: string } | null>(null)
 
   // Current page context
   const pageContext: PageContext = useMemo(() => {
@@ -161,10 +166,14 @@ export default function PolarisAI() {
     }
   }, [isOpen])
 
-  // Reset streaming state on unmount
+  // Reset streaming state and timer on unmount
   useEffect(() => {
     return () => {
       setIsStreaming(false)
+      if (typingTimerRef.current) {
+        clearInterval(typingTimerRef.current)
+        typingTimerRef.current = null
+      }
     }
   }, [])
 
@@ -187,27 +196,60 @@ export default function PolarisAI() {
     setIsStreaming(true)
     setStreamingContent('')
 
+    targetBufferRef.current = ''
+    displayedBufferRef.current = ''
+    isCompleteRef.current = false
+    pendingDoneRef.current = null
+
+    // High-refresh fluid typewriter loop (~70 FPS)
+    if (typingTimerRef.current) clearInterval(typingTimerRef.current)
+    typingTimerRef.current = setInterval(() => {
+      const target = targetBufferRef.current
+      const current = displayedBufferRef.current
+      if (current.length < target.length) {
+        const remaining = target.length - current.length
+        const step = remaining > 100 ? 8 : remaining > 40 ? 4 : remaining > 15 ? 2 : 1
+        const next = target.slice(0, current.length + step)
+        displayedBufferRef.current = next
+        setStreamingContent(next)
+      } else if (isCompleteRef.current && pendingDoneRef.current) {
+        clearInterval(typingTimerRef.current)
+        typingTimerRef.current = null
+        const { fullText, source, sourceUrl } = pendingDoneRef.current
+        setMessages(prev => [
+          ...prev,
+          {
+            id: `assistant-${Date.now()}`,
+            role: 'assistant',
+            content: fullText,
+            source,
+            sourceUrl,
+            timestamp: Date.now(),
+          },
+        ])
+        setStreamingContent('')
+        setIsStreaming(false)
+        pendingDoneRef.current = null
+      }
+    }, 14)
+
     await askPolarisAI({
       messages: updatedMessages,
       pageContext,
       audience,
       onChunk: (_delta, accumulated) => {
-        setStreamingContent(accumulated)
+        targetBufferRef.current = accumulated
       },
       onDone: (fullText, source, sourceUrl) => {
-        const assistantMessage: ChatMessage = {
-          id: `assistant-${Date.now()}`,
-          role: 'assistant',
-          content: fullText,
-          source,
-          sourceUrl,
-          timestamp: Date.now(),
-        }
-        setMessages(prev => [...prev, assistantMessage])
-        setStreamingContent('')
-        setIsStreaming(false)
+        targetBufferRef.current = fullText
+        isCompleteRef.current = true
+        pendingDoneRef.current = { fullText, source, sourceUrl }
       },
       onError: () => {
+        if (typingTimerRef.current) {
+          clearInterval(typingTimerRef.current)
+          typingTimerRef.current = null
+        }
         setError(trans("Sorry, I couldn't process that right now. Please try again.", "क्षमा करें, मैं इसे अभी प्रोसेस नहीं कर सका। कृपया पुनः प्रयास करें।"))
         setIsStreaming(false)
         setStreamingContent('')
@@ -223,6 +265,10 @@ export default function PolarisAI() {
   }
 
   const handleClear = () => {
+    if (typingTimerRef.current) {
+      clearInterval(typingTimerRef.current)
+      typingTimerRef.current = null
+    }
     setMessages([])
     setStreamingContent('')
     setError(null)
