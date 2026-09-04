@@ -3,6 +3,7 @@ import { datasets } from '../data/datasets'
 import { topics } from '../data/education'
 import { publications } from '../data/publications'
 import { stations } from '../data/stations'
+import { getEntityContextForAI, getExpeditionById, getDatasetById, getPublicationById, getKnowledgeById, getStationById } from '../services/polarisService'
 
 export type Audience = 'Student' | 'General Public' | 'Teacher' | 'Researcher'
 
@@ -11,6 +12,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   source?: string
+  sourceUrl?: string
   timestamp: number
 }
 
@@ -20,6 +22,7 @@ export interface PageContext {
   type: string
   context: string
   sourceName: string
+  sourceUrl?: string
 }
 
 /**
@@ -36,6 +39,7 @@ export function extractPageContext(pathname: string): PageContext {
         title: exp.title,
         type: 'Expedition Mission Dossier',
         sourceName: `POLARIS · ${exp.shortTitle} (${exp.year})`,
+        sourceUrl: `/expeditions/${id}`,
         context: `Mission: ${exp.title} (${exp.year}, ${exp.season}). Vessel: ${exp.vessel || 'N/A'}. Lead: ${exp.lead}. Stations: ${exp.stations.join(', ')}. Overview: ${exp.overview}. Key Objectives: ${exp.highlights.map(h => `${h.title}: ${h.description}`).join('; ')}. Research Areas: ${exp.researchAreas.join(', ')}.`,
       }
     }
@@ -48,6 +52,7 @@ export function extractPageContext(pathname: string): PageContext {
       title: 'National Polar Expeditions Registry',
       type: 'Registry Overview',
       sourceName: 'POLARIS · Expedition Registry',
+      sourceUrl: '/expeditions',
       context: `India has completed 44 annual scientific expeditions to Antarctica (1981–2025), alongside regular Arctic campaigns from Ny-Ålesund and Southern Ocean cruises. Flagship current mission: 44th ISEA on MV Vasiliy Golovnin resupplying Maitri and Bharati bases.`,
     }
   }
@@ -61,7 +66,8 @@ export function extractPageContext(pathname: string): PageContext {
         page: 'dataset-detail',
         title: ds.title,
         type: 'Open Scientific Dataset',
-        sourceName: `POLARIS · ${ds.title}`,
+        sourceName: `POLARIS Dataset · ${ds.id}`,
+        sourceUrl: `/datasets/${id}`,
         context: `Dataset: ${ds.title}. Discipline: ${ds.area}. Region: ${ds.region}. Temporal Coverage: ${ds.coverage}. File Format: ${ds.format} (${ds.size}). Summary: ${ds.description}. Parameters collected include in-situ cryospheric, atmospheric, and oceanographic measurements verified by NCPOR.`,
       }
     }
@@ -74,6 +80,7 @@ export function extractPageContext(pathname: string): PageContext {
       title: 'Polar Dataset Registry',
       type: 'Open Data Repository',
       sourceName: 'POLARIS · Polar Datasets Registry',
+      sourceUrl: '/datasets',
       context: `India's open repository of polar data. Contains in-situ atmospheric black carbon time series from Maitri, Kongsfjorden fjord CTD profiles from IndARC, Southern Ocean sea-ice concentration arrays, and Larsemann Hills shallow firn core isotope stratigraphy. Standard NetCDF-4 and CSV formats.`,
     }
   }
@@ -85,6 +92,7 @@ export function extractPageContext(pathname: string): PageContext {
       title: 'Smart Education Laboratory',
       type: 'Learning Platform',
       sourceName: 'POLARIS · Dual-Lens Education',
+      sourceUrl: '/education',
       context: `Interactive polar learning platform featuring Dual-Lens science concepts: Solar zenith angles and planetary albedo feedback, Southern Ocean sea-ice dynamics, ice-core paleoclimatology, and Kongsfjorden High Arctic oceanography. Linked to real Indian stations and verified quizzes.`,
     }
   }
@@ -98,7 +106,8 @@ export function extractPageContext(pathname: string): PageContext {
         page: 'publication-detail',
         title: pub.title,
         type: 'Peer-Reviewed Publication',
-        sourceName: `POLARIS · ${pub.journal} (${pub.year})`,
+        sourceName: `POLARIS Publication · ${pub.id}`,
+        sourceUrl: `/publications/${id}`,
         context: `Paper: ${pub.title} (${pub.year}). Authors: ${pub.authors.join(', ')}. Journal: ${pub.journal}. Discipline: ${pub.area}. DOI: ${pub.doi}. Abstract: ${pub.abstract}`,
       }
     }
@@ -107,6 +116,7 @@ export function extractPageContext(pathname: string): PageContext {
       title: 'Peer-Reviewed Research Library',
       type: 'Scholarly Archive',
       sourceName: 'POLARIS · Scholarly Publications',
+      sourceUrl: '/publications',
       context: `Catalog of Scopus and Web of Science indexed journal papers authored by Indian scientists from NCPOR, NIO, IITM, and universities covering cryosphere thermodynamics, ozone depletion, and monsoon teleconnections.`,
     }
   }
@@ -117,7 +127,8 @@ export function extractPageContext(pathname: string): PageContext {
       page: 'knowledge',
       title: 'Polar Knowledge Hub',
       type: 'Knowledge Repository',
-      sourceName: 'POLARIS · Polar Knowledge Hub',
+      sourceName: 'POLARIS Knowledge Repository',
+      sourceUrl: '/knowledge',
       context: `Consolidated public archive of technical reports, monographs, field stories, and policy briefs documenting 44 years of India's sovereign presence in Antarctica and the Arctic under MoES.`,
     }
   }
@@ -129,6 +140,7 @@ export function extractPageContext(pathname: string): PageContext {
       title: 'AI Science Dissemination Engine',
       type: 'Communicator Workflow',
       sourceName: 'POLARIS · AI Disseminator',
+      sourceUrl: '/communicator',
       context: `Translates dense expedition papers and CTD telemetry into audience-calibrated lesson plans, news articles, social posts, and 60-second video scripts with fact-checked domain rules.`,
     }
   }
@@ -140,6 +152,7 @@ export function extractPageContext(pathname: string): PageContext {
       title: 'National Polar Mission & Governance',
       type: 'Institutional Profile',
       sourceName: 'POLARIS · NCPOR / MoES Mission',
+      sourceUrl: '/about',
       context: `Operated by NCPOR under the Ministry of Earth Sciences (MoES), Government of India. Anchors sovereign Antarctic bases (Maitri Est. 1989, Bharati Est. 2012, historic Dakshin Gangotri Est. 1983) and Arctic station (Himadri Est. 2008 in Ny-Ålesund, Svalbard).`,
     }
   }
@@ -150,240 +163,449 @@ export function extractPageContext(pathname: string): PageContext {
     title: "India's Polar Knowledge & Outreach Platform",
     type: 'National Portal',
     sourceName: 'POLARIS · National Polar Portal',
+    sourceUrl: '/',
     context: `POLARIS integrates 44 years of Indian polar science. India maintains 3 permanent sovereign research stations: Maitri (Schirmacher Oasis, Antarctica), Bharati (Larsemann Hills, Antarctica), and Himadri (Ny-Ålesund, Svalbard, Arctic). Key discovery: variations in Antarctic sea ice modulate the Mascarene High and cross-equatorial moisture flux of the Indian Southwest Monsoon.`,
   }
 }
 
 /**
- * Generates page-specific suggested questions.
+ * Dynamically resolves live Supabase context for queries, linking database entities
+ * to prompt context and clickable sources without vector DB overhead.
  */
-export function getPageSuggestions(ctx: PageContext): string[] {
-  switch (ctx.page) {
-    case 'expedition-detail':
-      return [
-        'What was the primary scientific objective?',
-        'Which research stations were involved?',
-        'Explain this expedition in simple terms.',
-        'Why does this expedition matter to India?',
-      ]
-    case 'expeditions':
-      return [
-        'What is the 44th Indian Antarctic Expedition?',
-        'How does India travel to Antarctica from Goa?',
-        'What is the difference between Maitri and Bharati?',
-        'When did India start Arctic research?',
-      ]
-    case 'dataset-detail':
-      return [
-        'What does this dataset show?',
-        'Explain these scientific parameters simply.',
-        'How was this data collected in the field?',
-        'How does this connect to climate change?',
-      ]
-    case 'datasets':
-      return [
-        'Explain the sea-ice extent data simply.',
-        'What is black carbon in Antarctica?',
-        'How does polar melting modulate the Indian Monsoon?',
-        'What open data formats does POLARIS provide?',
-      ]
-    case 'education':
-      return [
-        'Why are the poles so cold?',
-        'What is planetary albedo feedback?',
-        'What is the difference between Arctic and Antarctic ice?',
-        'Explain the IndARC underwater mooring.',
-      ]
-    case 'publications':
-    case 'publication-detail':
-      return [
-        'What is the key conclusion of this paper?',
-        'How do polar winds affect Indian weather?',
-        'What institutions collaborate with NCPOR?',
-        'Cite this research in APA format.',
-      ]
-    case 'about':
-      return [
-        'What is NCPOR and its mandate?',
-        'Tell me about India’s three polar bases.',
-        'What happened to Dakshin Gangotri?',
-        'Why does India invest in polar exploration?',
-      ]
-    default:
-      return [
-        'What is POLARIS?',
-        'Tell me about India’s research stations.',
-        'How does polar ice affect India’s monsoon?',
-        'Explain Bharati station like I am a student.',
-      ]
+export async function resolveDynamicContext(query: string, pathname: string): Promise<PageContext> {
+  const baseCtx = extractPageContext(pathname)
+  const q = query.toLowerCase().trim()
+
+  // 1. If user is asking about current page context ("this", "isko", "ye", "here", etc.)
+  const isAboutCurrentPage = 
+    !q || 
+    /\b(this|here|current|isko|yeh|ye|iska|iski|yahan)\b/i.test(q) ||
+    q.includes('what is this') || 
+    q.includes('explain this') ||
+    q.includes('yeh kya hai') ||
+    q.includes('isko samjhao')
+
+  if (isAboutCurrentPage && baseCtx.page.endsWith('-detail')) {
+    // If on an expedition page, fetch live Supabase record
+    if (pathname.startsWith('/expeditions/')) {
+      const id = pathname.replace('/expeditions/', '').trim()
+      const liveCtx = await getEntityContextForAI('expedition', id)
+      if (liveCtx) return { ...baseCtx, context: liveCtx }
+    }
+    // If on a dataset page, fetch live Supabase record
+    if (pathname.startsWith('/datasets/')) {
+      const id = pathname.replace('/datasets/', '').trim()
+      const liveCtx = await getEntityContextForAI('dataset', id)
+      if (liveCtx) return { ...baseCtx, context: liveCtx }
+    }
+    // If on a publication page, fetch live Supabase record
+    if (pathname.startsWith('/publications/')) {
+      const id = pathname.replace('/publications/', '').trim()
+      const liveCtx = await getEntityContextForAI('publication', id)
+      if (liveCtx) return { ...baseCtx, context: liveCtx }
+    }
+    return baseCtx
   }
+
+  // 2. Query mentions 44th Expedition (live Supabase record)
+  if (q.includes('44th') || q.includes('44 th') || q.includes('vasiliy') || (q.includes('44') && q.includes('expedition'))) {
+    const live = await getEntityContextForAI('expedition', '44th-isea')
+    return {
+      page: 'expedition-detail',
+      title: '44th Indian Scientific Expedition to Antarctica (44th ISEA)',
+      type: 'Expedition Mission Dossier',
+      sourceName: 'POLARIS Expedition · 44th ISEA',
+      sourceUrl: '/expeditions/44th-isea',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 3. Query mentions IndARC / Arctic Expedition
+  if (q.includes('indarc') || q.includes('kongsfjorden')) {
+    const live = await getEntityContextForAI('expedition', 'indarc-2024')
+    return {
+      page: 'expedition-detail',
+      title: 'IndARC High-Arctic Observational Campaign 2024',
+      type: 'Arctic Expedition Mission',
+      sourceName: 'POLARIS Expedition · IndARC 2024',
+      sourceUrl: '/expeditions/indarc-2024',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 4. Query mentions 43rd Expedition
+  if (q.includes('43rd') || q.includes('43 rd')) {
+    const live = await getEntityContextForAI('expedition', '43rd-isea')
+    return {
+      page: 'expedition-detail',
+      title: '43rd Indian Scientific Expedition to Antarctica',
+      type: 'Expedition Mission Dossier',
+      sourceName: 'POLARIS Expedition · 43rd ISEA',
+      sourceUrl: '/expeditions/43rd-isea',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 5. Query mentions Black Carbon (dataset ds-atm-001 from Supabase)
+  if (q.includes('black carbon') || q.includes('aethalometer') || (q.includes('carbon') && (q.includes('maitri') || q.includes('air')))) {
+    const live = await getEntityContextForAI('dataset', 'ds-atm-001')
+    return {
+      page: 'dataset-detail',
+      title: 'Atmospheric Black Carbon Mass Concentration at Maitri',
+      type: 'Open Scientific Dataset',
+      sourceName: 'POLARIS Dataset · ds-atm-001',
+      sourceUrl: '/datasets/ds-atm-001',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 6. Query mentions Sea Ice dataset (ds-cry-003 from Supabase)
+  if (q.includes('sea ice') || q.includes('sea-ice')) {
+    const live = await getEntityContextForAI('dataset', 'ds-cry-003')
+    return {
+      page: 'dataset-detail',
+      title: 'Antarctic Sea-Ice Concentration & Extent Time-Series',
+      type: 'Open Scientific Dataset',
+      sourceName: 'POLARIS Dataset · ds-cry-003',
+      sourceUrl: '/datasets/ds-cry-003',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 7. Query mentions Firn / Ice core dataset (ds-cry-004 from Supabase)
+  if (q.includes('firn') || q.includes('ice core') || q.includes('snow pit')) {
+    const live = await getEntityContextForAI('dataset', 'ds-cry-004')
+    return {
+      page: 'dataset-detail',
+      title: 'Larsemann Hills Shallow Firn Core Stable Water Isotopes',
+      type: 'Open Scientific Dataset',
+      sourceName: 'POLARIS Dataset · ds-cry-004',
+      sourceUrl: '/datasets/ds-cry-004',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 8. Research stations: Maitri, Bharati, Himadri, Dakshin Gangotri
+  if (q.includes('maitri')) {
+    const liveStation = await getEntityContextForAI('station', 'maitri')
+    const liveDataset = await getEntityContextForAI('dataset', 'ds-atm-001')
+    return {
+      page: 'station-detail',
+      title: 'Maitri Research Base (East Antarctica)',
+      type: 'Sovereign Research Station',
+      sourceName: 'POLARIS Station · Maitri Base',
+      sourceUrl: '/about',
+      context: `${liveStation}. Active research at Maitri: Atmospheric black carbon aerosol measurements (ds-atm-001), total column ozone monitoring, geological mapping of Schirmacher Oasis. ${liveDataset}`,
+    }
+  }
+
+  if (q.includes('bharati')) {
+    const live = await getEntityContextForAI('station', 'bharati')
+    return {
+      page: 'station-detail',
+      title: 'Bharati Polar Station (East Antarctica)',
+      type: 'Sovereign Research Station',
+      sourceName: 'POLARIS Station · Bharati Base',
+      sourceUrl: '/about',
+      context: live || baseCtx.context,
+    }
+  }
+
+  if (q.includes('himadri')) {
+    const live = await getEntityContextForAI('station', 'himadri')
+    return {
+      page: 'station-detail',
+      title: 'Himadri Arctic Station (Ny-Ålesund, Svalbard)',
+      type: 'Sovereign Research Station',
+      sourceName: 'POLARIS Station · Himadri Station',
+      sourceUrl: '/about',
+      context: live || baseCtx.context,
+    }
+  }
+
+  if (q.includes('dakshin gangotri')) {
+    const live = await getEntityContextForAI('station', 'dakshin-gangotri')
+    return {
+      page: 'station-detail',
+      title: 'Dakshin Gangotri (First Indian Antarctic Base)',
+      type: 'Historical Research Station',
+      sourceName: 'POLARIS Station · Dakshin Gangotri',
+      sourceUrl: '/about',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 9. Monsoon / Teleconnections
+  if (q.includes('monsoon') || q.includes('teleconnection') || q.includes('mascarene') || q.includes('rainfall')) {
+    const live = await getEntityContextForAI('knowledge', 'kb-01')
+    return {
+      page: 'knowledge-detail',
+      title: 'Antarctic Sea-Ice and Indian Monsoon Teleconnections',
+      type: 'Knowledge Repository Document',
+      sourceName: 'POLARIS Knowledge Repository · kb-01',
+      sourceUrl: '/knowledge',
+      context: live || baseCtx.context,
+    }
+  }
+
+  // 10. If current page is already an entity detail page, preserve it
+  if (baseCtx.page.endsWith('-detail')) {
+    return baseCtx
+  }
+
+  // 11. Unrelated / Non-polar query check
+  const isPolarRelated = /\b(polar|antarctica|antarctic|arctic|ncpor|moes|ice|snow|glacier|climate|expedition|station|monsoon|sea|ocean)\b/i.test(q)
+  if (!isPolarRelated) {
+    return {
+      ...baseCtx,
+      sourceName: 'General Information (Non-POLARIS)',
+      sourceUrl: undefined,
+      context: `[Note for POLARIS AI: The user's query "${query}" is not found in the POLARIS polar science repository. Clearly state: "I couldn't find this information in the POLARIS repository." Then provide a brief general explanation while distinguishing it from POLARIS data.]`,
+    }
+  }
+
+  return baseCtx
+}
+
+/**
+ * Standard suggested questions as requested by POLARIS specification.
+ */
+export function getPageSuggestions(ctx: PageContext, isHindi = false): string[] {
+  if (isHindi) {
+    return [
+      'यह क्या है?',
+      'इसे सरल भाषा में समझाएं',
+      'यह भारत के लिए क्यों महत्वपूर्ण है?',
+      ctx.page.includes('expedition')
+        ? 'इस अभियान के बारे में और बताएं'
+        : ctx.page.includes('dataset')
+        ? 'इस डेटासेट के बारे में और बताएं'
+        : 'इस विषय के बारे में और बताएं',
+      'इसके पीछे के विज्ञान को समझाएं',
+    ]
+  }
+
+  return [
+    'What is this?',
+    'Explain this simply',
+    'Why does it matter to India?',
+    ctx.page.includes('expedition')
+      ? 'Tell me more about this expedition'
+      : ctx.page.includes('dataset')
+      ? 'Tell me more about this dataset'
+      : 'Tell me more about this research',
+    'Explain the science behind this',
+  ]
 }
 
 /**
  * Deterministic, grounded offline response generator for fallback or no-key scenarios.
  */
-function generateGroundedFallback(query: string, ctx: PageContext, audience: Audience): { text: string; source: string } {
-  const q = query.toLowerCase()
-  const isHindi = /[\u0900-\u097F]/.test(query) || /\b(kya|hai|kaise|kyun|batao|kripya|kahan|samjhao|antar|kis|ka|ke|ki)\b/i.test(query)
+function generateGroundedFallback(query: string, ctx: PageContext, audience: Audience): { text: string; source: string; sourceUrl?: string } {
+  const q = query.toLowerCase().trim()
+  const isHindi = /[\u0900-\u097F]/.test(query) || /\b(kya|hai|kaise|kyun|batao|kripya|kahan|samjhao|antar|kis|ka|ke|ki|yeh|ye|isko)\b/i.test(query)
 
-  // 1. Stations comparison / queries
-  if (q.includes('bharati') || q.includes('maitri') || q.includes('himadri') || q.includes('station') || q.includes('base')) {
+  // 1. Black Carbon queries
+  if (q.includes('black carbon') || q.includes('carbon') || q.includes('aethalometer') || q.includes('soot')) {
+    if (isHindi) {
+      return {
+        text: `**सरल व्याख्या (Simple Explanation)**
+ब्लैक कार्बन (Black Carbon) हवा में मौजूद बहुत सूक्ष्म कालिख के कण होते हैं, जो मुख्य रूप से जीवाश्म ईंधन या बायोमास के जलने से बनते हैं। जब तेज हवाएं इन कणों को अंटार्कटिका की सफेद बर्फ पर ले जाती हैं, तो ये सतह को काला कर देते हैं।
+
+**यह भारत और पृथ्वी के लिए क्यों महत्वपूर्ण है?**
+सफेद बर्फ सूरज की 85% से अधिक किरणों को अंतरिक्ष में परावर्तित कर देती है (उच्च एल्बेडो)। जब काली कालिख बर्फ पर बैठती है, तो बर्फ सूरज की गर्मी सोखने लगती है और तेजी से पिघलने लगती है।
+
+**पोलारिस डेटा (POLARIS Data)**
+भारत के मैत्री (Maitri) स्टेशन पर वैज्ञानिक 24x7 मल्टी-वेवलेंथ ऐथलोमीटर (Aethalometer) द्वारा हवा में ब्लैक कार्बन के स्तर का मापन करते हैं।
+
+**और जानना चाहते हैं?**
+आप पोलारिस डेटासेट \`ds-atm-001\` में इसका पूरा वैज्ञानिक विवरण देख सकते हैं।`,
+        source: 'POLARIS Dataset · ds-atm-001',
+        sourceUrl: '/datasets/ds-atm-001',
+      }
+    }
+
+    return {
+      text: `**Simple explanation**
+Black carbon is a tiny form of air pollution (soot) produced mainly by burning fuels. Scientists measure it in polar regions because even microscopic amounts of dark soot resting on pristine white snow dramatically alter the climate.
+
+**Why it matters**
+Pure snow reflects about 85% of incoming solar heat back into space (high albedo). When dark black carbon settles on Antarctic snow, the surface begins absorbing heat instead of reflecting it, accelerating ice melt.
+
+**POLARIS data**
+At India's Maitri Base in Antarctica, NCPOR scientists continuously monitor Equivalent Black Carbon (EBC) mass concentrations using multi-wavelength Aethalometers (Dataset: \`ds-atm-001\`).
+
+**Want to explore more?**
+You can inspect the verified atmospheric time-series in the POLARIS Datasets section.`,
+      source: 'POLARIS Dataset · ds-atm-001',
+      sourceUrl: '/datasets/ds-atm-001',
+    }
+  }
+
+  // 2. Stations queries: Maitri, Bharati, Himadri
+  if (q.includes('bharati') || q.includes('maitri') || q.includes('himadri') || q.includes('station') || q.includes('base') || q.includes('dakshin gangotri')) {
     if (isHindi) {
       if (audience === 'Student') {
         return {
-          text: `भारत के पास ध्रुवों पर 3 मुख्य वैज्ञानिक अनुसंधान केंद्र हैं:
+          text: `**सरल व्याख्या**
+भारत के पास ध्रुवों पर 3 मुख्य वैज्ञानिक अनुसंधान केंद्र हैं:
 
-1. **मैत्री (Maitri)** — अंटार्कटिका के शिर्माकर ओएसिस में 1989 से स्थित है। यह बर्फीली जमीन पर नहीं, बल्कि सूखी चट्टान पर बना है। यहाँ वायुमंडल और ओजोन की जाँच होती है।
-2. **भारती (Bharati)** — लार्समैन हिल्स, अंटार्कटिका में 2012 में खुला एक बहुत ही आधुनिक स्टेशन है, जो खंभों (stilts) पर 134 कंटेनरों से बना है। यहाँ सीधे भारतीय उपग्रहों से डेटा लिया जाता है।
-3. **हिमाद्री (Himadri)** — 2008 से नॉर्वे के स्वालबार्ड (आर्कटिक, उत्तरी ध्रुव) में स्थित भारत का केंद्र है।
+1. **मैत्री (Maitri Base)** — अंटार्कटिका के शिर्माकर ओएसिस में 1989 से स्थित है। यह बर्फीली जमीन पर नहीं, बल्कि सूखी चट्टान पर बना है। यहाँ वायुमंडल, मौसम और ओजोन परत का निरंतर अध्ययन होता है।
+2. **भारती (Bharati Station)** — लार्समैन हिल्स, अंटार्कटिका में 2012 में खुला एक बहुत ही आधुनिक स्टेशन है। यह खंभों (stilts) पर 134 कंटेनरों से बना है ताकि 200 किमी/घंटा की बर्फीली हवाएं इसके नीचे से निकल जाएं!
+3. **हिमाद्री (Himadri Station)** — 2008 से नॉर्वे के स्वालबार्ड (आर्कटिक) में स्थित भारत का उत्तरी ध्रुव अनुसंधान केंद्र है।
 
-सरल शब्दों में: मैत्री हमारा पुराना मजबूत किला है, भारती हमारा अत्याधुनिक उपग्रह प्रयोगशाला है, और हिमाद्री उत्तर ध्रुव की खिड़की है!`,
-          source: 'POLARIS · Sovereign Stations Dossier',
+**रोचक तथ्य:**
+भारत का पहला ऐतिहासिक बेस **दक्षिण गंगोत्री** 1983 में बना था, जो अब बर्फ की परतों के नीचे संरक्षित है।`,
+          source: 'POLARIS Sovereign Stations Dossier',
+          sourceUrl: '/about',
         }
       }
       return {
-        text: `भारत तीन सक्रिय वैज्ञानिक अनुसंधान केंद्रों का संचालन करता है:
+        text: `**सरल व्याख्या**
+भारत तीन सक्रिय वैज्ञानिक अनुसंधान केंद्रों का संचालन करता है:
 
-• **मैत्री (Maitri Base)**: 1989 में अंटार्कटिका के शिर्माकर ओएसिस (70°45′S, 11°44′E) में स्थापित। 36+ वर्षों से निरंतर मौसम विज्ञान, ओजोन परत और वायुमंडलीय एरोसोल का अध्ययन कर रहा है।
-• **भारती (Bharati Polar Station)**: 2012 में लार्समैन हिल्स (69°24′S, 76°11′E) में कमीशन। 134 प्रीफैब्रिकेटेड कंटेनरों से निर्मित, शून्य-अपशिष्ट डिस्चार्ज प्रणाली और इसरो/एनआरएससी उपग्रह ग्राउंड स्टेशन से सुसज्जित।
-• **हिमाद्री (Himadri Arctic Station)**: 2008 में स्वालबार्ड के न्य-ऑलेसुंड (78°55′N, 11°56′E) में स्थापित। यह आर्कटिक गर्म होने और भारतीय मानसून के आपसी संबंधों (teleconnections) का अध्ययन करता है।`,
-        source: 'POLARIS · National Centre for Polar and Ocean Research',
-      }
-    }
+• **मैत्री (Maitri)**: 1989 में अंटार्कटिका के शिर्माकर ओएसिस में स्थापित। 36+ वर्षों से निरंतर मौसम विज्ञान, ओजोन परत और वायुमंडलीय एरोसोल का अध्ययन कर रहा है।
+• **भारती (Bharati)**: 2012 में लार्समैन हिल्स में कमीशन। 134 प्रीफैब्रिकेटेड कंटेनरों से निर्मित, शून्य-अपशिष्ट डिस्चार्ज प्रणाली और इसरो/एनआरएससी उपग्रह ग्राउंड स्टेशन से सुसज्जित।
+• **हिमाद्री (Himadri)**: 2008 में स्वालबार्ड के न्य-ऑलेसुंड (78°55′N) में स्थापित। यह आर्कटिक गर्म होने और भारतीय मानसून के आपसी संबंधों (teleconnections) का अध्ययन करता है।
 
-    if (audience === 'Student') {
-      return {
-        text: `India operates three permanent scientific research bases in the polar regions:
-
-1. **Maitri Base (Antarctica)**: Built in 1989 on a rocky ice-free area called the Schirmacher Oasis. Think of it like a weather laboratory where scientists study ozone and polar blizzards.
-2. **Bharati Station (Antarctica)**: Opened in 2012, this is India's most modern base. It is built on elevated stilts using 134 shipping containers to let 200 km/h blizzard winds flow right beneath it! It also downloads real-time data from Indian satellites.
-3. **Himadri Station (Arctic)**: Established in 2008 at 79° North in Svalbard, Norway. It gives Indian scientists a laboratory near the North Pole.
-
-Fun fact: India's very first Antarctic base was called **Dakshin Gangotri** (built in 1983), but it is now submerged under 10 meters of ice!`,
-        source: 'POLARIS · Sovereign Stations Dossier',
-      }
-    }
-
-    if (audience === 'Researcher') {
-      return {
-        text: `India maintains a tri-station operational network spanning East Antarctica and the High Arctic:
-
-• **Maitri (70°45′57″S, 11°44′09″E; Elev. 130 m a.s.l.)**: Commissioned in 1989 during the 8th ISEA in the ice-free Schirmacher Oasis. Anchors WMO-GAW contributing total column ozone monitoring, aethalometer equivalent black carbon (EBC) time series, 3-component fluxgate magnetometry, and Lake Priyadarshini limnology.
-• **Bharati (69°24′28″S, 76°11′14″E; Elev. 35 m a.s.l.)**: Commissioned 2012 in the Larsemann Hills. Zero-liquid discharge modular architecture hosting NRSC/ISRO remote sensing terminals, Southern Ocean biogeochemistry labs, and coastal shallow firn core paleoclimatology.
-• **Himadri (78°55′00″N, 11°56′00″E; Elev. 20 m a.s.l.)**: Commissioned 2008 in Ny-Ålesund, Spitsbergen. Coordinates Kongsfjorden fjord dynamics with the moored IndARC multi-sensor underwater observatory array and inter-hemispheric teleconnections to the Indian Summer Monsoon.`,
-        source: 'POLARIS · NCPOR Sovereign Research Infrastructure',
+**यह भारत के लिए क्यों महत्वपूर्ण है?**
+ये स्टेशन भारत की संप्रभु वैज्ञानिक उपस्थिति को दर्शाते हैं और भारतीय मौसम पूर्वानुमान मॉडल को सटीक इन-सीटू डेटा प्रदान करते हैं।`,
+        source: 'POLARIS Sovereign Stations Dossier',
+        sourceUrl: '/about',
       }
     }
 
     return {
-      text: `India operates three sovereign polar scientific research bases under the Ministry of Earth Sciences:
+      text: `**Simple explanation**
+India maintains three sovereign, permanent scientific research stations across the polar regions:
 
-1. **Maitri Research Base (East Antarctica)**: Commissioned in 1989 in the Schirmacher Oasis. It is a year-round laboratory supporting 25 researchers studying atmospheric chemistry, geomagnetic fields, and long-range aerosol transport.
-2. **Bharati Polar Station (East Antarctica)**: Commissioned in 2012 in the Larsemann Hills. A modern modular facility on elevated stilts that directly downlinks Earth observation satellite telemetry and supports deep oceanographic cruises.
-3. **Himadri Arctic Station (Svalbard, High Arctic)**: Commissioned in 2008 at 79°N latitude. Anchors India's studies of Arctic amplification and how High-Arctic warming alters India's monsoon winds.
+1. **Maitri Research Base (East Antarctica)**: Commissioned in 1989 on the ice-free rocky Schirmacher Oasis. A year-round facility monitoring total column ozone, atmospheric aerosols (like black carbon), and geology.
+2. **Bharati Polar Station (East Antarctica)**: Commissioned in 2012 in the Larsemann Hills. A modern base elevated on stilts using 134 prefabricated shipping containers, with an integrated ISRO satellite data receiving terminal.
+3. **Himadri Arctic Station (Svalbard, High Arctic)**: Established in 2008 at 79°N in Ny-Ålesund, Norway. It studies Arctic amplification and marine microbiology.
 
-India's historical first station, **Dakshin Gangotri**, was built in 1983 on the ice shelf and has since been decommissioned and preserved under the continental snowpack.`,
-      source: 'POLARIS · Sovereign Research Stations',
+**Historical context**
+India's very first station, **Dakshin Gangotri** (built in 1983), was decommissioned in 1990 and is preserved beneath continental snow.`,
+      source: 'POLARIS Sovereign Stations Dossier',
+      sourceUrl: '/about',
     }
   }
 
-  // 2. Monsoon Teleconnection queries
+  // 3. Monsoon Teleconnection queries
   if (q.includes('monsoon') || q.includes('teleconnection') || q.includes('affect india') || q.includes('matter to india') || q.includes('kyun zaroori')) {
     if (isHindi) {
       return {
-        text: `ध्रुवों का पिघलना और अंटार्कटिक समुद्री बर्फ भारत के मानसून को सीधे कैसे प्रभावित करते हैं:
+        text: `**सरल व्याख्या**
+ध्रुवों की बर्फ पिघलने का सीधा असर भारत के मानसून पर पड़ता है:
 
-1. **मैस्करेन हाई (Mascarene High)**: दक्षिणी महासागर में बर्फ और समुद्र के तापमान में परिवर्तन हिंद महासागर के उच्च वायुदाब क्षेत्र (Mascarene High) को बदल देते हैं। यही सिस्टम अरब सागर के ऊपर से मानसूनी हवाओं को भारत की ओर धकेलता है।
-2. **अंतर-गोलार्धीय संबंध (Teleconnection)**: यदि अंटार्कटिका में समुद्री बर्फ कम होती है, तो वायुमंडलीय तरंगें (atmospheric Rossby waves) भूमध्य रेखा को पार करके भारत में बारिश के चक्र और सूखे की आवृत्ति को प्रभावित करती हैं।
-3. **आर्कटिक जेट स्ट्रीम**: उत्तरी ध्रुव पर बर्फ पिघलने से जेट स्ट्रीम कमजोर हो जाती है, जिससे भारत में पश्चिमी विक्षोभ (Western Disturbances) और बेमौसम बारिश की घटनाएं बढ़ती हैं।
+1. **मैस्करेन हाई (Mascarene High)**: दक्षिणी महासागर में बर्फ और समुद्र के तापमान में बदलाव हिंद महासागर के उच्च वायुदाब क्षेत्र (Mascarene High) को बदल देते हैं। यही सिस्टम मानसूनी हवाओं को भारत की ओर धकेलता है।
+2. **अंतर-गोलार्धीय संबंध (Teleconnection)**: यदि अंटार्कटिका में समुद्री बर्फ कम होती है, तो वायुमंडलीय तरंगें भारत में बारिश के चक्र और सूखे की आवृत्ति को प्रभावित करती हैं।
+3. **आर्कटिक जेट स्ट्रीम**: उत्तरी ध्रुव पर बर्फ पिघलने से जेट स्ट्रीम कमजोर हो जाती है, जिससे भारत में पश्चिमी विक्षोभ और बेमौसम बारिश बढ़ती है।
 
-इसीलिए भारत जैसे कृषि प्रधान देश के लिए ध्रुवीय विज्ञान जीवन और आजीविका की सुरक्षा का विषय है।`,
-        source: 'POLARIS · Observational Climatology Research',
-      }
-    }
-
-    if (audience === 'Student') {
-      return {
-        text: `Think of Earth's climate like a giant global water pipe and air conditioner!
-
-1. The icy poles are the planet's refrigerators. They send cold ocean currents and winds around the world.
-2. When sea ice melts in Antarctica, it changes the temperature of the Southern Indian Ocean.
-3. This shifts a huge high-pressure wind pump called the **Mascarene High**. This wind pump is what pushes monsoon clouds straight toward Mumbai, Kerala, and Delhi!
-4. If polar ice melts too fast, India's monsoon rains can become erratic, causing unexpected floods or sudden droughts.
-
-So when Indian scientists study ice in Antarctica, they are actually protecting Indian farmers and cities!`,
-        source: 'POLARIS · Dual-Lens Smart Education',
+**निष्कर्ष**
+भारतीय वैज्ञानिकों का ध्रुवीय शोध सीधे तौर पर हमारे किसानों, खाद्य सुरक्षा और जल प्रबंधन की रक्षा करता है।`,
+        source: 'POLARIS Knowledge Repository · kb-01',
+        sourceUrl: '/knowledge',
       }
     }
 
     return {
-      text: `Polar research is critical to India because changes at the poles directly modulate the **Indian Southwest Monsoon**:
+      text: `**Simple explanation**
+Polar climate is connected to India like a global conveyor belt of wind and water:
 
-• **The Mascarene High Driver**: Variations in Southern Ocean sea-ice extent alter the thermal gradient between polar and tropical latitudes. This shifts the position and intensity of the Mascarene High—the semi-permanent high-pressure cell that pumps cross-equatorial moisture into the Indian subcontinent.
-• **Atmospheric Wave Guides**: Diminishing sea-ice induces Rossby wave trains that propagate northward across the equator, altering the timing and spatial distribution of monsoon rainfall bursts.
-• **High Arctic Teleconnections**: Rapid Arctic warming reduces the temperature gradient with mid-latitudes, destabilizing the subtropical jet stream and modulating winter Western Disturbances over northern India.
+• **The Mascarene High Driver**: Variations in Antarctic sea-ice extent alter ocean-atmosphere thermal gradients. This modulates the Mascarene High — the massive high-pressure engine that drives cross-equatorial monsoon winds across the Arabian Sea into India.
+• **Atmospheric Wave Guides**: Reduced sea ice triggers planetary atmospheric waves (Rossby waves) that modulate the onset, intensity, and active/break spells of the Indian Summer Monsoon.
+• **High-Arctic Teleconnections**: Rapid warming at the North Pole destabilizes the subtropical jet stream, creating erratic winter Western Disturbances and heavy precipitation in North India.
 
-Understanding these inter-hemispheric teleconnections is vital for India's food security, disaster preparedness, and water resource planning.`,
-      source: 'POLARIS · NCPOR Polar Climate Dynamics Group',
+**Why it matters to India**
+Tracking polar changes allows Indian meteorologists to provide more accurate seasonal monsoon forecasts, protecting agriculture and water supplies.`,
+      source: 'POLARIS Knowledge Repository · kb-01',
+      sourceUrl: '/knowledge',
     }
   }
 
-  // 3. 44th Expedition queries
-  if (q.includes('44th') || q.includes('44') || q.includes('expedition') || q.includes('vasiliy') || q.includes('mission')) {
+  // 4. 44th Expedition queries
+  if (q.includes('44th') || q.includes('44') || q.includes('expedition') || q.includes('vasiliy') || q.includes('isea')) {
     if (isHindi) {
       return {
-        text: `44वां भारतीय अंटार्कटिक वैज्ञानिक अभियान (44th ISEA):
+        text: `**सरल व्याख्या**
+**44वां भारतीय अंटार्कटिक वैज्ञानिक अभियान (44th ISEA)** भारत का वर्तमान प्रमुख ध्रुवीय मिशन (2024–2025) है।
 
-• **पोत (Vessel)**: एमवी वासिली गोलोवनिन (MV Vasiliy Golovnin)
+• **पोत (Vessel)**: अनुसंधान आइसब्रेकर एमवी वासिली गोलोवनिन (MV Vasiliy Golovnin)
 • **यात्रा मार्ग**: गोवा (NCPOR) से केप टाउन होते हुए अंटार्कटिका
-• **मुख्य लक्ष्य**: मैत्री और भारती स्टेशनों को रसद व वैज्ञानिक टीमों की आपूर्ति, दक्षिणी महासागर में एरोसोल व सी-आइस का मापन, और लार्समैन हिल्स में उथले बर्फ के कोर (firn cores) का नमूना संग्रह।
-• **अग्रणी संस्थान**: राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र (NCPOR), पृथ्वी विज्ञान मंत्रालय।`,
-        source: 'POLARIS · 44th ISEA Expedition Archive',
+• **मुख्य कार्य**: मैत्री और भारती स्टेशनों को रसद व नए वैज्ञानिक दल की आपूर्ति करना।
+• **वैज्ञानिक लक्ष्य**: दक्षिणी महासागर में एरोसोल मापन, समुद्री बर्फ की मोटाई का सर्वेक्षण, और जलवायु इतिहास जानने के लिए लार्समैन हिल्स में बर्फ के कोर (firn cores) का नमूना संग्रह।`,
+        source: 'POLARIS Expedition · 44th ISEA',
+        sourceUrl: '/expeditions/44th-isea',
       }
     }
 
     return {
-      text: `The **44th Indian Scientific Expedition to Antarctica (44th ISEA)** is India's active flagship mission (2024–2025):
+      text: `**Simple explanation**
+The **44th Indian Scientific Expedition to Antarctica (44th ISEA)** is India's active flagship Antarctic campaign (2024–2025):
 
-• **Vessel**: Research icebreaker *MV Vasiliy Golovnin*
-• **Route**: Departs from NCPOR Headquarters in Vasco da Gama, Goa, with logistics consolidation in Cape Town, South Africa, sailing south across the Roaring Forties into East Antarctica.
-• **Key Stations**: Resupply and winter-over personnel rotation at **Bharati Station** (Larsemann Hills) and **Maitri Base** (Schirmacher Oasis).
-• **Core Research**:
-  1. Southern Ocean CTD oceanographic transects across the Polar Front.
-  2. Long-range atmospheric black carbon (EBC) aerosol tracing at Maitri.
-  3. Coastal firn-core paleoclimate extractions to reconstruct precipitation trends.
-  4. Real-time satellite data calibration for ISRO/NRSC.`,
-      source: 'POLARIS · 44th Indian Antarctic Expedition Dossier',
+• **Vessel**: Research vessel *MV Vasiliy Golovnin*
+• **Route**: Departs from NCPOR Headquarters in Vasco da Gama, Goa, transiting via Cape Town, South Africa, into East Antarctica.
+• **Key Stations**: Resupplies and rotates winter-over scientist teams at **Bharati Station** (Larsemann Hills) and **Maitri Base** (Schirmacher Oasis).
+• **Scientific Objectives**:
+  1. Measure atmospheric black carbon and greenhouse gases at Maitri.
+  2. Extract shallow firn cores in Larsemann Hills to reconstruct past climate variations.
+  3. Conduct Southern Ocean CTD oceanographic casts across the Polar Front.`,
+      source: 'POLARIS Expedition · 44th ISEA',
+      sourceUrl: '/expeditions/44th-isea',
     }
   }
 
-  // 4. Default context-grounded response
+  // 5. Unrelated queries
+  const isPolar = /\b(polar|antarctica|antarctic|arctic|ncpor|moes|ice|snow|glacier|climate|station|expedition|monsoon|sea|ocean|firn)\b/i.test(q)
+  if (!isPolar) {
+    if (isHindi) {
+      return {
+        text: `I couldn't find this information in the POLARIS repository.
+(मुझे पोलारिस रिपॉजिटरी में यह जानकारी नहीं मिली।)
+
+पोलारिस मुख्य रूप से भारत के ध्रुवीय वैज्ञानिक अभियानों, अंटार्कटिक व आर्कटिक अनुसंधान केंद्रों (मैत्री, भारती, हिमाद्री) और खुले पर्यावरणीय डेटासेट्स के लिए समर्पित है। 
+
+ध्रुवीय विज्ञान, 44वें अंटार्कटिक अभियान, या मानसून पर इसके प्रभाव के बारे में बेझिझक पूछें!`,
+        source: 'General Information (Non-POLARIS)',
+      }
+    }
+
+    return {
+      text: `I couldn't find this information in the POLARIS repository.
+
+POLARIS is specifically dedicated to India's polar science, Antarctic and Arctic expeditions (such as the 44th ISEA), sovereign research bases (Maitri, Bharati, Himadri), and verified in-situ environmental datasets.
+
+Feel free to ask about India's polar stations, expeditions, open datasets, or how polar changes modulate the Indian monsoon!`,
+      source: 'General Information (Non-POLARIS)',
+    }
+  }
+
+  // 6. Default context-grounded response
   if (isHindi) {
     return {
-      text: `नमस्ते! मैं पोलारिस एआई (POLARIS AI) हूँ — भारत के ध्रुवीय विज्ञान और अभियानों का डिजिटल मार्गदर्शक।
-
-वर्तमान पृष्ठ: **${ctx.title}** (${ctx.type})
+      text: `**वर्तमान संदर्भ: ${ctx.title}**
 ${ctx.context}
 
-आप मुझसे भारतीय ध्रुवीय स्टेशनों (मैत्री, भारती, हिमाद्री), 44वें अंटार्कटिक अभियान, खुले डेटासेट्स या मानसून से जुड़े प्रभावों के बारे में कुछ भी पूछ सकते हैं!`,
+आप मुझसे भारतीय ध्रुवीय स्टेशनों (मैत्री, भारती, हिमाद्री), 44वें अंटार्कटिक अभियान, खुले डेटासेट्स (जैसे ब्लैक कार्बन, सी-आइस) या भारतीय मानसून पर इसके प्रभाव के बारे में कुछ भी पूछ सकते हैं!`,
       source: ctx.sourceName,
+      sourceUrl: ctx.sourceUrl,
     }
   }
 
   return {
-    text: `Hello! I am **POLARIS AI**, your guide to India's Polar Knowledge & Outreach Platform.
-
-You are currently viewing: **${ctx.title}** (${ctx.type})
+    text: `**Current Context: ${ctx.title}**
 ${ctx.context}
 
-You can ask me to explain any dataset, expedition logbook, research base (Maitri, Bharati, Himadri), or how polar ice melting modulates India's monsoon rainfall. How can I assist your discovery today?`,
+You can ask me to explain any dataset, expedition dossier, research base (Maitri, Bharati, Himadri), or how polar melting connects to India's monsoon rainfall. How can I assist your discovery today?`,
     source: ctx.sourceName,
+    sourceUrl: ctx.sourceUrl,
   }
 }
 
 /**
  * Main function to communicate with POLARIS AI.
- * First attempts to stream live from Gemini Flash via /api/chat.
+ * First resolves live Supabase context dynamically via resolveDynamicContext,
+ * then streams live from Gemini Flash via /api/chat.
  * If API key is not configured or offline, smoothly falls back to the grounded polar knowledge engine
  * with progressive streaming so the user sees text appear smoothly in real-time.
  */
@@ -399,10 +621,19 @@ export async function askPolarisAI({
   pageContext: PageContext
   audience: Audience
   onChunk: (delta: string, accumulated: string) => void
-  onDone: (fullText: string, source: string) => void
+  onDone: (fullText: string, source: string, sourceUrl?: string) => void
   onError: (err: string) => void
 }): Promise<void> {
   const lastUserMsg = messages.filter(m => m.role === 'user').slice(-1)[0]?.content || ''
+
+  // Dynamically resolve live Supabase context for the user's specific query
+  let activeContext = pageContext
+  try {
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : pageContext.sourceUrl || '/'
+    activeContext = await resolveDynamicContext(lastUserMsg, currentPath)
+  } catch (err) {
+    console.warn('Context resolution fallback:', err)
+  }
 
   try {
     const response = await fetch('/api/chat', {
@@ -413,7 +644,7 @@ export async function askPolarisAI({
           role: m.role === 'user' ? 'user' : 'model',
           content: m.content,
         })),
-        pageContext,
+        pageContext: activeContext,
         audience,
       }),
     })
@@ -453,7 +684,7 @@ export async function askPolarisAI({
       }
 
       if (accumulated.trim().length > 0) {
-        onDone(accumulated, pageContext.sourceName)
+        onDone(accumulated, activeContext.sourceName, activeContext.sourceUrl)
         return
       }
     }
@@ -463,21 +694,21 @@ export async function askPolarisAI({
       const data = await response.json()
       if (data.fallback) {
         // Fall back to grounded engine with progressive typing
-        await streamGroundedFallback(lastUserMsg, pageContext, audience, onChunk, onDone)
+        await streamGroundedFallback(lastUserMsg, activeContext, audience, onChunk, onDone)
         return
       }
     }
 
     // If server failed or non-stream, use grounded fallback
-    await streamGroundedFallback(lastUserMsg, pageContext, audience, onChunk, onDone)
+    await streamGroundedFallback(lastUserMsg, activeContext, audience, onChunk, onDone)
   } catch (err: any) {
     console.warn('Live API unavailable, falling back to grounded POLARIS engine:', err.message)
-    await streamGroundedFallback(lastUserMsg, pageContext, audience, onChunk, onDone)
+    await streamGroundedFallback(lastUserMsg, activeContext, audience, onChunk, onDone)
   }
 }
 
 /**
- * Streams grounded polar fallback response word-by-word with ~25ms delay
+ * Streams grounded polar fallback response word-by-word with ~20ms delay
  * to achieve live typewriter effect without delay or abrupt dumping.
  */
 async function streamGroundedFallback(
@@ -485,7 +716,7 @@ async function streamGroundedFallback(
   pageContext: PageContext,
   audience: Audience,
   onChunk: (delta: string, accumulated: string) => void,
-  onDone: (fullText: string, source: string) => void
+  onDone: (fullText: string, source: string, sourceUrl?: string) => void
 ): Promise<void> {
   const result = generateGroundedFallback(query, pageContext, audience)
   const words = result.text.split(/(\s+)/)
@@ -495,8 +726,8 @@ async function streamGroundedFallback(
     accumulated += word
     onChunk(word, accumulated)
     // Small delay between tokens to create smooth fluid typing
-    await new Promise(r => setTimeout(r, 18))
+    await new Promise(r => setTimeout(r, 16))
   }
 
-  onDone(accumulated, result.source)
+  onDone(accumulated, result.source, result.sourceUrl)
 }

@@ -53,7 +53,7 @@ export default function Header() {
     >
       <div className="container-wide flex items-center justify-between h-14 sm:h-16">
         {/* POLARIS Institutional Brand Crest */}
-        <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+        <Link to="/" className="flex items-center gap-2.5 group shrink-0 mr-4">
           <div className="w-8 h-8 rounded-lg bg-slate-950 text-white grid place-items-center transition-colors group-hover:bg-slate-850 shadow-2xs">
             <svg
               viewBox="0 0 24 24"
@@ -87,7 +87,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Institutional Navigation */}
-        <nav className="hidden xl:flex items-center gap-3.5 2xl:gap-5">
+        <nav className="hidden xl:flex items-center gap-2.5 2xl:gap-4 shrink-0">
           {NAV_ITEMS.map(n => (
             <NavLink
               key={n.to}
@@ -167,11 +167,11 @@ export default function Header() {
         </div>
 
         {/* Mobile / Tablet Header Controls */}
-        <div className="flex xl:hidden items-center gap-1.5">
+        <div className="flex xl:hidden items-center gap-1 sm:gap-1.5 shrink-0">
           <button
             onClick={openSearch}
             aria-label="Search"
-            className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition"
+            className="p-1.5 sm:p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition"
           >
             <Search className="w-4 h-4" />
           </button>
@@ -179,7 +179,7 @@ export default function Header() {
             <button
               onClick={() => setLang('EN')}
               className={cn(
-                'px-2 py-1 rounded-md text-[11px] transition-all font-sans',
+                'px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-[11px] transition-all font-sans',
                 !isHindi
                   ? 'bg-white text-slate-950 font-bold shadow-2xs'
                   : 'text-slate-500 hover:text-slate-800'
@@ -190,7 +190,7 @@ export default function Header() {
             <button
               onClick={() => setLang('HI')}
               className={cn(
-                'px-2 py-1 rounded-md text-[11px] transition-all font-sans',
+                'px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-[11px] transition-all font-sans',
                 isHindi
                   ? 'bg-sky-600 text-white font-bold shadow-2xs'
                   : 'text-slate-500 hover:text-slate-800'
@@ -200,7 +200,7 @@ export default function Header() {
             </button>
           </div>
           <button
-            className="p-2 text-slate-900 hover:bg-slate-100 rounded-lg transition"
+            className="p-1.5 sm:p-2 text-slate-900 hover:bg-slate-100 rounded-lg transition"
             onClick={() => setOpen(o => !o)}
             aria-label="Toggle navigation menu"
           >

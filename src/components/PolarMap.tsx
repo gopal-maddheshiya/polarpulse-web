@@ -274,7 +274,7 @@ export default function PolarMap() {
         </div>
 
         {/* Quick Mobile Station Selector for Small Touch Screens */}
-        <div className="flex lg:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+        <div className="flex lg:hidden items-center gap-1.5 overflow-x-auto no-scrollbar max-w-full pb-1">
           {visibleStations.map(s => (
             <button
               key={s.id}

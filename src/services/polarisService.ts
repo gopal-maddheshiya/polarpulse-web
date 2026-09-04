@@ -14,37 +14,23 @@ export type { ResearchStation, Expedition, Dataset, Publication, KnowledgeItem, 
 /*                                DATA MAPPERS                                */
 /* -------------------------------------------------------------------------- */
 
-function mapStation(row: any): ResearchStation {
-  return {
-    id: row.id || row.slug,
-    name: row.name,
-    country: row.country || 'India',
-    region: row.region || 'Antarctic',
-    x: Number(row.x ?? 50),
-    y: Number(row.y ?? 50),
-    established: Number(row.established ?? 1989),
-    blurb: row.blurb || row.description || '',
-    relatedExpeditions: Array.isArray(row.related_expeditions) ? row.related_expeditions : (row.relatedExpeditions || []),
-  }
-}
-
 function mapExpedition(row: any): Expedition {
   return {
-    id: row.id || row.slug,
+    id: row.id,
     title: row.title,
-    shortTitle: row.short_title || row.shortTitle || row.title,
+    shortTitle: row.short_title || row.title,
     region: row.region || 'Antarctic',
     year: Number(row.year ?? 2024),
     season: row.season || 'Summer',
     vessel: row.vessel || undefined,
     stations: Array.isArray(row.stations) ? row.stations : [],
-    researchAreas: Array.isArray(row.research_areas) ? row.research_areas : (row.researchAreas || []),
+    researchAreas: Array.isArray(row.research_areas) ? row.research_areas : [],
     lead: row.lead || 'NCPOR · Ministry of Earth Sciences',
-    image: row.image_url || row.image || '',
-    overview: row.overview || row.description || '',
+    image: row.image_url || '',
+    overview: row.overview || '',
     timeline: Array.isArray(row.timeline) ? row.timeline : [],
     scientists: Array.isArray(row.scientists) ? row.scientists : [],
-    research: Array.isArray(row.research) ? row.research : (row.objectives || []),
+    research: Array.isArray(row.objectives) ? row.objectives : [],
     reports: Array.isArray(row.reports) ? row.reports : [],
     datasets: Array.isArray(row.datasets) ? row.datasets : [],
     publications: Array.isArray(row.publications) ? row.publications : [],
@@ -54,31 +40,31 @@ function mapExpedition(row: any): Expedition {
 
 function mapDataset(row: any): Dataset {
   return {
-    id: row.id || row.slug,
+    id: row.id,
     title: row.title,
     description: row.description,
-    area: row.area || row.category || 'General',
+    area: row.area || 'General',
     region: row.region || 'Antarctic',
     year: Number(row.year ?? 2024),
     format: row.format || 'CSV',
     size: row.size || '1.0 MB',
-    coverage: row.coverage || row.date_range || 'Current',
-    relatedExpedition: row.related_expedition || row.relatedExpedition || '',
-    relatedPublication: row.related_publication || row.relatedPublication || undefined,
-    previewRows: Array.isArray(row.preview_rows) ? row.preview_rows : (row.previewRows || []),
+    coverage: row.coverage || 'Current',
+    relatedExpedition: row.related_expedition || '',
+    relatedPublication: row.related_publication || undefined,
+    previewRows: Array.isArray(row.preview_rows) ? row.preview_rows : [],
   }
 }
 
 function mapPublication(row: any): Publication {
   return {
-    id: row.id || row.slug,
+    id: row.id,
     title: row.title,
     authors: Array.isArray(row.authors) ? row.authors : (typeof row.authors === 'string' ? [row.authors] : []),
     year: Number(row.year ?? 2024),
     journal: row.journal || 'Polar Research',
     doi: row.doi || '',
-    abstract: row.abstract || row.description || '',
-    area: row.area || row.category || 'Atmospheric Sciences',
+    abstract: row.abstract || '',
+    area: row.area || 'Atmospheric Sciences',
     expedition: row.expedition || '',
     dataset: row.dataset || undefined,
     type: (row.type as any) || 'Journal',
@@ -87,45 +73,19 @@ function mapPublication(row: any): Publication {
 
 function mapKnowledge(row: any): KnowledgeItem {
   return {
-    id: row.id || row.slug,
+    id: row.id,
     type: row.type || 'Article',
     title: row.title,
-    excerpt: row.excerpt || row.description || '',
-    body: row.body || row.content || '',
+    excerpt: row.excerpt || '',
+    body: row.body || '',
     tags: Array.isArray(row.tags) ? row.tags : [],
     category: row.category || 'General',
     year: Number(row.year ?? 2024),
     author: row.author || 'POLARIS',
     source: row.source || undefined,
-    relatedExpedition: row.related_expedition || row.relatedExpedition || undefined,
-    relatedDataset: row.related_dataset || row.relatedDataset || undefined,
-    relatedPublication: row.related_publication || row.relatedPublication || undefined,
-  }
-}
-
-function mapTopic(row: any): Topic {
-  return {
-    id: row.id || row.slug,
-    title: row.title,
-    emoji: row.emoji || '🧊',
-    simple: row.simple || row.description || '',
-    scientific: row.scientific || row.content || '',
-    glossary: Array.isArray(row.glossary) ? row.glossary : [],
-    quiz: Array.isArray(row.quiz) ? row.quiz : [],
-  }
-}
-
-function mapMedia(row: any): MediaItem {
-  return {
-    id: row.id || row.slug,
-    type: row.type || 'photo',
-    title: row.title,
-    caption: row.caption || row.description || '',
-    src: row.src || row.image_url || '',
-    poster: row.poster || undefined,
-    credit: row.credit || 'POLARIS / NCPOR',
-    region: row.region || undefined,
-    expedition: row.expedition || undefined,
+    relatedExpedition: row.related_expedition || undefined,
+    relatedDataset: row.related_dataset || undefined,
+    relatedPublication: row.related_publication || undefined,
   }
 }
 
@@ -134,42 +94,17 @@ function mapMedia(row: any): MediaItem {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Fetch all research stations from Supabase (falls back to static dataset)
+ * Fetch all research stations (Static Scope for SIH phase)
  */
 export async function getStations(): Promise<ResearchStation[]> {
-  if (isSupabaseConfigured() && supabase) {
-    try {
-      const { data, error } = await supabase.from('stations').select('*').order('established', { ascending: true })
-      if (!error && data && data.length > 0) {
-        return data.map(mapStation)
-      }
-    } catch (err) {
-      console.warn('Supabase getStations fallback:', err)
-    }
-  }
   return staticStations
 }
 
 /**
- * Fetch a single research station by ID or slug
+ * Fetch a single research station by ID (Static Scope for SIH phase)
  */
-export async function getStationById(idOrSlug: string): Promise<ResearchStation | null> {
-  if (isSupabaseConfigured() && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('stations')
-        .select('*')
-        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
-        .maybeSingle()
-
-      if (!error && data) {
-        return mapStation(data)
-      }
-    } catch (err) {
-      console.warn('Supabase getStationById fallback:', err)
-    }
-  }
-  return staticStations.find(s => s.id === idOrSlug) || null
+export async function getStationById(id: string): Promise<ResearchStation | null> {
+  return staticStations.find(s => s.id === id) || null
 }
 
 /**
@@ -178,7 +113,11 @@ export async function getStationById(idOrSlug: string): Promise<ResearchStation 
 export async function getExpeditions(): Promise<Expedition[]> {
   if (isSupabaseConfigured() && supabase) {
     try {
-      const { data, error } = await supabase.from('expeditions').select('*').order('year', { ascending: false })
+      const { data, error } = await supabase
+        .from('expeditions')
+        .select('*')
+        .order('year', { ascending: false })
+
       if (!error && data && data.length > 0) {
         return data.map(mapExpedition)
       }
@@ -190,15 +129,15 @@ export async function getExpeditions(): Promise<Expedition[]> {
 }
 
 /**
- * Fetch a single expedition by ID or slug
+ * Fetch a single expedition by ID
  */
-export async function getExpeditionById(idOrSlug: string): Promise<Expedition | null> {
+export async function getExpeditionById(id: string): Promise<Expedition | null> {
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
         .from('expeditions')
         .select('*')
-        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+        .eq('id', id)
         .maybeSingle()
 
       if (!error && data) {
@@ -208,7 +147,7 @@ export async function getExpeditionById(idOrSlug: string): Promise<Expedition | 
       console.warn('Supabase getExpeditionById fallback:', err)
     }
   }
-  return staticExpeditions.find(e => e.id === idOrSlug) || null
+  return staticExpeditions.find(e => e.id === id) || null
 }
 
 /**
@@ -217,7 +156,11 @@ export async function getExpeditionById(idOrSlug: string): Promise<Expedition | 
 export async function getDatasets(): Promise<Dataset[]> {
   if (isSupabaseConfigured() && supabase) {
     try {
-      const { data, error } = await supabase.from('datasets').select('*').order('year', { ascending: false })
+      const { data, error } = await supabase
+        .from('datasets')
+        .select('*')
+        .order('year', { ascending: false })
+
       if (!error && data && data.length > 0) {
         return data.map(mapDataset)
       }
@@ -229,15 +172,15 @@ export async function getDatasets(): Promise<Dataset[]> {
 }
 
 /**
- * Fetch a single dataset by ID or slug
+ * Fetch a single dataset by ID
  */
-export async function getDatasetById(idOrSlug: string): Promise<Dataset | null> {
+export async function getDatasetById(id: string): Promise<Dataset | null> {
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
         .from('datasets')
         .select('*')
-        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+        .eq('id', id)
         .maybeSingle()
 
       if (!error && data) {
@@ -247,7 +190,7 @@ export async function getDatasetById(idOrSlug: string): Promise<Dataset | null> 
       console.warn('Supabase getDatasetById fallback:', err)
     }
   }
-  return staticDatasets.find(d => d.id === idOrSlug) || null
+  return staticDatasets.find(d => d.id === id) || null
 }
 
 /**
@@ -256,7 +199,11 @@ export async function getDatasetById(idOrSlug: string): Promise<Dataset | null> 
 export async function getPublications(): Promise<Publication[]> {
   if (isSupabaseConfigured() && supabase) {
     try {
-      const { data, error } = await supabase.from('publications').select('*').order('year', { ascending: false })
+      const { data, error } = await supabase
+        .from('publications')
+        .select('*')
+        .order('year', { ascending: false })
+
       if (!error && data && data.length > 0) {
         return data.map(mapPublication)
       }
@@ -268,15 +215,15 @@ export async function getPublications(): Promise<Publication[]> {
 }
 
 /**
- * Fetch a single publication by ID or slug
+ * Fetch a single publication by ID
  */
-export async function getPublicationById(idOrSlug: string): Promise<Publication | null> {
+export async function getPublicationById(id: string): Promise<Publication | null> {
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
         .from('publications')
         .select('*')
-        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+        .eq('id', id)
         .maybeSingle()
 
       if (!error && data) {
@@ -286,7 +233,7 @@ export async function getPublicationById(idOrSlug: string): Promise<Publication 
       console.warn('Supabase getPublicationById fallback:', err)
     }
   }
-  return staticPublications.find(p => p.id === idOrSlug) || null
+  return staticPublications.find(p => p.id === id) || null
 }
 
 /**
@@ -295,7 +242,11 @@ export async function getPublicationById(idOrSlug: string): Promise<Publication 
 export async function getKnowledge(): Promise<KnowledgeItem[]> {
   if (isSupabaseConfigured() && supabase) {
     try {
-      const { data, error } = await supabase.from('knowledge').select('*').order('year', { ascending: false })
+      const { data, error } = await supabase
+        .from('knowledge')
+        .select('*')
+        .order('year', { ascending: false })
+
       if (!error && data && data.length > 0) {
         return data.map(mapKnowledge)
       }
@@ -307,15 +258,15 @@ export async function getKnowledge(): Promise<KnowledgeItem[]> {
 }
 
 /**
- * Fetch a single knowledge item by ID or slug
+ * Fetch a single knowledge item by ID
  */
-export async function getKnowledgeById(idOrSlug: string): Promise<KnowledgeItem | null> {
+export async function getKnowledgeById(id: string): Promise<KnowledgeItem | null> {
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
         .from('knowledge')
         .select('*')
-        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+        .eq('id', id)
         .maybeSingle()
 
       if (!error && data) {
@@ -325,62 +276,27 @@ export async function getKnowledgeById(idOrSlug: string): Promise<KnowledgeItem 
       console.warn('Supabase getKnowledgeById fallback:', err)
     }
   }
-  return staticKnowledge.find(k => k.id === idOrSlug) || null
+  return staticKnowledge.find(k => k.id === id) || null
 }
 
 /**
- * Fetch all educational topics from Supabase (falls back to static dataset)
+ * Fetch all educational topics (Static Scope for SIH phase)
  */
 export async function getEducation(): Promise<Topic[]> {
-  if (isSupabaseConfigured() && supabase) {
-    try {
-      const { data, error } = await supabase.from('education').select('*')
-      if (!error && data && data.length > 0) {
-        return data.map(mapTopic)
-      }
-    } catch (err) {
-      console.warn('Supabase getEducation fallback:', err)
-    }
-  }
   return staticTopics
 }
 
 /**
- * Fetch a single education topic by ID or slug
+ * Fetch a single education topic by ID (Static Scope for SIH phase)
  */
-export async function getEducationById(idOrSlug: string): Promise<Topic | null> {
-  if (isSupabaseConfigured() && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('education')
-        .select('*')
-        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
-        .maybeSingle()
-
-      if (!error && data) {
-        return mapTopic(data)
-      }
-    } catch (err) {
-      console.warn('Supabase getEducationById fallback:', err)
-    }
-  }
-  return staticTopics.find(t => t.id === idOrSlug) || null
+export async function getEducationById(id: string): Promise<Topic | null> {
+  return staticTopics.find(t => t.id === id) || null
 }
 
 /**
- * Fetch all multimedia items from Supabase (falls back to static dataset)
+ * Fetch all multimedia items (Static Scope for SIH phase)
  */
 export async function getMedia(): Promise<MediaItem[]> {
-  if (isSupabaseConfigured() && supabase) {
-    try {
-      const { data, error } = await supabase.from('media').select('*')
-      if (!error && data && data.length > 0) {
-        return data.map(mapMedia)
-      }
-    } catch (err) {
-      console.warn('Supabase getMedia fallback:', err)
-    }
-  }
   return staticMedia
 }
 
@@ -390,6 +306,7 @@ export async function getMedia(): Promise<MediaItem[]> {
 
 /**
  * Structured context helper for AI conversational layers (Gemini / POLARIS AI)
+ * Readily fetches the live or fallback record from Supabase for prompt grounding.
  */
 export async function getEntityContextForAI(type: string, id: string): Promise<string> {
   switch (type.toLowerCase()) {
@@ -412,6 +329,11 @@ export async function getEntityContextForAI(type: string, id: string): Promise<s
       const pub = await getPublicationById(id)
       if (!pub) return ''
       return `Publication: ${pub.title} (${pub.year}, ${pub.journal}). Authors: ${pub.authors.join(', ')}. Abstract: ${pub.abstract}`
+    }
+    case 'knowledge': {
+      const kb = await getKnowledgeById(id)
+      if (!kb) return ''
+      return `Knowledge Item [${kb.type}]: ${kb.title} (${kb.year}, Author: ${kb.author}). Summary: ${kb.excerpt}. Content: ${kb.body}`
     }
     case 'topic':
     case 'education': {

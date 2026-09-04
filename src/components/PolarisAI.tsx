@@ -12,6 +12,115 @@ import {
 import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
 
+/**
+ * Parses markdown inline tokens like **bold**, *italic*, and `code`
+ */
+function renderInlineMarkdown(text: string, isUser = false): React.ReactNode[] {
+  const parts: React.ReactNode[] = []
+  const regex = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index))
+    }
+
+    const token = match[0]
+    if (token.startsWith('**') && token.endsWith('**')) {
+      parts.push(
+        <strong
+          key={match.index}
+          className={cn('font-semibold', isUser ? 'text-white' : 'text-slate-900')}
+        >
+          {token.slice(2, -2)}
+        </strong>
+      )
+    } else if (token.startsWith('*') && token.endsWith('*')) {
+      parts.push(
+        <em key={match.index} className="italic">
+          {token.slice(1, -1)}
+        </em>
+      )
+    } else if (token.startsWith('`') && token.endsWith('`')) {
+      parts.push(
+        <code
+          key={match.index}
+          className={cn(
+            'px-1 py-0.5 rounded font-mono text-[11px]',
+            isUser
+              ? 'bg-white/20 text-white'
+              : 'bg-slate-100 text-sky-850 border border-slate-200'
+          )}
+        >
+          {token.slice(1, -1)}
+        </code>
+      )
+    }
+
+    lastIndex = match.index + token.length
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex))
+  }
+
+  return parts.length > 0 ? parts : [text]
+}
+
+/**
+ * Formats AI response text with line breaks, bold headers, and styled lists
+ */
+function FormattedMessageText({ content, isUser = false }: { content: string; isUser?: boolean }) {
+  const lines = content.split('\n')
+
+  return (
+    <div className="space-y-2 font-sans leading-relaxed">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim()
+        if (!trimmed) {
+          return <div key={idx} className="h-1" />
+        }
+
+        // Bullet point check
+        const isBullet = trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')
+        const lineContent = isBullet ? trimmed.replace(/^[\*\-•]\s+/, '') : line
+
+        // Numbered list item check
+        const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/)
+
+        if (isBullet) {
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-0.5">
+              <span className={cn('text-xs shrink-0 leading-normal font-bold', isUser ? 'text-sky-300' : 'text-sky-600')}>
+                •
+              </span>
+              <span className="flex-1">{renderInlineMarkdown(lineContent, isUser)}</span>
+            </div>
+          )
+        }
+
+        if (numMatch) {
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-0.5">
+              <span className={cn('text-xs font-mono font-bold shrink-0 leading-normal', isUser ? 'text-sky-300' : 'text-sky-700')}>
+                {numMatch[1]}.
+              </span>
+              <span className="flex-1">{renderInlineMarkdown(numMatch[2], isUser)}</span>
+            </div>
+          )
+        }
+
+        return (
+          <div key={idx}>
+            {renderInlineMarkdown(line, isUser)}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function PolarisAI() {
   const { isHindi, trans } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
@@ -33,8 +142,8 @@ export default function PolarisAI() {
 
   // Contextual suggested questions
   const suggestions = useMemo(() => {
-    return getPageSuggestions(pageContext)
-  }, [pageContext])
+    return getPageSuggestions(pageContext, isHindi)
+  }, [pageContext, isHindi])
 
   // Auto-scroll to bottom as text arrives
   const scrollToBottom = () => {
@@ -85,20 +194,21 @@ export default function PolarisAI() {
       onChunk: (_delta, accumulated) => {
         setStreamingContent(accumulated)
       },
-      onDone: (fullText, source) => {
+      onDone: (fullText, source, sourceUrl) => {
         const assistantMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           role: 'assistant',
           content: fullText,
           source,
+          sourceUrl,
           timestamp: Date.now(),
         }
         setMessages(prev => [...prev, assistantMessage])
         setStreamingContent('')
         setIsStreaming(false)
       },
-      onError: errMsg => {
-        setError(errMsg)
+      onError: () => {
+        setError(trans("Sorry, I couldn't process that right now. Please try again.", "क्षमा करें, मैं इसे अभी प्रोसेस नहीं कर सका। कृपया पुनः प्रयास करें।"))
         setIsStreaming(false)
         setStreamingContent('')
       },
@@ -163,10 +273,10 @@ export default function PolarisAI() {
           aria-label="POLARIS AI Chat Panel"
           className={cn(
             'fixed z-50 flex flex-col bg-white shadow-2xl border border-slate-200 overflow-hidden animate-fade-in',
-            // Desktop floating window
-            'md:bottom-6 md:right-6 md:w-[420px] md:h-[620px] md:max-h-[86vh] md:rounded-2xl',
-            // Mobile full-width bottom sheet (320px–767px)
-            'inset-x-0 bottom-0 top-14 md:top-auto rounded-t-2xl md:rounded-2xl'
+            // Mobile full-width bottom sheet (below 640px)
+            'max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-14 max-sm:rounded-t-2xl',
+            // Tablet & Desktop: floating window strictly anchored to bottom-right
+            'sm:bottom-6 sm:right-6 sm:left-auto sm:top-auto sm:w-[420px] sm:h-[620px] sm:max-h-[86vh] sm:rounded-2xl'
           )}
         >
           {/* Header */}
@@ -177,13 +287,15 @@ export default function PolarisAI() {
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h3 className="font-display text-sm font-bold tracking-wide text-white">POLARIS AI</h3>
+                  <h3 className="font-display text-sm font-bold tracking-wide text-white">
+                    {trans('Ask POLARIS', 'पोलारिस से पूछें')}
+                  </h3>
                   <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/20 font-semibold">
-                    FLASH
+                    AI
                   </span>
                 </div>
                 <div className="text-[10px] text-slate-400 leading-tight">
-                  {trans("Your guide to India's polar science", 'भारत के ध्रुवीय विज्ञान का मार्गदर्शक')}
+                  {trans("Understand India's polar science in simple language.", 'भारत के ध्रुवीय विज्ञान को सरल भाषा में समझें।')}
                 </div>
               </div>
             </div>
@@ -255,12 +367,15 @@ export default function PolarisAI() {
                 <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
                   <div className="flex items-center gap-2 text-xs font-mono text-sky-800 font-semibold">
                     <Compass className="w-3.5 h-3.5 text-sky-600" />
-                    <span>{trans('Welcome to POLARIS AI', 'पोलारिस एआई में आपका स्वागत है')}</span>
+                    <span>{trans('Ask POLARIS', 'पोलारिस से पूछें')}</span>
                   </div>
-                  <p className="text-xs text-slate-700 leading-relaxed font-sans">
+                  <div className="text-xs font-semibold text-slate-900">
+                    {trans("Understand India's polar science in simple language.", "भारत के ध्रुवीय विज्ञान को सरल भाषा में समझें।")}
+                  </div>
+                  <p className="text-xs text-slate-650 leading-relaxed font-sans">
                     {trans(
-                      "Ask me anything about India’s 44 Antarctic expeditions, the Arctic outposts of Himadri, research bases Maitri and Bharati, or open in-situ cryosphere datasets.",
-                      "भारत के 44 अंटार्कटिक अभियानों, हिमाद्री आर्कटिक स्टेशन, मैत्री और भारती अनुसंधान केंद्रों या खुले क्रायोस्फीयर डेटासेट के बारे में कुछ भी पूछें।"
+                      "Ask me about India’s 44 Antarctic expeditions, the Arctic station of Himadri, research bases Maitri and Bharati, or open scientific datasets.",
+                      "भारत के 44 अंटार्कटिक अभियानों, हिमाद्री आर्कटिक स्टेशन, मैत्री और भारती अनुसंधान केंद्रों या वैज्ञानिक डेटासेट्स के बारे में पूछें।"
                     )}
                   </p>
                   <div className="text-[11px] font-mono text-slate-400 pt-1">
@@ -271,7 +386,7 @@ export default function PolarisAI() {
                 {/* Suggested Questions */}
                 <div>
                   <div className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold mb-2">
-                    {trans('Suggested Questions for this page:', 'इस पृष्ठ के लिए सुझावित प्रश्न:')}
+                    {trans('Suggested Questions:', 'सुझावित प्रश्न:')}
                   </div>
                   <div className="space-y-1.5">
                     {suggestions.map((sug, i) => (
@@ -300,20 +415,31 @@ export default function PolarisAI() {
               >
                 <div
                   className={cn(
-                    'p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed max-w-[90%] whitespace-pre-wrap font-sans',
+                    'p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed max-w-[90%] font-sans',
                     msg.role === 'user'
                       ? 'bg-slate-900 text-white rounded-tr-xs shadow-2xs'
                       : 'bg-white border border-slate-200 text-slate-850 rounded-tl-xs shadow-2xs'
                   )}
                 >
-                  {msg.content}
+                  <FormattedMessageText content={msg.content} isUser={msg.role === 'user'} />
                 </div>
 
                 {/* Source attribution on assistant responses */}
                 {msg.role === 'assistant' && msg.source && (
-                  <div className="mt-1 ml-1 text-[10px] font-mono text-slate-400 flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-sky-600" />
-                    <span>Source: {msg.source}</span>
+                  <div className="mt-1.5 ml-1 text-[10px] font-mono text-slate-500 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3 h-3 text-sky-600 shrink-0" />
+                    {msg.sourceUrl ? (
+                      <a
+                        href={msg.sourceUrl}
+                        className="text-sky-700 hover:text-sky-900 hover:underline inline-flex items-center gap-1 font-medium transition"
+                        title="View in POLARIS Repository"
+                      >
+                        <span>{msg.source}</span>
+                        <ArrowRight className="w-2.5 h-2.5" />
+                      </a>
+                    ) : (
+                      <span>{msg.source}</span>
+                    )}
                   </div>
                 )}
               </div>
@@ -322,11 +448,13 @@ export default function PolarisAI() {
             {/* Live Streaming Content (written in real-time) */}
             {isStreaming && (
               <div className="flex flex-col items-start animate-fade-in">
-                <div className="p-3.5 rounded-2xl rounded-tl-xs bg-white border border-sky-300/80 text-slate-850 text-xs sm:text-sm leading-relaxed max-w-[92%] shadow-2xs whitespace-pre-wrap font-sans">
-                  {streamingContent || (
-                    <span className="inline-flex items-center gap-1.5 text-slate-400 font-mono text-xs">
+                <div className="p-3.5 rounded-2xl rounded-tl-xs bg-white border border-sky-300/80 text-slate-850 text-xs sm:text-sm leading-relaxed max-w-[92%] shadow-2xs font-sans">
+                  {streamingContent ? (
+                    <FormattedMessageText content={streamingContent} isUser={false} />
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-slate-500 font-mono text-xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
-                      POLARIS AI is thinking…
+                      POLARIS is thinking...
                     </span>
                   )}
                   {streamingContent && (
