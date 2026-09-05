@@ -94,7 +94,7 @@ export default function Knowledge() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb]">
       <PageHeader
         eyebrow={trans('Open Knowledge Repository', 'खुला ध्रुवीय ज्ञान भंडार')}
         title={trans('Polar Knowledge Hub', 'ध्रुवीय ज्ञान एवं अनुसंधान केंद्र')}
@@ -104,29 +104,29 @@ export default function Knowledge() {
         )}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
+          <span className="editorial-badge-light bg-sky-50/90 border-sky-300 text-sky-900 font-semibold px-3 py-1.5 rounded-full shadow-xs">
             <BookOpen className="w-3.5 h-3.5 text-sky-600" /> {trans('MULTI-DISCIPLINARY REPOSITORY', 'बहुविषयक ज्ञान भंडार')}
           </span>
-          <span className="editorial-badge-light">
-            <ShieldCheck className="w-3.5 h-3.5 text-slate-500" /> {trans('NCPOR CURATED & VERIFIED', 'एनसीपीओआर द्वारा सत्यापित एवं क्यूरेटेड')}
+          <span className="editorial-badge-light bg-white/80 border-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-full">
+            <ShieldCheck className="w-3.5 h-3.5 text-sky-700 inline mr-1" /> {trans('NCPOR CURATED & VERIFIED', 'एनसीपीओआर द्वारा सत्यापित एवं क्यूरेटेड')}
           </span>
         </div>
       </PageHeader>
 
-      <Section>
+      <Section className="pb-20">
         <Container>
           <Reveal>
             {/* Search and Filters Bar */}
-            <div className="editorial-frame p-5 mb-8 bg-white space-y-4">
+            <div className="p-6 mb-8 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {/* Search Bar */}
-                <div className="flex-1 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-2.5 min-w-[240px]">
-                  <Search className="w-4 h-4 text-slate-400" />
+                <div className="flex-1 flex items-center gap-2 rounded-xl border border-sky-200/80 bg-sky-50/30 px-3.5 py-2.5 min-w-[240px] focus-within:border-sky-400 transition-colors">
+                  <Search className="w-4 h-4 text-sky-600" />
                   <input
                     value={q}
                     onChange={e => setQ(e.target.value)}
                     placeholder={trans('Search articles, reports, field stories, tutorials…', 'शोध लेख, तकनीकी रिपोर्ट, फील्ड कहानियां, ट्यूटोरियल खोजें...')}
-                    className="flex-1 bg-transparent outline-none text-sm placeholder:text-slate-400 font-sans"
+                    className="flex-1 bg-transparent outline-none text-sm placeholder:text-slate-400 font-sans text-slate-800"
                   />
                   {q && (
                     <button onClick={() => setQ('')} className="text-slate-400 hover:text-slate-700">
@@ -140,7 +140,7 @@ export default function Knowledge() {
                   <select
                     value={type}
                     onChange={e => setType(e.target.value as any)}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                    className="rounded-xl border border-sky-200/80 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40"
                   >
                     {TYPES.map(t => (
                       <option key={t} value={t}>
@@ -152,7 +152,7 @@ export default function Knowledge() {
                   <select
                     value={cat}
                     onChange={e => setCat(e.target.value as any)}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                    className="rounded-xl border border-sky-200/80 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40"
                   >
                     {CATEGORIES.map(c => (
                       <option key={c} value={c}>
@@ -173,17 +173,17 @@ export default function Knowledge() {
               </div>
 
               {/* Tags Horizontal Scroll */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 mr-2">{trans('Topics:', 'प्रमुख विषय:')}</span>
+              <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-sky-100">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-sky-900 font-bold mr-2">{trans('Topics:', 'प्रमुख विषय:')}</span>
                 {allTags.slice(0, 10).map(t => (
                   <button
                     key={t}
                     onClick={() => setActiveTag(activeTag === t ? null : t)}
                     className={cn(
-                      'text-xs px-2.5 py-1 rounded-lg transition font-medium',
+                      'text-xs px-2.5 py-1 rounded-lg transition-all font-semibold',
                       activeTag === t
-                        ? 'bg-polar-950 text-white font-semibold'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        ? 'bg-slate-950 text-white shadow-xs'
+                        : 'bg-sky-50/60 text-slate-700 hover:bg-sky-100/80'
                     )}
                   >
                     #{t}
@@ -195,8 +195,8 @@ export default function Knowledge() {
 
           {loading ? (
             <div className="py-20 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-                <Compass className="w-5 h-5" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3 shadow-xs">
+                <Compass className="w-6 h-6" />
               </div>
               <p className="text-sm font-medium text-slate-700">{trans('Loading polar knowledge...', 'ध्रुवीय ज्ञान भंडार लोड हो रहा है...')}</p>
             </div>
@@ -209,9 +209,9 @@ export default function Knowledge() {
           ) : (
             <>
               {/* Results count */}
-              <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-5">
+              <div className="flex items-center justify-between text-xs font-mono text-slate-600 mb-5">
                 <span>{trans(`Displaying ${filtered.length} curated polar resource${filtered.length === 1 ? '' : 's'}`, `${filtered.length} सत्यापित ध्रुवीय संसाधन प्रदर्शित`)}</span>
-                <span>{trans('POLARIS KNOWLEDGE INDEX', 'पोलारिस ज्ञान सूचकांक')}</span>
+                <span className="text-sky-800 font-semibold">{trans('POLARIS KNOWLEDGE INDEX', 'पोलारिस ज्ञान सूचकांक')}</span>
               </div>
 
               {/* Cards Grid */}
@@ -236,49 +236,49 @@ export default function Knowledge() {
                   {filtered.map((item, idx) => {
                     const Icon = ICONS[item.type] || BookOpen
                     return (
-                      <Reveal key={item.id} delay={idx * 35}>
+                      <Reveal key={item.id} delay={idx * 30}>
                         <Link
                           to={`/knowledge/${item.id}`}
-                          className="group flex flex-col justify-between h-full bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition p-6"
+                          className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-2xl border border-sky-200/90 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 p-6 hover:-translate-y-0.5"
                         >
                           <div className="space-y-3">
                             {/* Card Top */}
                             <div className="flex items-center justify-between">
-                              <span className="editorial-badge-light bg-sky-50 border-sky-200 text-sky-900 font-semibold !text-[10px] inline-flex items-center gap-1">
+                              <span className="editorial-badge-light bg-sky-50 border-sky-200 text-sky-900 font-semibold !text-[10px] inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full">
                                 <Icon className="w-3 h-3 text-sky-600" />
                                 <span>{TYPE_LABELS[item.type] || item.type}</span>
                               </span>
-                              <span className="text-[11px] font-mono text-slate-400">
+                              <span className="text-[11px] font-mono text-slate-500 font-medium">
                                 {item.year}
                               </span>
                             </div>
 
                             {/* Title */}
-                            <h3 className="font-display text-lg font-semibold text-slate-900 group-hover:text-sky-700 transition leading-snug">
+                            <h3 className="font-display text-lg font-bold text-slate-900 group-hover:text-sky-950 transition-colors leading-snug">
                               {item.title}
                             </h3>
 
                             {/* Excerpt */}
-                            <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                            <p className="text-xs text-slate-600 leading-relaxed line-clamp-3 font-sans">
                               {item.excerpt}
                             </p>
                           </div>
 
                           {/* Footer */}
-                          <div className="pt-4 mt-4 border-t border-slate-100 space-y-3">
+                          <div className="pt-4 mt-4 border-t border-sky-100 space-y-3">
                             <div className="flex flex-wrap gap-1">
                               {item.tags.slice(0, 3).map(tag => (
-                                <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                                <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-sky-50/70 text-slate-600 border border-sky-100">
                                   #{tag}
                                 </span>
                               ))}
                             </div>
 
                             <div className="flex items-center justify-between text-xs pt-1">
-                              <span className="text-slate-400 text-[11px] truncate max-w-[160px]">
+                              <span className="text-slate-500 text-[11px] truncate max-w-[160px] font-medium">
                                 {item.author}
                               </span>
-                              <span className="font-semibold text-sky-700 group-hover:translate-x-0.5 transition inline-flex items-center gap-1">
+                              <span className="font-semibold text-sky-800 group-hover:text-sky-950 group-hover:translate-x-0.5 transition-all inline-flex items-center gap-1">
                                 {trans('Read Article', 'लेख पढ़ें')} <ArrowRight className="w-3 h-3" />
                               </span>
                             </div>

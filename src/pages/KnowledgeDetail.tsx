@@ -97,22 +97,27 @@ export default function KnowledgeDetail() {
   const Icon = ICONS[k.type] || BookOpen
 
   return (
-    <div>
-      <div className="bg-gradient-to-b from-polar-50/80 to-white border-b border-polar-100">
-        <Container className="py-12 sm:py-16">
+    <div className="min-h-screen bg-[#edf5fb]">
+      {/* Luxury Hero Banner */}
+      <div className="bg-gradient-to-b from-sky-100/80 via-sky-50/50 to-[#edf5fb] border-b border-sky-200/90 relative overflow-hidden">
+        {/* Slow-rotating celestial orbit watermark */}
+        <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full border border-sky-300/40 pointer-events-none animate-[spin_60s_linear_infinite]" />
+        <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full border border-dashed border-sky-400/30 pointer-events-none animate-[spin_90s_linear_infinite_reverse]" />
+
+        <Container className="py-12 sm:py-16 relative z-10">
           <Reveal>
-            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-widest text-polar-500 hover:text-polar-900 mb-4">
-              <ArrowLeft className="w-3.5 h-3.5" /> {trans('Back', 'वापस')}
+            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-sky-800 hover:text-sky-950 mb-4 font-semibold transition-colors">
+              <ArrowLeft className="w-3.5 h-3.5" /> {trans('Back to Knowledge Hub', 'ज्ञान केंद्र पर वापस जाएं')}
             </button>
-            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-cyan-accent/90">
-              <Icon className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-sky-800 font-bold bg-sky-50/80 border border-sky-200/80 inline-block px-3 py-1 rounded-full">
+              <Icon className="w-3.5 h-3.5 inline mr-1 text-sky-600" />
               <span>{k.type} · {k.category} · {k.year}</span>
             </div>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-polar-950 mt-3 max-w-4xl leading-[1.1]">{k.title}</h1>
-            <p className="mt-4 text-polar-600 text-base sm:text-lg max-w-3xl leading-relaxed">{k.excerpt}</p>
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-mono text-polar-500">
-              <div className="flex items-center gap-1.5"><User2 className="w-3.5 h-3.5 text-polar-400" /><span>{k.author}</span></div>
-              <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-polar-400" /><span>{k.year}</span></div>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-950 mt-4 max-w-4xl leading-[1.15]">{k.title}</h1>
+            <p className="mt-4 text-slate-600 text-base sm:text-lg max-w-3xl leading-relaxed font-sans">{k.excerpt}</p>
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500">
+              <div className="flex items-center gap-1.5"><User2 className="w-3.5 h-3.5 text-sky-600" /><span className="font-medium text-slate-700">{k.author}</span></div>
+              <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-sky-600" /><span className="font-medium text-slate-700">{k.year}</span></div>
             </div>
             {k.sourceUrl && (
               <div className="mt-6">
@@ -120,10 +125,10 @@ export default function KnowledgeDetail() {
                   href={k.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-polar-700 hover:text-polar-950"
+                  className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-sky-900 hover:text-sky-950 rounded-xl bg-white/90 shadow-xs font-semibold"
                 >
                   <span>{trans('Verify Official Source', 'आधिकारिक स्रोत सत्यापित करें')}</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-cyan-accent" />
+                  <ExternalLink className="w-3.5 h-3.5 text-sky-600" />
                 </a>
               </div>
             )}
@@ -131,26 +136,28 @@ export default function KnowledgeDetail() {
         </Container>
       </div>
 
-      <Section className="py-10">
+      <Section className="py-12 pb-20">
         <Container>
-          <div className="grid lg:grid-cols-3 gap-10">
-            <div className="lg:col-span-2 space-y-8">
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
               {/* Article body */}
               <Reveal>
-                <div className="prose prose-polar max-w-none text-polar-800 leading-relaxed space-y-4 text-base">
-                  <p className="text-lg text-polar-700 leading-relaxed font-serif italic border-l-2 border-cyan-accent pl-4 py-1">
+                <div className="p-6 sm:p-8 rounded-2xl bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft space-y-5 text-base">
+                  <p className="text-lg text-slate-700 leading-relaxed font-serif italic border-l-3 border-sky-500 bg-sky-50/50 p-4 rounded-r-xl">
                     "{k.excerpt}"
                   </p>
-                  <p>{k.body}</p>
+                  <div className="text-slate-800 leading-relaxed font-sans font-normal space-y-4 whitespace-pre-line">
+                    {k.body}
+                  </div>
                 </div>
               </Reveal>
 
               {/* Tags */}
               <Reveal>
-                <div className="pt-6 border-t border-polar-100 flex flex-wrap items-center gap-1.5">
-                  <span className="text-xs font-mono text-polar-400 mr-2">{trans('Filed under:', 'विषय वर्गीकरण:')}</span>
+                <div className="p-5 rounded-2xl bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-mono text-sky-900 font-bold mr-2">{trans('Filed under:', 'विषय वर्गीकरण:')}</span>
                   {k.tags.map(t => (
-                    <span key={t} className="text-xs font-mono px-2.5 py-1 rounded-full bg-polar-50 text-polar-700 border border-polar-100">
+                    <span key={t} className="text-xs font-mono px-3 py-1 rounded-full bg-sky-50 text-sky-800 border border-sky-200/80 font-medium">
                       #{t}
                     </span>
                   ))}
@@ -160,24 +167,24 @@ export default function KnowledgeDetail() {
 
             {/* Sidebar related resources */}
             <div className="space-y-6">
-              <div className="rounded-2xl border border-polar-100 p-5 bg-white space-y-4">
-                <div className="text-xs font-mono uppercase tracking-wider text-polar-400">{trans('Resource Information', 'संसाधन सूचना')}</div>
-                <div className="text-xs space-y-2 text-polar-600">
-                  <div className="flex justify-between"><span className="text-polar-400">{trans('Type', 'प्रकार')}</span><span className="font-medium text-polar-900">{k.type}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-400">{trans('Category', 'श्रेणी')}</span><span className="font-medium text-polar-900">{k.category}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-400">{trans('Year', 'वर्ष')}</span><span className="font-medium text-polar-900">{k.year}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-400">{trans('Author', 'लेखक / वैज्ञानिक')}</span><span className="font-medium text-polar-900">{k.author}</span></div>
+              <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft space-y-4">
+                <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold border-b border-sky-100 pb-2">{trans('Resource Information', 'संसाधन सूचना')}</div>
+                <div className="text-xs space-y-2.5 text-slate-600 font-sans">
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Type', 'प्रकार')}</span><span className="font-semibold text-slate-900">{k.type}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Category', 'श्रेणी')}</span><span className="font-semibold text-slate-900">{k.category}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Year', 'वर्ष')}</span><span className="font-mono text-slate-900 font-bold">{k.year}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Author', 'लेखक / वैज्ञानिक')}</span><span className="font-semibold text-slate-900">{k.author}</span></div>
                 </div>
                 {k.sourceUrl && (
-                  <div className="pt-3 border-t border-polar-100">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-polar-400 mb-1">
+                  <div className="pt-3 border-t border-sky-100">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-sky-900 font-bold mb-1">
                       {trans('Official Reference Source', 'आधिकारिक संदर्भ स्रोत')}
                     </div>
                     <a
                       href={k.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-accent hover:text-cyan-700 underline underline-offset-4 decoration-cyan-accent/40"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono text-sky-800 hover:text-sky-950 font-bold underline underline-offset-4 decoration-sky-300"
                     >
                       <span className="line-clamp-1">{k.sourceLabel || "National Centre for Polar and Ocean Research (NCPOR)"}</span>
                       <ExternalLink className="w-3 h-3 shrink-0" />
@@ -188,33 +195,33 @@ export default function KnowledgeDetail() {
 
               {/* Linked expedition */}
               {exp && (
-                <div className="rounded-2xl border border-polar-100 p-5 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400 mb-2">{trans('Linked Expedition', 'संबद्ध वैज्ञानिक अभियान')}</div>
-                  <Link to={`/expeditions/${exp.id}`} className="block p-2.5 rounded-lg hover:bg-polar-50 border border-transparent hover:border-polar-100 transition group">
-                    <div className="text-xs font-medium text-polar-900 group-hover:text-cyan-accent line-clamp-2">{exp.title}</div>
-                    <div className="text-[10px] font-mono text-polar-400 mt-0.5">{exp.region} · {exp.year}</div>
+                <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft">
+                  <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold mb-2 border-b border-sky-100 pb-2">{trans('Linked Expedition', 'संबद्ध वैज्ञानिक अभियान')}</div>
+                  <Link to={`/expeditions/${exp.id}`} className="block p-3 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200 transition group">
+                    <div className="text-xs font-semibold text-slate-900 group-hover:text-sky-900 line-clamp-2 font-display">{exp.title}</div>
+                    <div className="text-[10px] font-mono text-slate-500 mt-1">{exp.region} · {exp.year}</div>
                   </Link>
                 </div>
               )}
 
               {/* Linked dataset */}
               {ds && (
-                <div className="rounded-2xl border border-polar-100 p-5 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400 mb-2">{trans('Linked Dataset', 'संबद्ध डेटासेट')}</div>
-                  <Link to={`/datasets/${ds.id}`} className="block p-2.5 rounded-lg hover:bg-polar-50 border border-transparent hover:border-polar-100 transition group">
-                    <div className="text-xs font-medium text-polar-900 group-hover:text-cyan-accent line-clamp-2">{ds.title}</div>
-                    <div className="text-[10px] font-mono text-polar-400 mt-0.5">{ds.area} · {ds.format}</div>
+                <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft">
+                  <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold mb-2 border-b border-sky-100 pb-2">{trans('Linked Dataset', 'संबद्ध डेटासेट')}</div>
+                  <Link to={`/datasets/${ds.id}`} className="block p-3 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200 transition group">
+                    <div className="text-xs font-semibold text-slate-900 group-hover:text-sky-900 line-clamp-2 font-display">{ds.title}</div>
+                    <div className="text-[10px] font-mono text-slate-500 mt-1">{ds.area} · {ds.format}</div>
                   </Link>
                 </div>
               )}
 
               {/* Linked publication */}
               {pub && (
-                <div className="rounded-2xl border border-polar-100 p-5 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400 mb-2">{trans('Linked Publication', 'संबद्ध शोध पत्र')}</div>
-                  <Link to={`/publications/${pub.id}`} className="block p-2.5 rounded-lg hover:bg-polar-50 border border-transparent hover:border-polar-100 transition group">
-                    <div className="text-xs font-medium text-polar-900 group-hover:text-cyan-accent line-clamp-2">{pub.title}</div>
-                    <div className="text-[10px] font-mono text-polar-400 mt-0.5">{pub.journal} ({pub.year})</div>
+                <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft">
+                  <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold mb-2 border-b border-sky-100 pb-2">{trans('Linked Publication', 'संबद्ध शोध पत्र')}</div>
+                  <Link to={`/publications/${pub.id}`} className="block p-3 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200 transition group">
+                    <div className="text-xs font-semibold text-slate-900 group-hover:text-sky-900 line-clamp-2 font-display">{pub.title}</div>
+                    <div className="text-[10px] font-mono text-slate-500 mt-1">{pub.journal} ({pub.year})</div>
                   </Link>
                 </div>
               )}

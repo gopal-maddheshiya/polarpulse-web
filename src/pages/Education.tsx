@@ -166,7 +166,7 @@ export default function Education() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb]">
       <PageHeader
         eyebrow={trans('Smart Education Platform', 'स्मार्ट शिक्षा मंच')}
         title={trans('Interactive Polar Science Laboratory', 'इंटरएक्टिव ध्रुवीय विज्ञान प्रयोगशाला')}
@@ -176,21 +176,21 @@ export default function Education() {
         )}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
+          <span className="editorial-badge-light bg-sky-50/90 border-sky-300 text-sky-900 font-semibold px-3 py-1.5 rounded-full shadow-xs">
             <GraduationCap className="w-3.5 h-3.5 text-sky-600" /> {trans('SIH 2026 THEME · SMART EDUCATION', 'एसआईएच 2026 थीम · स्मार्ट एजुकेशन')}
           </span>
-          <span className="editorial-badge-light">
+          <span className="editorial-badge-light bg-white/80 border-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-full">
             {trans('PROBLEM ID: 26063 · MINISTRY OF EARTH SCIENCES', 'समस्या आईडी: 26063 · पृथ्वी विज्ञान मंत्रालय')}
           </span>
         </div>
       </PageHeader>
 
-      <Section>
+      <Section className="pb-20">
         <Container>
           {loading ? (
             <div className="py-20 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-                <Compass className="w-5 h-5" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3 shadow-xs">
+                <Compass className="w-6 h-6" />
               </div>
               <p className="text-sm font-medium text-slate-700">{trans('Loading polar knowledge...', 'ध्रुवीय ज्ञान लोड हो रहा है...')}</p>
             </div>
@@ -206,15 +206,16 @@ export default function Education() {
               message={trans('No educational topics found in the database.', 'डेटाबेस में कोई शैक्षणिक विषय उपलब्ध नहीं हैं।')}
             />
           ) : (
-            <div className="grid lg:grid-cols-[280px_1fr] gap-8 items-start">
+            <div className="grid lg:grid-cols-[290px_1fr] gap-8 items-start">
               {/* Sidebar Topic Navigator */}
               <Reveal>
                 <aside className="space-y-4 sticky top-24">
-                  <div className="editorial-frame p-3 bg-white">
-                    <div className="px-3 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-400 font-semibold border-b border-slate-100">
-                      {trans('Curriculum Modules', 'पाठ्यक्रम मॉड्यूल')}
+                  <div className="p-4 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft">
+                    <div className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-widest text-sky-900 font-bold border-b border-sky-100 flex items-center justify-between">
+                      <span>{trans('Curriculum Modules', 'पाठ्यक्रम मॉड्यूल')}</span>
+                      <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">{topicsList.length}</span>
                     </div>
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-3 space-y-1.5">
                       {topicsList.map(t => {
                         const isSelected = active === t.id
                         const topicAnswers = answers[t.id] || []
@@ -224,18 +225,18 @@ export default function Education() {
                             <button
                               onClick={() => setActive(t.id)}
                               className={cn(
-                                'w-full flex items-center justify-between gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition',
+                                'w-full flex items-center justify-between gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-semibold transition-all duration-200',
                                 isSelected 
-                                   ? 'bg-polar-950 text-white font-semibold shadow-xs' 
-                                   : 'text-slate-700 hover:bg-slate-100'
+                                   ? 'bg-slate-950 text-white shadow-md' 
+                                   : 'text-slate-700 hover:bg-sky-50/80 hover:text-sky-950'
                               )}
                             >
                               <span className="flex items-center gap-2.5">
                                 <span className="text-base">{t.emoji}</span>
-                                <span>{t.title}</span>
+                                <span className="truncate">{t.title}</span>
                               </span>
                               {isCompleted && (
-                                <CheckCircle2 className={cn('w-4 h-4', isSelected ? 'text-cyan-300' : 'text-emerald-600')} />
+                                <CheckCircle2 className={cn('w-4 h-4 shrink-0', isSelected ? 'text-sky-300' : 'text-emerald-600')} />
                               )}
                             </button>
                           </li>
@@ -244,36 +245,36 @@ export default function Education() {
                     </ul>
 
                     {/* Knowledge Progress Meter */}
-                    <div className="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                      <div className="flex items-center justify-between text-[11px] font-mono text-slate-600">
+                    <div className="mt-5 p-3.5 rounded-xl bg-sky-50/70 border border-sky-200/80">
+                      <div className="flex items-center justify-between text-[11px] font-mono text-slate-700">
                         <span className="uppercase tracking-wider font-semibold">{trans('Scholar Progress', 'अध्येता प्रगति')}</span>
-                        <span className="font-bold text-cyan-800">{progressPercent}%</span>
+                        <span className="font-bold text-sky-950">{progressPercent}%</span>
                       </div>
-                      <div className="mt-2 w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+                      <div className="mt-2 w-full h-2 rounded-full bg-sky-100 overflow-hidden">
                         <div
-                          className="h-full bg-cyan-500 transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-sky-500 to-cyan-500 transition-all duration-500"
                           style={{ width: `${progressPercent}%` }}
                         />
                       </div>
 
-                      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-600 font-mono">
                         <span>{answeredCount}/{totalQuestions} {trans('questions', 'प्रश्न')}</span>
-                        <span>{correctCount} {trans('correct', 'सही')}</span>
+                        <span className="font-semibold text-sky-800">{correctCount} {trans('correct', 'सही')}</span>
                       </div>
 
                       {progressPercent > 50 && (
                         <button
                           onClick={() => setShowCert(true)}
-                          className="btn-outline w-full !py-1.5 text-xs font-semibold mt-3 text-cyan-900 border-cyan-300 bg-cyan-50 hover:bg-cyan-100"
+                          className="btn-outline w-full !py-1.5 text-xs font-semibold mt-3 text-sky-950 border-sky-300 bg-white/90 hover:bg-white shadow-xs"
                         >
-                          <Award className="w-3.5 h-3.5 text-cyan-700" /> {trans('View Polar Scholar Badge', 'ध्रुवीय अध्येता प्रमाणपत्र देखें')}
+                          <Award className="w-3.5 h-3.5 text-sky-600" /> {trans('View Polar Scholar Badge', 'ध्रुवीय अध्येता प्रमाणपत्र देखें')}
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600 leading-relaxed">
-                    <div className="font-semibold text-slate-900 flex items-center gap-1.5 mb-1">
+                  <div className="p-4 rounded-2xl border border-sky-200/80 bg-white/80 backdrop-blur-xs text-xs text-slate-600 leading-relaxed shadow-xs">
+                    <div className="font-semibold text-slate-900 flex items-center gap-1.5 mb-1.5 font-display">
                       <Lightbulb className="w-4 h-4 text-amber-500" /> {trans('Educator Guide', 'शिक्षक मार्गदर्शिका')}
                     </div>
                     {trans(
@@ -288,22 +289,22 @@ export default function Education() {
               <div className="space-y-6">
                 {/* Topic Header & Mode Switcher */}
                 <Reveal>
-                  <div className="editorial-frame p-6 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3.5">
-                      <span className="text-4xl p-2.5 rounded-2xl bg-slate-50 border border-slate-200">{topic.emoji}</span>
+                  <div className="p-6 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <span className="text-4xl p-3 rounded-2xl bg-sky-50 border border-sky-200/80 shadow-xs">{topic.emoji}</span>
                       <div>
-                        <span className="editorial-badge-light">{trans('CURRICULUM TOPIC', 'पाठ्यक्रम विषय')}</span>
+                        <span className="editorial-badge-light bg-sky-50 text-sky-800 border-sky-200 text-[10px] font-bold tracking-wider">{trans('CURRICULUM TOPIC', 'पाठ्यक्रम विषय')}</span>
                         <h2 className="font-display text-2xl font-bold text-slate-950 mt-1">{topic.title}</h2>
                       </div>
                     </div>
 
                     {/* Dual Mode Lens Switcher */}
-                    <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start sm:self-auto">
+                    <div className="inline-flex p-1 bg-sky-50/80 rounded-xl border border-sky-200/80 self-start sm:self-auto shadow-xs">
                       <button
                         onClick={() => setMode('simple')}
                         className={cn(
-                          'px-4 py-2 rounded-lg text-xs font-semibold transition',
-                          mode === 'simple' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                          'px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200',
+                          mode === 'simple' ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-600 hover:text-slate-950'
                         )}
                       >
                         {trans('Foundational (Student)', 'बुनियादी (छात्र)')}
@@ -311,8 +312,8 @@ export default function Education() {
                       <button
                         onClick={() => setMode('scientific')}
                         className={cn(
-                          'px-4 py-2 rounded-lg text-xs font-semibold transition',
-                          mode === 'scientific' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                          'px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200',
+                          mode === 'scientific' ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-600 hover:text-slate-950'
                         )}
                       >
                         {trans('Academic (Researcher)', 'वैज्ञानिक (शोधकर्ता)')}
@@ -323,9 +324,9 @@ export default function Education() {
 
                 {/* Core Content Presentation */}
                 <Reveal>
-                  <div className="editorial-frame p-6 sm:p-8 bg-white space-y-4">
-                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-sky-800 font-semibold border-b border-slate-100 pb-3">
-                      <BookOpenCheck className="w-3.5 h-3.5 text-sky-600" />
+                  <div className="p-6 sm:p-8 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
+                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-sky-800 font-bold border-b border-sky-100 pb-3">
+                      <BookOpenCheck className="w-4 h-4 text-sky-600" />
                       <span>
                         {mode === 'simple' 
                           ? trans('FOUNDATIONAL EXPLANATION · MIDDLE & HIGH SCHOOL CURRICULUM', 'बुनियादी व्याख्या · माध्यमिक एवं उच्चतर माध्यमिक स्तर')
@@ -337,39 +338,42 @@ export default function Education() {
                       {mode === 'simple' ? topic.simple : topic.scientific}
                     </p>
 
-                    <div className="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-mono">{trans('Verified by NCPOR Polar Education Wing', 'एनसीपीओआर ध्रुवीय शिक्षा प्रभाग द्वारा सत्यापित')}</span>
-                      <span className="text-sky-800 font-medium">{trans('Switch modes anytime for side-by-side comparison', 'तुलना के लिए कभी भी मोड बदलें')}</span>
+                    <div className="mt-4 pt-4 border-t border-sky-100 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-2">
+                      <span className="font-mono text-slate-600">{trans('Verified by NCPOR Polar Education Wing', 'एनसीपीओआर ध्रुवीय शिक्षा प्रभाग द्वारा सत्यापित')}</span>
+                      <span className="text-sky-800 font-semibold">{trans('Switch modes anytime for side-by-side comparison', 'तुलना के लिए कभी भी मोड बदलें')}</span>
                     </div>
                   </div>
                 </Reveal>
 
                 {/* Direct Scientific Ground Truth Evidence */}
                 <Reveal>
-                  <div className="editorial-frame p-6 bg-gradient-to-r from-sky-50/50 via-white to-slate-50 border-sky-200/80">
-                    <div className="flex items-center gap-2 text-sky-900 font-mono text-xs uppercase tracking-wider font-semibold mb-3">
-                      <Compass className="w-4 h-4 text-sky-700" />
+                  <div className="p-6 bg-gradient-to-r from-sky-50/90 via-white to-sky-50/60 border border-sky-200/90 rounded-2xl shadow-soft">
+                    <div className="flex items-center gap-2 text-sky-900 font-mono text-xs uppercase tracking-wider font-bold mb-4">
+                      <Compass className="w-4 h-4 text-sky-600" />
                       <span>{trans('Real In-Situ Scientific Evidence Backing This Lesson', 'इस पाठ का वास्तविक इन-सिटू वैज्ञानिक साक्ष्य')}</span>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-xs text-slate-500 font-mono">{trans('OBSERVATORY BASE', 'वेधशाला आधार')}</div>
+                      <div className="p-4 rounded-xl bg-white/80 border border-sky-100">
+                        <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">{trans('OBSERVATORY BASE', 'वेधशाला आधार')}</div>
                         <div className="font-display font-bold text-slate-900 text-sm mt-0.5">{evidence.base}</div>
                         <div className="text-xs text-slate-600 mt-1 leading-relaxed">{evidence.summary}</div>
                       </div>
-                      <div>
-                        <div className="text-xs text-slate-500 font-mono">{trans('LINKED DATASET & EXPEDITION', 'संबद्ध डेटासेट एवं अभियान')}</div>
-                        <Link to="/datasets" className="font-display font-bold text-sky-800 hover:underline text-sm mt-0.5 block">
-                          {evidence.datasetTitle} →
-                        </Link>
-                        <div className="text-xs text-slate-600 mt-1">{trans('Mission:', 'अभियान:')} {evidence.expedition}</div>
+                      <div className="p-4 rounded-xl bg-white/80 border border-sky-100 flex flex-col justify-between">
+                        <div>
+                          <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">{trans('LINKED DATASET & EXPEDITION', 'संबद्ध डेटासेट एवं अभियान')}</div>
+                          <Link to="/datasets" className="font-display font-bold text-sky-800 hover:text-sky-950 text-sm mt-0.5 inline-flex items-center gap-1 group">
+                            <span>{evidence.datasetTitle}</span>
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                          </Link>
+                          <div className="text-xs text-slate-600 mt-1">{trans('Mission:', 'अभियान:')} {evidence.expedition}</div>
+                        </div>
                         {evidence.sourceUrl && (
-                          <div className="mt-2 pt-2 border-t border-sky-200/60">
+                          <div className="mt-3 pt-2.5 border-t border-sky-100">
                             <a
                               href={evidence.sourceUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-800 hover:text-cyan-950 underline underline-offset-4 decoration-cyan-500/40"
+                              className="inline-flex items-center gap-1.5 text-xs font-mono text-sky-800 hover:text-sky-950 font-semibold"
                             >
                               <span>{evidence.sourceLabel || trans('Verify Official Source', 'आधिकारिक स्रोत पर सत्यापित करें')}</span>
                               <ExternalLink className="w-3 h-3 shrink-0" />
@@ -385,21 +389,21 @@ export default function Education() {
                 <div className="grid md:grid-cols-2 gap-6">
                   {/* Glossary */}
                   <Reveal>
-                    <div className="editorial-frame p-6 bg-white h-full flex flex-col justify-between">
+                    <div className="p-6 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft h-full flex flex-col justify-between">
                       <div>
-                        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-slate-400 font-semibold mb-4 border-b border-slate-100 pb-2">
+                        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-sky-900 font-bold mb-4 border-b border-sky-100 pb-2.5">
                           <FileText className="w-3.5 h-3.5 text-sky-600" /> {trans('Key Polar Terminology', 'प्रमुख ध्रुवीय शब्दावली')}
                         </div>
-                        <dl className="space-y-4">
+                        <dl className="space-y-3">
                           {topic.glossary.map(g => (
-                            <div key={g.term} className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                            <div key={g.term} className="p-3 rounded-xl bg-sky-50/50 border border-sky-100">
                               <dt className="font-display font-bold text-slate-950 text-sm">{g.term}</dt>
-                              <dd className="text-xs text-slate-600 mt-1 leading-relaxed">{g.definition}</dd>
+                              <dd className="text-xs text-slate-600 mt-1 leading-relaxed font-sans">{g.definition}</dd>
                             </div>
                           ))}
                         </dl>
                       </div>
-                      <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] font-mono text-slate-400">
+                      <div className="mt-5 pt-3 border-t border-sky-100 text-[11px] font-mono text-slate-500">
                         {trans('Standard scientific taxonomy (IASC / SCAR)', 'मानक वैज्ञानिक शब्दावली (IASC / SCAR)')}
                       </div>
                     </div>
@@ -407,13 +411,13 @@ export default function Education() {
 
                   {/* Interactive Quiz */}
                   <Reveal>
-                    <div className="editorial-frame p-6 bg-white h-full flex flex-col justify-between">
+                    <div className="p-6 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft h-full flex flex-col justify-between">
                       <div>
-                        <div className="flex items-center justify-between font-mono text-xs uppercase tracking-widest text-slate-400 font-semibold mb-4 border-b border-slate-100 pb-2">
-                          <span className="flex items-center gap-1.5 text-cyan-800">
-                            <Sparkles className="w-3.5 h-3.5 text-cyan-600" /> {trans('Comprehension Check', 'समझ मूल्यांकन')}
+                        <div className="flex items-center justify-between font-mono text-xs uppercase tracking-widest text-sky-900 font-bold mb-4 border-b border-sky-100 pb-2.5">
+                          <span className="flex items-center gap-1.5 text-sky-800">
+                            <Sparkles className="w-3.5 h-3.5 text-sky-600" /> {trans('Comprehension Check', 'समझ मूल्यांकन')}
                           </span>
-                          <span>{trans(`Question ${quizIdx + 1} of ${topic.quiz.length}`, `प्रश्न ${quizIdx + 1} / ${topic.quiz.length}`)}</span>
+                          <span className="text-slate-500">{trans(`Question ${quizIdx + 1} of ${topic.quiz.length}`, `प्रश्न ${quizIdx + 1} / ${topic.quiz.length}`)}</span>
                         </div>
 
                         {question ? (
@@ -432,19 +436,19 @@ export default function Education() {
                                     onClick={() => handleSelectOption(i)}
                                     disabled={picked !== null}
                                     className={cn(
-                                      'w-full flex items-center justify-between p-3 rounded-xl border text-left text-xs font-medium transition-all',
-                                      picked === null && 'border-slate-200 hover:border-slate-400 hover:bg-slate-50',
+                                      'w-full flex items-center justify-between p-3.5 rounded-xl border text-left text-xs font-medium transition-all',
+                                      picked === null && 'border-slate-200 bg-white hover:border-sky-300 hover:bg-sky-50/50',
                                       picked !== null && isAnswer && 'border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold',
                                       picked !== null && isPicked && !isAnswer && 'border-rose-400 bg-rose-50 text-rose-950',
-                                      picked !== null && !isPicked && !isAnswer && 'border-slate-100 opacity-50'
+                                      picked !== null && !isPicked && !isAnswer && 'border-slate-100 opacity-50 bg-slate-50/50'
                                     )}
                                   >
                                     <span>{opt}</span>
                                     {picked !== null && isAnswer && (
-                                      <Check className="w-4 h-4 text-emerald-600" />
+                                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                                     )}
                                     {picked !== null && isPicked && !isAnswer && (
-                                      <XIcon className="w-4 h-4 text-rose-500" />
+                                      <XIcon className="w-4 h-4 text-rose-500 shrink-0" />
                                     )}
                                   </button>
                                 )
@@ -452,7 +456,7 @@ export default function Education() {
                             </div>
 
                             {picked !== null && (
-                              <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                              <div className="mt-4 p-3 rounded-xl bg-sky-50/70 border border-sky-200/80 text-xs">
                                 <span className={picked === question.answer ? 'text-emerald-700 font-bold' : 'text-rose-700 font-bold'}>
                                   {picked === question.answer 
                                     ? trans('Correct! Verified scientific answer.', 'सही उत्तर! वैज्ञानिक रूप से प्रमाणित तथ्य।') 
@@ -466,10 +470,10 @@ export default function Education() {
                         )}
                       </div>
 
-                      <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                      <div className="mt-5 pt-3.5 border-t border-sky-100 flex items-center justify-between">
                         <button
                           onClick={handleResetQuiz}
-                          className="text-slate-500 hover:text-slate-900 text-xs font-mono inline-flex items-center gap-1"
+                          className="text-slate-500 hover:text-slate-900 text-xs font-mono inline-flex items-center gap-1.5 transition-colors"
                         >
                           <RefreshCw className="w-3 h-3" /> {trans('Reset Module', 'मॉड्यूल रीसेट करें')}
                         </button>
@@ -482,7 +486,7 @@ export default function Education() {
                             {trans('Next Question', 'अगला प्रश्न')} <ArrowRight className="w-3.5 h-3.5" />
                           </button>
                         ) : picked !== null ? (
-                          <span className="text-xs font-mono text-emerald-700 font-semibold">
+                          <span className="text-xs font-mono text-emerald-700 font-bold">
                             {trans('Topic Finished!', 'विषय संपन्न!')}
                           </span>
                         ) : null}
@@ -498,20 +502,20 @@ export default function Education() {
 
       {/* Polar Scholar Certificate Modal */}
       {showCert && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-up">
-          <div className="scientific-frame max-w-lg w-full bg-white p-8 text-center relative shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-up">
+          <div className="max-w-lg w-full bg-white/98 backdrop-blur-md border border-sky-200 rounded-3xl p-8 text-center relative shadow-2xl">
             <button
               onClick={() => setShowCert(false)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-900 rounded-lg"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition-colors"
             >
               <XIcon className="w-5 h-5" />
             </button>
 
-            <div className="w-16 h-16 rounded-2xl bg-cyan-50 border border-cyan-200 text-cyan-700 grid place-items-center mx-auto mb-4">
-              <Award className="w-8 h-8 text-cyan-600" />
+            <div className="w-16 h-16 rounded-2xl bg-sky-50 border border-sky-200 text-sky-700 grid place-items-center mx-auto mb-4 shadow-xs">
+              <Award className="w-8 h-8 text-sky-600" />
             </div>
 
-            <span className="telemetry-badge bg-cyan-50 text-cyan-900 border-cyan-300">
+            <span className="editorial-badge-light bg-sky-50 text-sky-900 border-sky-300 font-semibold px-3 py-1 rounded-full text-[10px]">
               {trans('SMART INDIA HACKATHON 2026 · SMART EDUCATION', 'स्मार्ट इंडिया हैकाथॉन 2026 · स्मार्ट एजुकेशन')}
             </span>
 
@@ -526,15 +530,15 @@ export default function Education() {
               )}
             </p>
 
-            <div className="my-6 p-4 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs text-slate-700 space-y-1">
-              <div>{trans('Score Verified:', 'प्रमाणित स्कोर:')} <strong className="text-slate-900">{correctCount} / {answeredCount} {trans('Questions', 'प्रश्न')}</strong></div>
-              <div>{trans('Curriculum Level:', 'पाठ्यक्रम स्तर:')} <strong className="text-slate-900">{trans('National Polar Sciences (Secondary/UG)', 'राष्ट्रीय ध्रुवीय विज्ञान (माध्यमिक/स्नातक)')}</strong></div>
-              <div>{trans('Issuer:', 'जारीकर्ता:')} <strong className="text-slate-900">{trans('NCPOR · Ministry of Earth Sciences', 'एनसीपीओआर · पृथ्वी विज्ञान मंत्रालय')}</strong></div>
+            <div className="my-6 p-4 rounded-xl bg-sky-50/60 border border-sky-200/80 font-mono text-xs text-slate-700 space-y-1.5 text-left">
+              <div className="flex justify-between"><span>{trans('Score Verified:', 'प्रमाणित स्कोर:')}</span> <strong className="text-slate-900">{correctCount} / {answeredCount} {trans('Questions', 'प्रश्न')}</strong></div>
+              <div className="flex justify-between"><span>{trans('Curriculum Level:', 'पाठ्यक्रम स्तर:')}</span> <strong className="text-slate-900">{trans('National Polar Sciences (Secondary/UG)', 'राष्ट्रीय ध्रुवीय विज्ञान (माध्यमिक/स्नातक)')}</strong></div>
+              <div className="flex justify-between"><span>{trans('Issuer:', 'जारीकर्ता:')}</span> <strong className="text-slate-900">{trans('NCPOR · Ministry of Earth Sciences', 'एनसीपीओआर · पृथ्वी विज्ञान मंत्रालय')}</strong></div>
             </div>
 
             <button
               onClick={() => setShowCert(false)}
-              className="btn-primary w-full text-xs !py-2.5 font-semibold"
+              className="btn-primary w-full text-xs !py-3 font-semibold rounded-xl"
             >
               {trans('Close & Continue Learning', 'बंद करें और अध्ययन जारी रखें')}
             </button>

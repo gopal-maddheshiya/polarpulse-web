@@ -57,15 +57,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Institutional Identification */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-md bg-white text-slate-950 grid place-items-center font-display font-bold text-xs">
-                P
+            <div className="flex items-center gap-3">
+              <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-sky-400 to-sky-600 text-slate-950 grid place-items-center font-display font-bold text-xs shadow-md">
+                <div className="absolute inset-0 rounded-xl border border-sky-300/40 animate-[spin_24s_linear_infinite]" />
+                <span className="text-white font-extrabold tracking-wider">P</span>
               </div>
               <div className="leading-tight">
                 <span className="font-display text-base font-bold tracking-[0.14em] text-white">
                   POLARIS
                 </span>
-                <span className="text-[10px] font-mono text-slate-400 ml-1.5">
+                <span className="text-[10px] font-mono text-sky-400 ml-1.5 font-semibold">
                   {trans('INDIA', 'भारत')}
                 </span>
               </div>

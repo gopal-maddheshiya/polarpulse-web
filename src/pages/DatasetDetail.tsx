@@ -97,50 +97,50 @@ export default function DatasetDetail() {
   }
 
   return (
-    <div>
-      <div className="bg-gradient-to-b from-polar-50/80 to-white border-b border-polar-100">
+    <div className="min-h-screen bg-[#edf5fb]">
+      <div className="bg-gradient-to-b from-[#d6ecf9] via-[#e6f3fa] to-[#edf5fb] border-b border-sky-200/80">
         <Container className="py-12 sm:py-16">
           <Reveal>
-            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-widest text-polar-500 hover:text-polar-900 mb-4">
-              <ArrowLeft className="w-3.5 h-3.5" /> {trans('Back', 'वापस')}
+            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-slate-900 mb-4 font-semibold transition">
+              <ArrowLeft className="w-3.5 h-3.5 text-cyan-600" /> {trans('Back', 'वापस')}
             </button>
-            <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-accent/90">{d.area} · {d.region} · {d.year}</div>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-polar-950 mt-3 max-w-4xl leading-[1.1]">{d.title}</h1>
-            <p className="mt-4 text-polar-600 max-w-3xl leading-relaxed text-base sm:text-lg">{d.description}</p>
+            <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-700 font-bold">{d.area} · {d.region} · {d.year}</div>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-950 mt-3 max-w-4xl leading-[1.1]">{d.title}</h1>
+            <p className="mt-4 text-slate-600 max-w-3xl leading-relaxed text-base sm:text-lg">{d.description}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <button onClick={handleDownload} className="btn-primary">
-                <Download className="w-4 h-4" /> {trans(`Download (${d.format})`, `डाउनलोड करें (${d.format})`)}
+                <Download className="w-4 h-4 text-cyan-400" /> {trans(`Download (${d.format})`, `डाउनलोड करें (${d.format})`)}
               </button>
-              <button onClick={handlePreview} className="btn-outline">
-                <Eye className="w-4 h-4" /> {trans('Copy Preview JSON', 'प्रिव्यू JSON कॉपी करें')}
+              <button onClick={handlePreview} className="btn-light">
+                <Eye className="w-4 h-4 text-cyan-700" /> {trans('Copy Preview JSON', 'प्रिव्यू JSON कॉपी करें')}
               </button>
               <a
                 href={d.sourceUrl || "https://data.ncpor.res.in"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-polar-700 hover:text-polar-950"
+                className="btn-light inline-flex items-center gap-2 text-xs font-mono text-cyan-800"
               >
                 <span>{trans('Verify at NPDC', 'NPDC पर सत्यापित करें')}</span>
-                <ExternalLink className="w-3.5 h-3.5 text-cyan-accent" />
+                <ExternalLink className="w-3.5 h-3.5 text-cyan-600" />
               </a>
             </div>
           </Reveal>
         </Container>
       </div>
 
-      <Section className="py-10">
+      <Section className="py-10 bg-[#edf5fb]">
         <Container>
           <div className="grid lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-10">
               {/* Sample visualisation */}
               <Reveal>
-                <div className="p-6 rounded-2xl border border-polar-100 bg-white">
+                <div className="p-7 rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-xs">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <div className="text-xs font-mono uppercase tracking-wider text-polar-400">{trans('Preview Visualisation', 'पूर्वावलोकन विज़ुअलाइज़ेशन')}</div>
-                      <div className="font-display text-lg font-semibold text-polar-950">{trans('Downcast Profile Sample', 'डाउनकास्ट प्रोफाइल नमूना')}</div>
+                      <div className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">{trans('Preview Visualisation', 'पूर्वावलोकन विज़ुअलाइज़ेशन')}</div>
+                      <div className="font-display text-lg font-bold text-slate-950">{trans('Downcast Profile Sample', 'डाउनकास्ट प्रोफाइल नमूना')}</div>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-polar-50 text-polar-600">{trans('Simulated', 'सिम्युलेटेड')}</span>
+                    <span className="text-[10px] font-mono px-2.5 py-1 rounded-md bg-sky-100 text-sky-900 font-bold">{trans('Simulated', 'सिम्युलेटेड')}</span>
                   </div>
                   <LineChart
                     title={trans('Downcast Profile Sample', 'डाउनकास्ट प्रोफाइल नमूना')}
@@ -153,7 +153,7 @@ export default function DatasetDetail() {
                       { label: '500m', value: 18 },
                       { label: '1000m', value: 8 },
                     ]}
-                    accent="#00a3c4"
+                    accent="#0284c7"
                     height={200}
                   />
                 </div>
@@ -161,21 +161,21 @@ export default function DatasetDetail() {
 
               {/* Data Preview Table */}
               <Reveal>
-                <div>
-                  <h2 className="font-display text-xl font-semibold text-polar-950 mb-4">{trans('Observation Record Preview', 'प्रेक्षण रिकॉर्ड पूर्वावलोकन')}</h2>
-                  <div className="overflow-x-auto rounded-xl border border-polar-100 bg-white">
+                <div className="rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md p-7 shadow-xs">
+                  <h2 className="font-display text-xl font-bold text-slate-950 mb-4">{trans('Observation Record Preview', 'प्रेक्षण रिकॉर्ड पूर्वावलोकन')}</h2>
+                  <div className="overflow-x-auto rounded-2xl border border-sky-200/80 bg-white shadow-2xs">
                     <table className="w-full text-sm text-left">
-                      <thead className="text-[11px] font-mono uppercase tracking-wider text-polar-500 bg-polar-50/60 border-b border-polar-100">
+                      <thead className="text-[11px] font-mono uppercase tracking-wider text-slate-700 bg-sky-50/80 border-b border-sky-200/80 font-bold">
                         <tr>
-                          <th className="py-3 px-4">{trans('Parameter / Variable', 'मापदंड / चर (Parameter)')}</th>
-                          <th className="py-3 px-4">{trans('Sample Reading', 'नमूना पाठ्यांक (Reading)')}</th>
+                          <th className="py-3.5 px-4">{trans('Parameter / Variable', 'मापदंड / चर (Parameter)')}</th>
+                          <th className="py-3.5 px-4">{trans('Sample Reading', 'नमूना पाठ्यांक (Reading)')}</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-polar-50 text-polar-700">
+                      <tbody className="divide-y divide-sky-100 text-slate-700">
                         {d.previewRows.map((r, idx) => (
-                          <tr key={idx} className="hover:bg-polar-50/40 transition">
-                            <td className="py-3 px-4 font-mono text-xs text-polar-900">{r.name}</td>
-                            <td className="py-3 px-4 font-mono text-xs text-cyan-accent font-medium">{r.value}</td>
+                          <tr key={idx} className="hover:bg-sky-50/50 transition">
+                            <td className="py-3 px-4 font-mono text-xs text-slate-900 font-semibold">{r.name}</td>
+                            <td className="py-3 px-4 font-mono text-xs text-cyan-700 font-bold">{r.value}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -187,31 +187,31 @@ export default function DatasetDetail() {
 
             {/* Sidebar metadata */}
             <div className="space-y-6">
-              <div className="rounded-2xl border border-polar-100 p-5 bg-white space-y-4 text-sm">
-                <div className="text-xs font-mono uppercase tracking-wider text-polar-400">{trans('Dataset Metadata', 'डेटासेट मेटाडेटा')}</div>
+              <div className="rounded-3xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md space-y-4 text-sm shadow-xs">
+                <div className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">{trans('Dataset Metadata', 'डेटासेट मेटाडेटा')}</div>
                 <div className="space-y-2.5">
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Coverage', 'भौगोलिक कवरेज')}</span><span className="text-polar-900 font-mono text-xs">{d.coverage}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('File Size', 'फ़ाइल आकार')}</span><span className="text-polar-900 font-mono text-xs">{d.size}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Format', 'प्रारूप (Format)')}</span><span className="text-polar-900 font-mono text-xs">{d.format}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Discipline', 'वैज्ञानिक विषय')}</span><span className="text-polar-900">{d.area}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Region', 'ध्रुवीय क्षेत्र')}</span><span className="text-polar-900">{d.region}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Access', 'पहुंच स्तर')}</span><span className="text-emerald-600 font-medium text-xs">{trans('Open / Public Domain', 'खुला / सार्वजनिक अधिकार')}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">{trans('Coverage', 'भौगोलिक कवरेज')}</span><span className="text-slate-900 font-mono text-xs font-bold">{d.coverage}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">{trans('File Size', 'फ़ाइल आकार')}</span><span className="text-slate-900 font-mono text-xs font-bold">{d.size}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">{trans('Format', 'प्रारूप (Format)')}</span><span className="text-slate-900 font-mono text-xs font-bold">{d.format}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">{trans('Discipline', 'वैज्ञानिक विषय')}</span><span className="text-slate-900 font-semibold">{d.area}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">{trans('Region', 'ध्रुवीय क्षेत्र')}</span><span className="text-slate-900 font-semibold">{d.region}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">{trans('Access', 'पहुंच स्तर')}</span><span className="text-emerald-700 font-bold text-xs bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">{trans('Open / Public Domain', 'खुला / सार्वजनिक अधिकार')}</span></div>
                 </div>
               </div>
 
               {/* Official Repository Verification */}
-              <div className="rounded-2xl border border-polar-100 p-5 bg-white space-y-3 text-sm">
-                <div className="text-xs font-mono uppercase tracking-wider text-polar-400">
+              <div className="rounded-3xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md space-y-3 text-sm shadow-xs">
+                <div className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
                   {trans('Official Repository', 'आधिकारिक डेटा संग्रह')}
                 </div>
-                <p className="text-xs text-polar-600 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   {trans('National Polar Data Centre (NPDC) · Ministry of Earth Sciences, Govt. of India', 'राष्ट्रीय ध्रुवीय डेटा केंद्र (NPDC) · पृथ्वी विज्ञान मंत्रालय, भारत सरकार')}
                 </p>
                 <a
                   href={d.sourceUrl || "https://data.ncpor.res.in"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-accent hover:text-cyan-700 underline underline-offset-4 decoration-cyan-accent/40"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-cyan-700 hover:text-cyan-900 underline underline-offset-4"
                 >
                   <span>{d.sourceLabel || "National Polar Data Centre (NPDC) Portal"}</span>
                   <ExternalLink className="w-3 h-3 shrink-0" />
@@ -220,22 +220,22 @@ export default function DatasetDetail() {
 
               {/* Linked Expedition */}
               {exp && (
-                <div className="rounded-2xl border border-polar-100 p-5 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400 mb-2">{trans('Collected During', 'इस अभियान के दौरान एकत्रित')}</div>
-                  <Link to={`/expeditions/${exp.id}`} className="block p-2.5 rounded-lg hover:bg-polar-50 border border-transparent hover:border-polar-100 transition group">
-                    <div className="text-xs font-medium text-polar-900 group-hover:text-cyan-accent line-clamp-2">{exp.title}</div>
-                    <div className="text-[10px] font-mono text-polar-400 mt-0.5">{exp.region} · {exp.year}</div>
+                <div className="rounded-3xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-xs">
+                  <div className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold mb-2.5">{trans('Collected During', 'इस अभियान के दौरान एकत्रित')}</div>
+                  <Link to={`/expeditions/${exp.id}`} className="block p-3 rounded-xl hover:bg-sky-50 border border-sky-100 hover:border-sky-300 transition group">
+                    <div className="text-xs font-bold text-slate-900 group-hover:text-cyan-700 line-clamp-2">{exp.title}</div>
+                    <div className="text-[10px] font-mono text-slate-500 mt-0.5">{exp.region} · {exp.year}</div>
                   </Link>
                 </div>
               )}
 
               {/* Linked Publication */}
               {pub && (
-                <div className="rounded-2xl border border-polar-100 p-5 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400 mb-2">{trans('Cited in Publication', 'शोध पत्र में उद्धृत')}</div>
-                  <Link to={`/publications/${pub.id}`} className="block p-2.5 rounded-lg hover:bg-polar-50 border border-transparent hover:border-polar-100 transition group">
-                    <div className="text-xs font-medium text-polar-900 group-hover:text-cyan-accent line-clamp-2">{pub.title}</div>
-                    <div className="text-[10px] font-mono text-polar-400 mt-0.5">{pub.journal} ({pub.year})</div>
+                <div className="rounded-3xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-xs">
+                  <div className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold mb-2.5">{trans('Cited in Publication', 'शोध पत्र में उद्धृत')}</div>
+                  <Link to={`/publications/${pub.id}`} className="block p-3 rounded-xl hover:bg-sky-50 border border-sky-100 hover:border-sky-300 transition group">
+                    <div className="text-xs font-bold text-slate-900 group-hover:text-cyan-700 line-clamp-2">{pub.title}</div>
+                    <div className="text-[10px] font-mono text-slate-500 mt-0.5">{pub.journal} ({pub.year})</div>
                   </Link>
                 </div>
               )}

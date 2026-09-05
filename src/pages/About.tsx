@@ -144,7 +144,7 @@ export default function About() {
   ]
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb]">
       <PageHeader
         eyebrow={trans('Institutional Mission', 'संस्थागत मिशन एवं संकल्प')}
         title={trans('From India’s Polar Research to Public Knowledge', 'भारत के ध्रुवीय अनुसंधान से जन-साधारण तक ज्ञान')}
@@ -154,10 +154,10 @@ export default function About() {
         )}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
+          <span className="editorial-badge-light bg-sky-50/90 border-sky-300 text-sky-900 font-semibold px-3 py-1.5 rounded-full shadow-xs">
             <ShieldCheck className="w-3.5 h-3.5 text-sky-600" /> {trans('SIH 2026 · PROBLEM ID: 26063', 'एसआईएच 2026 · समस्या आईडी: 26063')}
           </span>
-          <span className="editorial-badge-light">
+          <span className="editorial-badge-light bg-white/80 border-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-full">
             {trans('NCPOR · MINISTRY OF EARTH SCIENCES, GOVT. OF INDIA', 'एनसीपीओआर · पृथ्वी विज्ञान मंत्रालय, भारत सरकार')}
           </span>
         </div>
@@ -169,27 +169,27 @@ export default function About() {
           <Reveal>
             <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 items-center">
               <div>
-                <div className="eyebrow text-cyan-700">{trans('Four National Commitments', 'चार राष्ट्रीय वैज्ञानिक संकल्प')}</div>
-                <h2 className="section-title-lg mt-1">{trans('A Unified Portal for India’s Sovereign Science', 'भारत के संप्रभु ध्रुवीय विज्ञान का एकीकृत मंच')}</h2>
-                <p className="mt-4 text-slate-600 leading-relaxed text-sm">
+                <div className="text-xs font-mono uppercase tracking-widest text-sky-800 font-bold mb-1.5">{trans('Four National Commitments', 'चार राष्ट्रीय वैज्ञानिक संकल्प')}</div>
+                <h2 className="font-display text-3xl font-bold text-slate-950 tracking-tight leading-tight">{trans('A Unified Portal for India’s Sovereign Science', 'भारत के संप्रभु ध्रुवीय विज्ञान का एकीकृत मंच')}</h2>
+                <p className="mt-4 text-slate-600 leading-relaxed text-sm font-sans">
                   {trans(
                     'The National Centre for Polar and Ocean Research (NCPOR) is the nodal agency for the Indian Polar Programme. POLARIS consolidates four decades of field expeditions, technical reports, and telemetry into a single open platform for students, researchers, policymakers, and the global public.',
                     'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र (NCPOR) भारतीय ध्रुवीय कार्यक्रम की नोडल एजेंसी है। पोलारिस चार दशकों के फील्ड अभियानों, तकनीकी रिपोर्टों और टेलीमेट्री को छात्रों, शोधकर्ताओं, नीति निर्माताओं और जनता के लिए एक पारदर्शी और सुलभ मंच पर प्रस्तुत करता है।'
                   )}
                 </p>
 
-                <div className="mt-6 grid sm:grid-cols-2 gap-3">
+                <div className="mt-6 grid sm:grid-cols-2 gap-3.5">
                   {MISSION.map(m => {
                     const Icon = m.icon
                     return (
-                      <div key={m.title} className="p-4 rounded-xl border border-slate-200 bg-white">
+                      <div key={m.title} className="p-4 rounded-2xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-soft">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-800 grid place-items-center font-bold">
-                            <Icon className="w-4 h-4 text-cyan-700" />
+                          <div className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 grid place-items-center font-bold shadow-xs">
+                            <Icon className="w-4.5 h-4.5 text-sky-600" />
                           </div>
                           <h4 className="font-display font-bold text-slate-900 text-sm">{m.title}</h4>
                         </div>
-                        <p className="text-xs text-slate-600 mt-2 leading-relaxed">{m.desc}</p>
+                        <p className="text-xs text-slate-600 mt-2.5 leading-relaxed font-sans">{m.desc}</p>
                       </div>
                     )
                   })}
@@ -197,14 +197,16 @@ export default function About() {
               </div>
 
               {/* Station Hero Card */}
-              <div className="scientific-frame shadow-md">
-                <div className="relative aspect-[4/3] bg-slate-900 overflow-hidden">
+              <div className="rounded-3xl border border-sky-200/90 shadow-soft overflow-hidden bg-slate-900">
+                <div className="relative aspect-[4/3] overflow-hidden">
                   <img src={IMG.station} alt="Polar Research Station" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <span className="telemetry-badge-dark mb-1">{trans('SOVEREIGN RESEARCH INFRASTRUCTURE', 'संप्रभु अनुसंधान अवसंरचना')}</span>
-                    <h3 className="font-display text-xl font-bold text-white mt-1">{trans('Bharati Station, Antarctica', 'भारती स्टेशन, अंटार्कटिका')}</h3>
-                    <p className="text-xs text-slate-300 mt-1">
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
+                  <div className="absolute bottom-5 left-5 right-5 text-white">
+                    <span className="editorial-badge-light bg-slate-950/80 text-sky-300 border-white/20 text-[10px] font-bold tracking-wider mb-2 inline-block px-2.5 py-1 rounded-full backdrop-blur-md">
+                      {trans('SOVEREIGN RESEARCH INFRASTRUCTURE', 'संप्रभु अनुसंधान अवसंरचना')}
+                    </span>
+                    <h3 className="font-display text-2xl font-bold text-white mt-1">{trans('Bharati Station, Antarctica', 'भारती स्टेशन, अंटार्कटिका')}</h3>
+                    <p className="text-xs text-slate-300 mt-1.5 leading-relaxed font-sans">
                       {trans(
                         'State-of-the-art zero-liquid discharge modular station operating year-round in Larsemann Hills.',
                         'लार्समैन हिल्स में साल भर सक्रिय रहने वाला शून्य-अपशिष्ट डिस्चार्ज अत्याधुनिक भारतीय अनुसंधान केंद्र।'
@@ -219,7 +221,7 @@ export default function About() {
       </Section>
 
       {/* Historical Milestones Timeline */}
-      <Section className="bg-slate-50 border-y border-slate-200/80">
+      <Section className="bg-white/60 backdrop-blur-xs border-y border-sky-200/80 py-16">
         <Container>
           <Reveal>
             <SectionHeader
@@ -231,19 +233,19 @@ export default function About() {
               )}
             />
 
-            <div className="relative border-l-2 border-slate-200 ml-4 md:ml-6 space-y-8 my-6">
+            <div className="relative border-l-2 border-sky-200 ml-4 md:ml-6 space-y-8 my-6">
               {TIMELINE.map(t => (
                 <div key={t.year} className="pl-6 md:pl-8 relative">
-                  <span className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-cyan-500 border-4 border-white shadow-xs" />
+                  <span className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-sky-600 border-4 border-white shadow-xs" />
                   <div className="flex flex-wrap items-baseline gap-2">
-                    <span className="font-mono text-sm font-bold text-cyan-800 bg-cyan-100/70 px-2 py-0.5 rounded border border-cyan-300">
+                    <span className="font-mono text-sm font-bold text-sky-950 bg-sky-100/90 px-2.5 py-0.5 rounded-md border border-sky-300 shadow-xs">
                       {t.year}
                     </span>
                     <h4 className="font-display font-bold text-slate-900 text-base">
                       {t.event}
                     </h4>
                   </div>
-                  <p className="text-xs text-slate-600 mt-1.5 max-w-2xl leading-relaxed">
+                  <p className="text-xs text-slate-600 mt-1.5 max-w-2xl leading-relaxed font-sans">
                     {t.desc}
                   </p>
                 </div>
@@ -254,7 +256,7 @@ export default function About() {
       </Section>
 
       {/* Three Research Bases Detailed */}
-      <Section className="bg-white">
+      <Section className="py-16">
         <Container>
           <Reveal>
             <SectionHeader
@@ -268,37 +270,37 @@ export default function About() {
 
             <div className="grid md:grid-cols-3 gap-6">
               {STATIONS.map(s => (
-                <div key={s.name} className="scientific-frame bg-white hover:border-cyan-400 hover:shadow-md transition-all flex flex-col justify-between">
+                <div key={s.name} className="rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-soft hover:shadow-xl hover:border-sky-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
                   <div>
                     <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
                       <img src={s.img} alt={s.name} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                      <span className="absolute top-3 left-3 telemetry-badge-dark !bg-slate-950/80">
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent" />
+                      <span className="absolute top-3 left-3 text-[10px] font-mono font-bold tracking-wider px-2.5 py-1 rounded-full bg-slate-950/80 text-sky-300 backdrop-blur-md border border-white/20 shadow-xs">
                         {trans('EST.', 'स्थापना')} {s.established}
                       </span>
                       <div className="absolute bottom-3 left-3 right-3 text-white">
-                        <div className="font-mono text-[10px] text-cyan-300">{s.coords}</div>
+                        <div className="font-mono text-[10px] text-sky-300 font-semibold">{s.coords}</div>
                         <h4 className="font-display font-bold text-base mt-0.5">{s.name}</h4>
                       </div>
                     </div>
 
                     <div className="p-5">
-                      <div className="font-mono text-[10px] uppercase tracking-wider text-cyan-800 font-semibold mb-1">
+                      <div className="font-mono text-[10px] uppercase tracking-wider text-sky-800 font-bold mb-1">
                         {s.country}
                       </div>
-                      <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                      <p className="text-xs text-slate-600 mt-2 leading-relaxed font-sans">
                         {s.blurb}
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-5 pt-0 border-t border-slate-100 mt-2">
+                  <div className="p-5 pt-0 border-t border-sky-100 mt-2">
                     <Link
                       to="/expeditions"
-                      className="btn-outline w-full text-xs !py-2 text-center flex items-center justify-center gap-1 font-semibold"
+                      className="btn-outline w-full text-xs !py-2.5 text-center flex items-center justify-center gap-1.5 font-semibold rounded-xl bg-white shadow-xs hover:border-sky-400"
                     >
                       <span>{trans('Expedition Logs', 'अभियान लॉग देखें')}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5 text-sky-600" />
                     </Link>
                   </div>
                 </div>
@@ -309,15 +311,15 @@ export default function About() {
       </Section>
 
       {/* Institutional Contact Section */}
-      <Section className="bg-slate-50 border-t border-slate-200/80" id="contact">
+      <Section className="bg-white/60 backdrop-blur-xs border-t border-sky-200/80 py-16" id="contact">
         <Container>
           <Reveal>
-            <div className="scientific-frame p-8 sm:p-10 bg-white">
+            <div className="rounded-3xl border border-sky-200/90 p-8 sm:p-10 bg-white/95 backdrop-blur-md shadow-soft">
               <div className="grid md:grid-cols-[1fr_1.5fr] gap-8">
                 <div>
-                  <div className="eyebrow text-cyan-700">{trans('Outreach & Inquiries', 'संपर्क एवं पूछताछ')}</div>
+                  <div className="text-xs font-mono uppercase tracking-widest text-sky-800 font-bold mb-1">{trans('Outreach & Inquiries', 'संपर्क एवं पूछताछ')}</div>
                   <h3 className="font-display text-2xl font-bold text-slate-900 mt-1">{trans('Get in Touch', 'हमसे संपर्क करें')}</h3>
-                  <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 mt-2 leading-relaxed font-sans">
                     {trans(
                       'For scientific data requests, school and college educational collaborations, or media dissemination inquiries with the POLARIS portal.',
                       'वैज्ञानिक डेटा अनुरोध, विद्यालय एवं महाविद्यालय सहयोग, अथवा पोलारिस पोर्टल से संबंधित मीडिया पूछताछ के लिए।'
@@ -326,11 +328,11 @@ export default function About() {
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4 text-xs font-mono">
-                  <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
-                    <div className="text-slate-400 uppercase font-semibold flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-cyan-700" /> {trans('Headquarters', 'मुख्यालय')}
+                  <div className="p-4 rounded-2xl border border-sky-200/80 bg-sky-50/50 space-y-1">
+                    <div className="text-sky-900 uppercase font-bold flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-sky-600" /> {trans('Headquarters', 'मुख्यालय')}
                     </div>
-                    <div className="text-slate-900 font-medium font-sans mt-1">
+                    <div className="text-slate-800 font-medium font-sans mt-1.5 leading-relaxed">
                       {trans(
                         'National Centre for Polar and Ocean Research (NCPOR)\nMinistry of Earth Sciences, Govt. of India\nHeadland Sada, Vasco da Gama, Goa 403804',
                         'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र (NCPOR)\nपृथ्वी विज्ञान मंत्रालय, भारत सरकार\nहेडलैंड साडा, वास्को-द-गामा, गोवा 403804'
@@ -338,11 +340,11 @@ export default function About() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
-                    <div className="text-slate-400 uppercase font-semibold flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-cyan-700" /> {trans('Digital Outreach', 'डिजिटल संपर्क')}
+                  <div className="p-4 rounded-2xl border border-sky-200/80 bg-sky-50/50 space-y-1">
+                    <div className="text-sky-900 uppercase font-bold flex items-center gap-1.5">
+                      <Mail className="w-3.5 h-3.5 text-sky-600" /> {trans('Digital Outreach', 'डिजिटल संपर्क')}
                     </div>
-                    <div className="text-slate-900 font-medium font-sans mt-1">
+                    <div className="text-slate-800 font-medium font-sans mt-1.5 leading-relaxed">
                       polaris.outreach@ncpor.res.in (Demo)<br />
                       Portal: polaris.gov.in (Prototype)<br />
                       {trans('SIH 2026 Problem ID: 26063', 'एसआईएच 2026 समस्या आईडी: 26063')}

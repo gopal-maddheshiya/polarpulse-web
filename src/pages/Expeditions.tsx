@@ -56,7 +56,7 @@ export default function Expeditions() {
   const filtersActive = year !== 'All' || region !== 'All' || area !== 'All'
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb]">
       <PageHeader
         eyebrow={trans('National Polar Expeditions', 'राष्ट्रीय ध्रुवीय अभियान')}
         title={trans("India's Polar Expedition Registry", 'भारत का ध्रुवीय अभियान रजिस्टर')}
@@ -66,11 +66,11 @@ export default function Expeditions() {
         )}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
-            <Compass className="w-3.5 h-3.5 text-sky-600" /> {trans('44 CONSECUTIVE ANTARCTIC CAMPAIGNS', '44 निरंतर अंटार्कटिक अभियान')}
+          <span className="editorial-badge-light bg-white/90 border-sky-300 text-sky-950 font-bold shadow-2xs">
+            <Compass className="w-3.5 h-3.5 text-cyan-600 animate-spin-slow" /> {trans('44 CONSECUTIVE ANTARCTIC CAMPAIGNS', '44 निरंतर अंटार्कटिक अभियान')}
           </span>
-          <span className="editorial-badge-light">
-            <ShieldCheck className="w-3.5 h-3.5 text-slate-500" /> {trans('NCPOR LOGISTICS ARCHIVE', 'एनसीपीओआर लॉजिस्टिक्स पुरालेख')}
+          <span className="editorial-badge-light bg-white/90 border-sky-200 text-slate-700 font-semibold shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> {trans('NCPOR LOGISTICS ARCHIVE', 'एनसीपीओआर लॉजिस्टिक्स पुरालेख')}
           </span>
         </div>
       </PageHeader>
@@ -79,10 +79,10 @@ export default function Expeditions() {
         <Container>
           <Reveal>
             {/* Filter controls */}
-            <div className="editorial-frame p-5 mb-8 bg-white space-y-4">
+            <div className="rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md p-6 mb-8 shadow-xs space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold">
-                  <Filter className="w-4 h-4 text-sky-700" />
+                <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
+                  <Filter className="w-4 h-4 text-cyan-700" />
                   <span>{trans('Filter Expedition Logs', 'अभियान लॉग फ़िल्टर करें')}</span>
                 </div>
 
@@ -91,7 +91,7 @@ export default function Expeditions() {
                     <select
                       value={year}
                       onChange={e => setYear(e.target.value)}
-                      className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                      className="rounded-xl border border-sky-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs"
                     >
                       {years.map(y => (
                         <option key={y} value={y}>
@@ -105,7 +105,7 @@ export default function Expeditions() {
                     <select
                       value={region}
                       onChange={e => setRegion(e.target.value as any)}
-                      className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                      className="rounded-xl border border-sky-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs"
                     >
                       {REGIONS.map(r => (
                         <option key={r} value={r}>
@@ -119,7 +119,7 @@ export default function Expeditions() {
                     <select
                       value={area}
                       onChange={e => setArea(e.target.value as any)}
-                      className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                      className="rounded-xl border border-sky-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs"
                     >
                       {AREAS.map(a => (
                         <option key={a} value={a}>
@@ -132,7 +132,7 @@ export default function Expeditions() {
                   {filtersActive && (
                     <button
                       onClick={() => { setYear('All'); setRegion('All'); setArea('All') }}
-                      className="btn-ghost !py-2 !px-3 text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1"
+                      className="btn-ghost !py-2 !px-3 text-xs text-slate-600 hover:text-slate-950 font-semibold inline-flex items-center gap-1"
                     >
                       <X className="w-3.5 h-3.5" /> {trans('Clear', 'साफ़ करें')}
                     </button>
@@ -141,17 +141,17 @@ export default function Expeditions() {
               </div>
 
               {/* Quick Region Selector Tabs */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 mr-2">{trans('Region:', 'क्षेत्र:')}</span>
+              <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-sky-100">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 mr-1 font-semibold">{trans('Region:', 'क्षेत्र:')}</span>
                 {REGIONS.map(r => (
                   <button
                     key={r}
                     onClick={() => setRegion(r)}
                     className={cn(
-                      'text-xs px-2.5 py-1 rounded-lg transition font-medium',
+                      'text-xs px-3 py-1.5 rounded-xl transition font-semibold',
                       region === r
-                        ? 'bg-polar-950 text-white font-semibold'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        ? 'bg-slate-950 text-white shadow-xs font-bold'
+                        : 'bg-sky-50 text-slate-700 hover:bg-sky-100/80 border border-sky-200/80'
                     )}
                   >
                     {r}
@@ -163,10 +163,10 @@ export default function Expeditions() {
 
           {loading ? (
             <div className="py-20 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-                <Compass className="w-5 h-5" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-sky-200 text-cyan-600 animate-spin-slow mb-3 shadow-xs">
+                <Compass className="w-6 h-6" />
               </div>
-              <p className="text-sm font-medium text-slate-700">Loading polar knowledge...</p>
+              <p className="text-sm font-semibold text-slate-700">Loading polar knowledge archive...</p>
             </div>
           ) : error ? (
             <EmptyState
@@ -182,7 +182,7 @@ export default function Expeditions() {
             <>
               <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-5">
                 <span>Displaying {filtered.length} documented expedition mission{filtered.length === 1 ? '' : 's'}</span>
-                <span>NCPOR SOVEREIGN POLAR REGISTRY</span>
+                <span className="text-cyan-800 font-bold">NCPOR SOVEREIGN POLAR REGISTRY</span>
               </div>
 
               {filtered.length === 0 ? (
@@ -204,30 +204,30 @@ export default function Expeditions() {
                     <Reveal key={exp.id} delay={idx * 50}>
                       <Link
                         to={`/expeditions/${exp.id}`}
-                        className="group flex flex-col h-full bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition overflow-hidden"
+                        className="group flex flex-col h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 overflow-hidden"
                       >
                         {/* Image banner */}
-                        <div className="aspect-[16/10] relative overflow-hidden bg-slate-100">
+                        <div className="aspect-[16/10] relative overflow-hidden bg-slate-900">
                           <img
                             src={exp.image}
                             alt={exp.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                             loading="lazy"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
                           <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5">
-                            <span className="editorial-badge !text-[10px] !bg-polar-950/80 !border-white/20 !text-cyan-accent backdrop-blur-md">
+                            <span className="editorial-badge !text-[10px] !bg-slate-950/80 !border-white/20 !text-cyan-300 backdrop-blur-md font-mono font-bold">
                               {exp.region}
                             </span>
-                            <span className="editorial-badge !text-[10px] !bg-white/90 !text-slate-900 backdrop-blur-md font-mono">
+                            <span className="editorial-badge !text-[10px] !bg-white/90 !text-slate-900 backdrop-blur-md font-mono font-bold">
                               {exp.year} · {exp.season}
                             </span>
                           </div>
                           <div className="absolute bottom-3 left-3 right-3 text-white">
-                            <span className="text-xs font-mono tracking-wider uppercase text-cyan-accent font-semibold block">
+                            <span className="text-[10px] font-mono tracking-wider uppercase text-cyan-300 font-bold block">
                               {exp.shortTitle}
                             </span>
-                            <h3 className="font-display text-base font-semibold leading-tight line-clamp-1 group-hover:text-cyan-accent transition">
+                            <h3 className="font-display text-base font-bold leading-tight line-clamp-1 group-hover:text-cyan-300 transition">
                               {exp.title}
                             </h3>
                           </div>
@@ -243,14 +243,14 @@ export default function Expeditions() {
                           <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">
                             {exp.vessel && (
                               <div className="flex items-center gap-2 text-slate-600">
-                                <Anchor className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                                <Anchor className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
                                 <span className="font-mono text-[11px] truncate">{exp.vessel}</span>
                               </div>
                             )}
                             {exp.stations.length > 0 && (
                               <div className="flex items-center gap-2 text-slate-600">
-                                <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                                <span className="text-[11px] truncate">{exp.stations.join(', ')}</span>
+                                <MapPin className="w-3.5 h-3.5 text-cyan-700 shrink-0" />
+                                <span className="text-[11px] truncate font-medium">{exp.stations.join(', ')}</span>
                               </div>
                             )}
                             {exp.scientists.length > 0 && (
@@ -268,12 +268,12 @@ export default function Expeditions() {
                           <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
                             <div className="flex flex-wrap gap-1">
                               {exp.researchAreas.slice(0, 2).map(a => (
-                                <span key={a} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                                <span key={a} className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-sky-50 text-cyan-900 border border-sky-200/80 font-semibold">
                                   {a}
                                 </span>
                               ))}
                             </div>
-                            <span className="text-xs font-semibold text-sky-700 group-hover:translate-x-0.5 transition inline-flex items-center gap-1">
+                            <span className="text-xs font-bold text-cyan-700 group-hover:translate-x-0.5 transition inline-flex items-center gap-1">
                               {trans('Log', 'लॉग')} <ArrowRight className="w-3 h-3" />
                             </span>
                           </div>

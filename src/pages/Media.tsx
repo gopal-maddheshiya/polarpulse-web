@@ -69,7 +69,7 @@ export default function Media() {
   }, [lightbox, mediaList])
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb]">
       <PageHeader
         eyebrow={trans('Visual Science Archive', 'दृश्य विज्ञान संग्रह')}
         title={trans('Photographic & Field Media Gallery', 'ध्रुवीय छायाचित्र एवं फ़ील्ड मीडिया गैलरी')}
@@ -79,29 +79,29 @@ export default function Media() {
         )}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
+          <span className="editorial-badge-light bg-sky-50/90 border-sky-300 text-sky-900 font-semibold px-3 py-1.5 rounded-full shadow-xs">
             <ImageIcon className="w-3.5 h-3.5 text-sky-600" /> {trans('AUTHENTIC FIELD DISPATCHES', 'सत्यापित फ़ील्ड छायाचित्र')}
           </span>
-          <span className="editorial-badge-light">
+          <span className="editorial-badge-light bg-white/80 border-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-full">
             {trans('NCPOR EXPEDITION REPOSITORY', 'एनसीपीओआर अभियान संग्रह')}
           </span>
         </div>
       </PageHeader>
 
-      <Section>
+      <Section className="pb-20">
         <Container>
           <Reveal>
             {/* Filter Tabs */}
-            <div className="editorial-frame p-2 bg-white inline-flex flex-wrap items-center gap-1.5 mb-8">
+            <div className="p-2 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl inline-flex flex-wrap items-center gap-1.5 mb-8 shadow-soft">
               {TABS.map(t => (
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id as any)}
                   className={cn(
-                    'px-4 py-2 rounded-xl text-xs font-semibold transition',
+                    'px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200',
                     tab === t.id
-                      ? 'bg-polar-950 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'bg-slate-950 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-sky-50/70'
                   )}
                 >
                   {t.label}
@@ -112,8 +112,8 @@ export default function Media() {
 
           {loading ? (
             <div className="py-20 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-                <Compass className="w-5 h-5" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3 shadow-xs">
+                <Compass className="w-6 h-6" />
               </div>
               <p className="text-sm font-medium text-slate-700">{trans('Loading polar knowledge...', 'ध्रुवीय मीडिया लोड हो रहा है...')}</p>
             </div>
@@ -137,27 +137,27 @@ export default function Media() {
                     <Reveal key={item.id} delay={idx * 30}>
                       <div
                         onClick={() => setLightbox(mediaList.indexOf(item))}
-                        className="group cursor-pointer rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition flex flex-col h-full"
+                        className="group cursor-pointer rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft hover:shadow-xl hover:border-sky-300 transition-all duration-300 flex flex-col h-full hover:-translate-y-1"
                       >
                         <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
                           <img
                             src={item.poster || item.src}
                             alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                            className="w-full h-full object-cover group-hover:scale-108 transition duration-700 ease-out"
                             loading="lazy"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
                           
                           <div className="absolute top-2.5 right-2.5">
-                            <span className="editorial-badge !text-[9px] !bg-polar-950/80 !border-white/20 !text-cyan-accent backdrop-blur-md uppercase">
+                            <span className="editorial-badge !text-[9px] !bg-slate-950/80 !border-white/20 !text-sky-300 backdrop-blur-md uppercase font-bold tracking-wider px-2.5 py-1 rounded-full shadow-xs">
                               {item.type}
                             </span>
                           </div>
 
                           {item.type === 'video' && (
                             <div className="absolute inset-0 grid place-items-center">
-                              <div className="w-10 h-10 rounded-full bg-white/90 text-polar-950 grid place-items-center shadow-md group-hover:scale-110 transition">
-                                <Play className="w-4 h-4 ml-0.5" />
+                              <div className="w-11 h-11 rounded-full bg-white/95 text-slate-950 grid place-items-center shadow-lg group-hover:scale-110 transition-transform">
+                                <Play className="w-5 h-5 ml-0.5 text-slate-900" />
                               </div>
                             </div>
                           )}
@@ -165,16 +165,16 @@ export default function Media() {
 
                         <div className="p-4 flex-1 flex flex-col justify-between">
                           <div>
-                            <h3 className="font-display text-sm font-semibold text-slate-900 group-hover:text-sky-700 transition leading-snug line-clamp-1">
+                            <h3 className="font-display text-sm font-bold text-slate-900 group-hover:text-sky-950 transition-colors leading-snug line-clamp-1">
                               {item.title}
                             </h3>
-                            <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                            <p className="text-xs text-slate-600 mt-1.5 line-clamp-2 leading-relaxed font-sans">
                               {item.caption}
                             </p>
                           </div>
-                          <div className="pt-3 mt-3 border-t border-slate-100 text-[10px] font-mono text-slate-400 flex items-center justify-between">
-                            <span>{item.credit}</span>
-                            {item.region && <span>{item.region}</span>}
+                          <div className="pt-3 mt-3 border-t border-sky-100 text-[10px] font-mono text-slate-500 flex items-center justify-between font-medium">
+                            <span className="truncate pr-2">{item.credit}</span>
+                            {item.region && <span className="text-sky-800 font-semibold shrink-0">{item.region}</span>}
                           </div>
                         </div>
                       </div>
@@ -191,25 +191,25 @@ export default function Media() {
       {lightbox !== null && mediaList[lightbox] && (
         <div
           onClick={() => setLightbox(null)}
-          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
+          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-up"
         >
           <div
             onClick={e => e.stopPropagation()}
-            className="relative max-w-4xl w-full bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex flex-col max-h-[90vh]"
+            className="relative max-w-4xl w-full bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 shadow-2xl flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between text-white">
+            <div className="p-4 sm:px-6 border-b border-slate-800 flex items-center justify-between text-white">
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-sky-400 font-bold">
                   {mediaList[lightbox].type} · {mediaList[lightbox].credit}
                 </span>
-                <h3 className="font-display text-base font-semibold">
+                <h3 className="font-display text-base font-bold mt-0.5">
                   {mediaList[lightbox].title}
                 </h3>
               </div>
               <button
                 onClick={() => setLightbox(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -223,48 +223,48 @@ export default function Media() {
                   poster={mediaList[lightbox].poster}
                   controls
                   autoPlay
-                  className="max-h-[60vh] max-w-full rounded-lg"
+                  className="max-h-[60vh] max-w-full rounded-lg shadow-lg"
                 />
               ) : (
                 <img
                   src={mediaList[lightbox].src}
                   alt={mediaList[lightbox].title}
-                  className="max-h-[60vh] max-w-full object-contain rounded-lg"
+                  className="max-h-[60vh] max-w-full object-contain rounded-lg shadow-lg"
                 />
               )}
             </div>
 
             {/* Modal Caption */}
-            <div className="p-4 bg-slate-900/90 border-t border-slate-800 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 text-xs text-slate-300">
+            <div className="p-4 sm:px-6 bg-slate-900/90 border-t border-slate-800 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 text-xs text-slate-300">
               <div className="max-w-xl space-y-1">
-                <p className="leading-relaxed">{mediaList[lightbox].caption}</p>
+                <p className="leading-relaxed font-sans">{mediaList[lightbox].caption}</p>
                 {mediaList[lightbox].sourceUrl && (
                   <a
                     href={mediaList[lightbox].sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={e => e.stopPropagation()}
-                    className="inline-flex items-center gap-1 text-[11px] font-mono text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+                    className="inline-flex items-center gap-1.5 text-[11px] font-mono text-sky-400 hover:text-sky-300 underline underline-offset-2 font-semibold"
                   >
                     <span>{mediaList[lightbox].sourceLabel || trans('Verify at Official NCPOR Portal', 'आधिकारिक NCPOR पोर्टल पर सत्यापित करें')}</span>
                     <ExternalLink className="w-3 h-3 shrink-0" />
                   </a>
                 )}
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2.5 shrink-0">
                 <button
                   onClick={() => setLightbox((lightbox - 1 + mediaList.length) % mediaList.length)}
-                  className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition"
+                  className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors"
                   title="Previous"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="font-mono text-[11px] text-slate-400 px-1">
+                <span className="font-mono text-[11px] text-slate-400 px-1 font-semibold">
                   {lightbox + 1} / {mediaList.length}
                 </span>
                 <button
                   onClick={() => setLightbox((lightbox + 1) % mediaList.length)}
-                  className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition"
+                  className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors"
                   title="Next"
                 >
                   <ChevronRight className="w-4 h-4" />

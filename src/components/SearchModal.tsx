@@ -139,10 +139,10 @@ export default function SearchModal() {
 
   return (
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-polar-950/40 backdrop-blur-sm" onClick={closeSearch} />
-      <div className="relative mx-auto mt-16 sm:mt-24 w-[min(720px,calc(100vw-32px))] rounded-2xl bg-white shadow-2xl border border-polar-100 overflow-hidden">
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-polar-100">
-          <Search className="w-5 h-5 text-polar-500" />
+      <div className="absolute inset-0 bg-slate-950/50 dark:bg-black/75 backdrop-blur-sm" onClick={closeSearch} />
+      <div className="relative mx-auto mt-16 sm:mt-24 w-[min(720px,calc(100vw-32px))] rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-polar-100 dark:border-slate-800 text-slate-900 dark:text-slate-100 overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-polar-100 dark:border-slate-800">
+          <Search className="w-5 h-5 text-polar-500 dark:text-slate-400" />
           <input
             autoFocus
             value={q}
@@ -151,17 +151,17 @@ export default function SearchModal() {
               'Search expeditions, datasets, publications, media, education…',
               'अभियान, डेटासेट, शोध पत्र, मीडिया, शिक्षा मॉड्यूल खोजें…'
             )}
-            className="flex-1 bg-transparent outline-none text-base placeholder:text-polar-400"
+            className="flex-1 bg-transparent outline-none text-base text-slate-900 dark:text-white placeholder:text-polar-400 dark:placeholder:text-slate-500"
           />
-          <button onClick={closeSearch} aria-label="Close" className="p-1 text-polar-500 hover:text-polar-900">
+          <button onClick={closeSearch} aria-label="Close" className="p-1 text-polar-500 dark:text-slate-400 hover:text-polar-900 dark:hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="max-h-[60vh] overflow-y-auto">
           {!q.trim() && (
-            <div className="p-6 text-sm text-polar-500">
-              <div className="font-mono text-[10px] uppercase tracking-widest text-polar-400 mb-3">
+            <div className="p-6 text-sm text-polar-500 dark:text-slate-400">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-polar-400 dark:text-slate-500 mb-3">
                 {trans('Suggested', 'सुझाए गए खोज शब्द')}
               </div>
               <div className="flex flex-wrap gap-2">
@@ -169,7 +169,7 @@ export default function SearchModal() {
                   <button
                     key={s}
                     onClick={() => setQ(s)}
-                    className="chip hover:bg-polar-100 cursor-pointer"
+                    className="chip hover:bg-polar-100 dark:hover:bg-slate-700 cursor-pointer"
                   >
                     {s}
                   </button>
@@ -179,7 +179,7 @@ export default function SearchModal() {
           )}
 
           {q.trim() && results.length === 0 && (
-            <div className="p-8 text-center text-sm text-polar-500">
+            <div className="p-8 text-center text-sm text-polar-500 dark:text-slate-400">
               {trans(
                 `No results for “${q}”. Try a broader term, a research area, or a station name.`,
                 `“${q}” के लिए कोई परिणाम नहीं मिला। कोई अन्य शब्द, अनुसंधान क्षेत्र या स्टेशन का नाम खोजें।`
@@ -190,8 +190,8 @@ export default function SearchModal() {
           {Object.entries(grouped).map(([kind, items]) => {
             const Icon = ICON[kind] || FileText
             return (
-              <div key={kind} className="border-t border-polar-100 first:border-t-0">
-                <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-polar-400 bg-polar-50/60">
+              <div key={kind} className="border-t border-polar-100 dark:border-slate-800 first:border-t-0">
+                <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-polar-400 dark:text-slate-400 bg-polar-50/60 dark:bg-slate-800/50">
                   {kindLabels[kind] || kind}
                 </div>
                 <ul>
@@ -199,14 +199,14 @@ export default function SearchModal() {
                     <li key={r.id}>
                       <button
                         onClick={() => { navigate(r.to); closeSearch() }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-polar-50/70 transition"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-polar-50/70 dark:hover:bg-slate-800/60 transition"
                       >
-                        <Icon className="w-4 h-4 text-polar-500" />
+                        <Icon className="w-4 h-4 text-polar-500 dark:text-slate-400" />
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-polar-900 truncate">{r.title}</div>
-                          <div className="text-xs text-polar-500 truncate">{r.subtitle}</div>
+                          <div className="text-sm font-medium text-polar-900 dark:text-white truncate">{r.title}</div>
+                          <div className="text-xs text-polar-500 dark:text-slate-400 truncate">{r.subtitle}</div>
                         </div>
-                        <Link to={r.to} onClick={closeSearch} className="text-xs text-polar-500 hover:text-polar-900">
+                        <Link to={r.to} onClick={closeSearch} className="text-xs text-polar-500 dark:text-slate-400 hover:text-polar-900 dark:hover:text-white">
                           {trans('Open', 'खोलें')}
                         </Link>
                       </button>
@@ -218,7 +218,7 @@ export default function SearchModal() {
           })}
         </div>
 
-        <div className="border-t border-polar-100 bg-polar-50/60 px-4 py-2 flex items-center justify-between text-[11px] text-polar-500 font-mono">
+        <div className="border-t border-polar-100 dark:border-slate-800 bg-polar-50/60 dark:bg-slate-800/50 px-4 py-2 flex items-center justify-between text-[11px] text-polar-500 dark:text-slate-400 font-mono">
           <span>{trans('↵ open · esc close', '↵ खोलें · esc बंद करें')}</span>
           <span>{trans('POLARIS search', 'पोलारिस खोज')}</span>
         </div>

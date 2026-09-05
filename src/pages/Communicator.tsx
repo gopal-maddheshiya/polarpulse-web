@@ -114,24 +114,24 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb]">
       <PageHeader
         eyebrow="AI Science Communicator"
         title="From Peer Review to Public Outreach"
         sub="Transform dense expedition findings into channel-specific outreach content. Bridge the gap between polar laboratories and schools, journalists, and social media."
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-sky-600" /> MULTI-FORMAT SCIENCE DISSEMINATION
+          <span className="editorial-badge-light bg-sky-50/90 border-sky-300 text-sky-900 font-semibold px-3 py-1.5 rounded-full shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-sky-600 animate-pulse" /> MULTI-FORMAT SCIENCE DISSEMINATION
           </span>
-          <span className="editorial-badge-light">
-            <ShieldCheck className="w-3.5 h-3.5 text-slate-500" /> FACT-CHECKED POLAR DOMAIN RULES
+          <span className="editorial-badge-light bg-white/80 border-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-full">
+            <ShieldCheck className="w-3.5 h-3.5 text-sky-700 inline mr-1" /> FACT-CHECKED POLAR DOMAIN RULES
           </span>
         </div>
       </PageHeader>
 
       {/* 4-Stage Workflow Visualizer */}
-      <div className="border-b border-slate-200 bg-slate-50/70 py-4">
+      <div className="border-b border-sky-200/80 bg-white/80 backdrop-blur-md py-4">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
             <div className="flex items-center gap-2 text-slate-700">
@@ -146,7 +146,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
               <span className="w-5 h-5 rounded-full bg-slate-900 text-white grid place-items-center text-[10px] font-bold">3</span>
               <span>Linguistic Mapping</span>
             </div>
-            <div className="flex items-center gap-2 text-sky-800 font-semibold">
+            <div className="flex items-center gap-2 text-sky-900 font-bold">
               <span className="w-5 h-5 rounded-full bg-sky-500 text-white grid place-items-center text-[10px] font-bold">4</span>
               <span>5 Channel Drafts</span>
             </div>
@@ -154,15 +154,15 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
         </Container>
       </div>
 
-      <Section>
+      <Section className="pb-20">
         <Container>
           <Reveal>
             <div className="grid lg:grid-cols-[1.1fr_1.3fr] gap-8 items-start">
               {/* Input Formulation Panel */}
-              <div className="editorial-frame p-6 bg-white space-y-5">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="p-6 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-5">
+                <div className="flex items-center justify-between border-b border-sky-100 pb-3">
                   <div>
-                    <span className="editorial-badge-light">STAGE 1 & 2</span>
+                    <span className="editorial-badge-light bg-sky-50 text-sky-800 border-sky-200 text-[10px] font-bold">STAGE 1 & 2</span>
                     <h3 className="font-display text-lg font-bold text-slate-950 mt-1">Research Input Formulation</h3>
                   </div>
                   <span className="font-mono text-xs text-slate-400">{input.length} characters</span>
@@ -170,10 +170,10 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
 
                 {/* Pre-Loaded Real Indian Polar Papers */}
                 <div>
-                  <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-semibold mb-2">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-sky-900 font-bold mb-2">
                     Load Authenticated Indian Polar Abstracts:
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                     {REAL_POLAR_SAMPLES.map(sample => (
                       <button
                         key={sample.title}
@@ -181,10 +181,10 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                           setInput(sample.text)
                           setDraft(null)
                         }}
-                        className="p-2.5 rounded-xl border border-slate-200 hover:border-cyan-400 hover:bg-slate-50 text-left transition text-xs"
+                        className="p-3 rounded-xl border border-sky-200/80 bg-sky-50/40 hover:border-sky-400 hover:bg-sky-50 text-left transition-all text-xs group"
                       >
-                        <div className="font-semibold text-slate-900 line-clamp-1">{sample.title}</div>
-                        <div className="text-[10px] font-mono text-cyan-800 mt-0.5">{sample.category}</div>
+                        <div className="font-semibold text-slate-900 line-clamp-1 group-hover:text-sky-950 font-display">{sample.title}</div>
+                        <div className="text-[10px] font-mono text-sky-700 mt-1">{sample.category}</div>
                       </button>
                     ))}
                   </div>
@@ -192,23 +192,23 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
 
                 {/* Textarea Input */}
                 <div>
-                  <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5 font-semibold">
+                  <label className="block text-xs font-mono uppercase tracking-widest text-slate-600 mb-1.5 font-bold">
                     Raw Scientific Abstract / Expedition Report
                   </label>
                   <textarea
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     placeholder="Paste research abstract, expedition telemetry report, or methodology paper here…"
-                    className="w-full h-44 rounded-xl border border-slate-200 p-3.5 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-cyan-400/50 resize-y font-sans placeholder:text-slate-400"
+                    className="w-full h-44 rounded-xl border border-sky-200/90 bg-white/80 p-3.5 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-sky-400/50 resize-y font-sans placeholder:text-slate-400 shadow-2xs"
                   />
                 </div>
 
                 {/* Target Audience Calibration */}
                 <div>
-                  <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-2 font-semibold">
+                  <label className="block text-xs font-mono uppercase tracking-widest text-slate-600 mb-2 font-bold">
                     Target Dissemination Persona
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2.5">
                     {AUDIENCES.map(a => {
                       const isSelected = audience === a.id
                       return (
@@ -216,19 +216,19 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                           key={a.id}
                           onClick={() => setAudience(a.id)}
                           className={cn(
-                            'p-3 rounded-xl border text-left transition-all',
+                            'p-3.5 rounded-xl border text-left transition-all duration-200',
                             isSelected
-                              ? 'border-polar-950 bg-polar-950 text-white shadow-xs'
-                              : 'border-slate-200 hover:border-slate-300 bg-white text-slate-800'
+                              ? 'border-slate-950 bg-slate-950 text-white shadow-md'
+                              : 'border-sky-200/80 hover:border-sky-300 bg-sky-50/30 text-slate-800'
                           )}
                         >
                           <div className="font-display font-bold text-xs flex items-center justify-between">
                             <span>{a.label}</span>
-                            <span className={cn('text-[9px] font-mono px-1.5 py-0.5 rounded', isSelected ? 'bg-white/20 text-cyan-300' : 'bg-slate-100 text-slate-600')}>
+                            <span className={cn('text-[9px] font-mono px-1.5 py-0.5 rounded', isSelected ? 'bg-white/20 text-sky-200' : 'bg-white border border-sky-200 text-slate-600')}>
                               {a.readingLevel}
                             </span>
                           </div>
-                          <div className={cn('text-[11px] mt-1 line-clamp-1', isSelected ? 'text-slate-300' : 'text-slate-500')}>
+                          <div className={cn('text-[11px] mt-1 line-clamp-1 font-sans', isSelected ? 'text-slate-300' : 'text-slate-500')}>
                             {a.desc}
                           </div>
                         </button>
@@ -238,11 +238,11 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                 </div>
 
                 {/* Generation Triggers */}
-                <div className="pt-3 border-t border-slate-100 flex items-center gap-3">
+                <div className="pt-3 border-t border-sky-100 flex items-center gap-3">
                   <button
                     onClick={handleGenerate}
                     disabled={loading}
-                    className="btn bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs flex-1 !py-3 transition rounded-xl"
+                    className="btn bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs flex-1 !py-3.5 transition-all rounded-xl shadow-xs"
                   >
                     {loading ? (
                       <span className="inline-block w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
@@ -254,22 +254,22 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
 
                   <button
                     onClick={() => { setInput(''); setDraft(null); setError(null) }}
-                    className="btn-outline !py-3 text-xs"
+                    className="btn-outline !py-3.5 text-xs rounded-xl"
                   >
                     Clear
                   </button>
                 </div>
 
                 {error && (
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                  <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
                     <span>{error}</span>
                   </div>
                 )}
 
                 {/* Honest AI Governance Box */}
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-[11px] text-slate-600 leading-relaxed font-mono">
-                  <span className="font-bold text-slate-800">EDITORIAL SAFEGUARD:</span> AI-assisted draft — all statistics and findings should be verified by the principal investigator before public release.
+                <div className="p-3.5 rounded-xl border border-sky-200/80 bg-sky-50/50 text-[11px] text-slate-600 leading-relaxed font-mono">
+                  <span className="font-bold text-slate-900">EDITORIAL SAFEGUARD:</span> AI-assisted draft — all statistics and findings should be verified by the principal investigator before public release.
                 </div>
               </div>
 
@@ -277,10 +277,10 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
               <div className="space-y-4">
                 {/* Empty State */}
                 {!draft && !loading && (
-                  <div className="editorial-frame p-12 bg-white text-center border-dashed border-2">
+                  <div className="p-12 bg-white/95 backdrop-blur-md border-2 border-dashed border-sky-200 rounded-2xl text-center shadow-soft">
                     <Sparkles className="w-10 h-10 text-sky-600 mx-auto opacity-70 mb-3 animate-pulse" />
                     <h4 className="font-display font-bold text-slate-900 text-lg">Multi-Channel Dissemination Desk</h4>
-                    <p className="text-xs text-slate-500 max-w-sm mx-auto mt-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 max-w-sm mx-auto mt-2 leading-relaxed">
                       Select an Indian polar research sample or paste your expedition report to synthesize educational texts, news articles, and social media releases.
                     </p>
                   </div>
@@ -288,25 +288,25 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
 
                 {/* Loading Skeleton */}
                 {loading && (
-                  <div className="editorial-frame p-6 bg-white space-y-4 animate-pulse">
-                    <div className="h-4 bg-slate-200 rounded w-1/3" />
-                    <div className="h-24 bg-slate-100 rounded-xl" />
-                    <div className="h-20 bg-slate-100 rounded-xl" />
-                    <div className="h-20 bg-slate-100 rounded-xl" />
+                  <div className="p-6 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4 animate-pulse">
+                    <div className="h-4 bg-sky-100 rounded w-1/3" />
+                    <div className="h-24 bg-sky-50 rounded-xl" />
+                    <div className="h-20 bg-sky-50 rounded-xl" />
+                    <div className="h-20 bg-sky-50 rounded-xl" />
                   </div>
                 )}
 
                 {/* Generated Multi-Channel Workspace */}
                 {draft && !loading && (
-                  <div className="editorial-frame bg-white shadow-md">
+                  <div className="p-0 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft overflow-hidden">
                     {/* Channel Selector Header */}
-                    <div className="flex items-center justify-between border-b border-slate-100 p-4 bg-slate-50/70">
-                      <div className="flex items-center gap-1 overflow-x-auto">
+                    <div className="flex items-center justify-between border-b border-sky-100 p-4 bg-sky-50/60">
+                      <div className="flex items-center gap-1.5 overflow-x-auto">
                         <button
                           onClick={() => setActiveTab('article')}
                           className={cn(
                             'px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap flex items-center gap-1.5',
-                            activeTab === 'article' ? 'bg-polar-950 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                            activeTab === 'article' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                           )}
                         >
                           <FileText className="w-3.5 h-3.5" /> Web Article
@@ -315,7 +315,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                           onClick={() => setActiveTab('simple')}
                           className={cn(
                             'px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap flex items-center gap-1.5',
-                            activeTab === 'simple' ? 'bg-polar-950 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                            activeTab === 'simple' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                           )}
                         >
                           <BookOpen className="w-3.5 h-3.5" /> Simple Explanation
@@ -324,7 +324,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                           onClick={() => setActiveTab('social')}
                           className={cn(
                             'px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap flex items-center gap-1.5',
-                            activeTab === 'social' ? 'bg-polar-950 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                            activeTab === 'social' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                           )}
                         >
                           <Share2 className="w-3.5 h-3.5" /> X / Social Post
@@ -333,7 +333,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                           onClick={() => setActiveTab('video')}
                           className={cn(
                             'px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap flex items-center gap-1.5',
-                            activeTab === 'video' ? 'bg-polar-950 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                            activeTab === 'video' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                           )}
                         >
                           <Video className="w-3.5 h-3.5" /> 60s Video Script
@@ -342,7 +342,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                           onClick={() => setActiveTab('instagram')}
                           className={cn(
                             'px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap flex items-center gap-1.5',
-                            activeTab === 'instagram' ? 'bg-polar-950 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                            activeTab === 'instagram' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                           )}
                         >
                           <AtSign className="w-3.5 h-3.5" /> Instagram Carousel
@@ -351,7 +351,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
 
                       <button
                         onClick={handleDownloadDraft}
-                        className="btn-outline !py-1.5 !px-2.5 text-xs shrink-0 flex items-center gap-1 ml-2"
+                        className="btn-outline !py-1.5 !px-2.5 text-xs shrink-0 flex items-center gap-1 ml-2 bg-white"
                         title="Download all formats as text file"
                       >
                         <Download className="w-3.5 h-3.5" />
@@ -444,15 +444,15 @@ function ChannelCard({
 }) {
   return (
     <div className="space-y-4 animate-fade-up">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="flex items-center justify-between border-b border-sky-100 pb-3">
         <div>
-          <span className="telemetry-badge">{badge}</span>
+          <span className="editorial-badge-light bg-sky-50 text-sky-800 border-sky-200 text-[10px] font-bold">{badge}</span>
           <h4 className="font-display font-bold text-slate-900 text-base mt-1">{title}</h4>
         </div>
         <button
           onClick={() => onCopy(copiedKey, text)}
           className={cn(
-            'btn-outline !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-semibold transition',
+            'btn-outline !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-semibold transition-all rounded-lg',
             copied === copiedKey && 'border-emerald-500 bg-emerald-50 text-emerald-800'
           )}
         >
@@ -461,13 +461,13 @@ function ChannelCard({
         </button>
       </div>
 
-      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+      <div className="p-4 rounded-xl bg-sky-50/40 border border-sky-200/70">
         <pre className="whitespace-pre-wrap text-sm text-slate-800 leading-relaxed font-sans font-normal">
           {text}
         </pre>
       </div>
 
-      <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+      <div className="flex items-center justify-between text-[11px] font-mono text-slate-500">
         <span>Channel Word Count: {text.split(/\s+/).length} words</span>
         <span>Review for scientific nuances prior to broadcasting</span>
       </div>

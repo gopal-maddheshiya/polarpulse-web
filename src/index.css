@@ -10,18 +10,29 @@
   --polar-aurora-2: #6cb6ff;
 }
 
+html.dark {
+  color-scheme: dark;
+}
+
 html, body, #root { height: 100%; }
 body {
-  background-color: #ffffff;
+  background-color: #d6ecf9;
   color: #081a2c;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "cv11", "ss01";
   text-rendering: optimizeLegibility;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark body {
+  background-color: #0b1d2e;
+  color: #f1f5f9;
 }
 
 ::selection { background: rgba(94, 234, 212, 0.35); color: #061a2c; }
+html.dark ::selection { background: rgba(56, 189, 248, 0.4); color: #f8fafc; }
 
 @layer components {
   .container-prose { @apply max-w-7xl mx-auto px-3.5 sm:px-6 md:px-8; }
@@ -29,70 +40,70 @@ body {
   .container-wide { @apply max-w-[88rem] mx-auto px-3.5 sm:px-6 md:px-8; }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:pointer-events-none;
   }
-  .btn-primary { @apply btn bg-polar-950 text-white hover:bg-polar-800 hover:shadow-[0_8px_24px_-12px_rgba(6,26,44,0.6)]; }
-  .btn-ghost { @apply btn bg-transparent text-polar-900 hover:bg-polar-50; }
-  .btn-outline { @apply btn border border-polar-200 text-polar-900 hover:border-polar-400 hover:bg-polar-50; }
-  .btn-light { @apply btn bg-white text-polar-950 hover:bg-polar-100; }
-  .btn-aurora { @apply btn bg-cyan-accent/90 text-polar-950 hover:bg-cyan-accent; }
+  .btn-primary { @apply btn bg-slate-950 text-white hover:bg-slate-900 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400 shadow-[0_4px_14px_rgba(15,23,42,0.18)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.25)]; }
+  .btn-ghost { @apply btn bg-transparent text-slate-800 hover:bg-sky-50/70 dark:text-slate-200 dark:hover:bg-slate-800/80; }
+  .btn-outline { @apply btn border border-sky-200 text-slate-900 hover:border-sky-300 hover:bg-white dark:border-slate-700 dark:text-slate-100 dark:hover:border-slate-600 dark:hover:bg-slate-800/90; }
+  .btn-light { @apply btn bg-white text-slate-950 hover:bg-sky-50 shadow-sm border border-sky-200/80 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:hover:bg-slate-700; }
+  .btn-aurora { @apply btn bg-cyan-accent/90 text-slate-950 hover:bg-cyan-accent dark:bg-sky-400 dark:text-slate-950 dark:hover:bg-sky-300; }
 
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-polar-200/70 bg-polar-50/60 px-2.5 py-1 text-xs font-medium text-polar-700;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-sky-200/90 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:border-slate-700/80 dark:bg-slate-800/90 dark:text-slate-200;
   }
   .chip-dark {
     @apply inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs font-medium text-white/80;
   }
   .chip-accent {
-    @apply inline-flex items-center gap-1.5 rounded-full bg-cyan-accent/10 border border-cyan-accent/30 px-2.5 py-1 text-xs font-semibold text-polar-900;
+    @apply inline-flex items-center gap-1.5 rounded-full bg-cyan-100 border border-cyan-300 px-2.5 py-1 text-xs font-bold text-cyan-950 dark:bg-cyan-950/80 dark:border-cyan-700 dark:text-cyan-200;
   }
 
-  .card { @apply rounded-2xl border border-polar-100 bg-white shadow-soft transition-all duration-300; }
-  .card-flat { @apply rounded-2xl border border-polar-100 bg-white; }
-  .card-hover { @apply hover:shadow-lg hover:-translate-y-0.5 hover:border-polar-200; }
+  .card { @apply rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] transition-all duration-300 dark:border-slate-800/90 dark:bg-slate-900/90 dark:text-slate-100 dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)]; }
+  .card-flat { @apply rounded-3xl border border-sky-200/90 bg-white/95 dark:border-slate-800/90 dark:bg-slate-900/90; }
+  .card-hover { @apply hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:-translate-y-0.5 hover:border-cyan-400 dark:hover:border-sky-500/60 dark:hover:shadow-[0_12px_36px_-6px_rgba(0,0,0,0.5)]; }
 
   .section { @apply py-12 sm:py-16 md:py-20; }
   .section-tight { @apply py-8 sm:py-12; }
-  .section-title { @apply font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-polar-950; }
-  .section-title-lg { @apply font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-polar-950; }
-  .eyebrow { @apply text-xs font-mono uppercase tracking-[0.16em] text-sky-800 font-semibold; }
-  .eyebrow-light { @apply text-xs font-mono uppercase tracking-[0.16em] text-sky-300 font-medium; }
-  .glass { @apply backdrop-blur-md bg-white/70 border border-white/40; }
-  .nav-link { @apply text-sm font-medium text-polar-700 hover:text-polar-950 transition-colors; }
-  .nav-link-active { @apply text-polar-950; }
+  .section-title { @apply font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-950 dark:text-white; }
+  .section-title-lg { @apply font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-950 dark:text-white; }
+  .eyebrow { @apply text-xs font-mono uppercase tracking-[0.18em] text-cyan-700 font-bold dark:text-cyan-400; }
+  .eyebrow-light { @apply text-xs font-mono uppercase tracking-[0.18em] text-sky-300 font-medium; }
+  .glass { @apply backdrop-blur-md bg-white/85 border border-sky-200/80 dark:bg-slate-900/85 dark:border-slate-800/80; }
+  .nav-link { @apply text-sm font-semibold text-slate-600 hover:text-slate-950 transition-colors dark:text-slate-300 dark:hover:text-white; }
+  .nav-link-active { @apply text-slate-950 font-bold dark:text-white; }
 
-  .hairline { @apply border-t border-polar-100; }
+  .hairline { @apply border-t border-sky-200/80 dark:border-slate-800/80; }
   .hairline-dark { @apply border-t border-white/10; }
 
-  .link-arrow { @apply inline-flex items-center gap-1 text-sm font-medium text-polar-900 hover:text-polar-700 transition; }
+  .link-arrow { @apply inline-flex items-center gap-1 text-sm font-semibold text-cyan-700 hover:text-cyan-900 transition dark:text-cyan-400 dark:hover:text-cyan-300; }
   .link-arrow-light { @apply inline-flex items-center gap-1 text-sm font-medium text-white hover:text-cyan-accent transition; }
 
   .display-mono { @apply font-mono text-[11px] tracking-wider; }
 
   /* Refined Editorial Primitives */
   .editorial-border {
-    @apply border border-slate-200/80;
+    @apply border border-sky-200/80 dark:border-slate-800/80;
   }
   .editorial-frame {
-    @apply relative rounded-2xl border border-slate-200/80 bg-white overflow-hidden;
+    @apply relative rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md overflow-hidden shadow-sm dark:border-slate-800/90 dark:bg-slate-900/90 dark:text-slate-100;
   }
   .scientific-frame {
     @apply editorial-frame;
   }
   .scientific-frame-dark {
-    @apply relative rounded-2xl border border-white/10 bg-white/5 overflow-hidden;
+    @apply relative rounded-3xl border border-white/10 bg-white/5 overflow-hidden;
   }
   .tag-label {
-    @apply inline-flex items-center gap-1.5 text-[11px] font-mono tracking-wider uppercase text-slate-500;
+    @apply inline-flex items-center gap-1.5 text-[11px] font-mono tracking-wider uppercase text-slate-500 dark:text-slate-400;
   }
   .tag-accent {
-    @apply inline-flex items-center gap-1.5 text-[11px] font-mono tracking-wider uppercase text-sky-800 font-semibold;
+    @apply inline-flex items-center gap-1.5 text-[11px] font-mono tracking-wider uppercase text-sky-800 font-semibold dark:text-sky-300;
   }
   .editorial-badge {
     @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono tracking-wider uppercase border transition-colors;
   }
   .editorial-badge-light {
-    @apply editorial-badge bg-sky-50/90 border-sky-200 text-sky-900 font-semibold;
+    @apply editorial-badge bg-sky-50/90 border-sky-200 text-sky-900 font-semibold dark:bg-sky-950/80 dark:border-sky-800 dark:text-sky-300;
   }
   .editorial-badge-dark {
     @apply editorial-badge bg-slate-900/90 border-white/10 text-sky-300 font-medium;
@@ -114,12 +125,20 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+html.dark ::-webkit-scrollbar-thumb { background: #334155; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
 /* Subtle grid background */
 .bg-polar-grid {
   background-image:
     linear-gradient(to right, rgba(8,26,44,0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(8,26,44,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+html.dark .bg-polar-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 .bg-polar-grid-light {
@@ -134,6 +153,10 @@ body {
   background: linear-gradient(90deg, #eef4f8 0%, #dde9f0 50%, #eef4f8 100%);
   background-size: 200% 100%;
   animation: shimmer 1.6s linear infinite;
+}
+html.dark .skeleton {
+  background: linear-gradient(90deg, #0b1d2e 0%, #17324d 50%, #0b1d2e 100%);
+  background-size: 200% 100%;
 }
 
 /* Polar Glacial text gradient (pure arctic blues, zero purple) */
@@ -184,6 +207,43 @@ body {
 /* Buttons / chips with subtle hairline */
 .hairline-card {
   box-shadow: inset 0 0 0 1px rgba(8,26,44,0.04);
+}
+
+/* Polar Rotating Instruments */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse-slow {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 35s linear infinite;
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 28s linear infinite;
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 6s linear infinite;
+}
+
+.animate-float-gentle {
+  animation: float-gentle 4s ease-in-out infinite;
 }
 
 /* Reduced motion */

@@ -1,215 +1,100 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, ArrowUpRight, Compass, BookOpen, Database, Sparkles,
-  MapPin, CheckCircle2, ChevronRight, GraduationCap, Copy, Check,
-  FileText, Layers, ExternalLink, Calendar, User, Radio, Award
+  Compass, Database, Sparkles, MapPin, CheckCircle2, ChevronRight,
+  GraduationCap, Copy, Check, FileText, ExternalLink, Calendar,
+  ArrowRight, ArrowUpRight, ThermometerSnowflake, Wind, Anchor,
+  Globe2, ShieldCheck, Flame, Layers, Eye, BookOpen, Radio, Award,
+  Sun, Activity, Wifi, ChevronDown, CheckCircle
 } from 'lucide-react'
-import { HERO_IMAGE, IMG, GALLERY } from '../data/images'
+import { HERO_IMAGE, IMG } from '../data/images'
 import { expeditions } from '../data/expeditions'
 import { knowledgeItems } from '../data/knowledge'
 import { LineChart, type ChartPoint } from '../components/ui/Chart'
 import PolarMap from '../components/PolarMap'
+import PolarTelemetryTicker from '../components/PolarTelemetryTicker'
 import { Container, Section } from '../components/ui/Primitives'
 import { Reveal } from '../lib/reveal'
 import { cn } from '../lib/utils'
-
 import { useLanguage } from '../context/LanguageContext'
 
-interface StationDossier {
-  id: string
+type PolarRealm = 'antarctica' | 'arctic' | 'himalayas'
+type HeroStationId = 'bharati' | 'maitri' | 'himadri'
+
+interface LiveTelemetry {
+  id: HeroStationId
   name: string
-  commissioned: number
   region: string
-  latLong: string
+  temp: string
+  wind: string
+  telemetryMetric: string
+  telemetryLabel: string
+  sunStatus: string
+  coordinates: string
   elevation: string
-  img: string
-  tagline: string
-  description: string
-  researchFocus: string[]
-  achievements: string[]
-  officialUrl?: string
-  officialSource?: string
+  established: number
+  photo: string
+  status: 'Operational' | 'Active Observation'
 }
 
-const INDIAN_STATIONS: StationDossier[] = [
-  {
-    id: 'maitri',
-    name: 'Maitri Research Base',
-    commissioned: 1989,
-    region: 'Schirmacher Oasis, East Antarctica',
-    latLong: '70°45′57″S, 11°44′09″E',
-    elevation: '130 m a.s.l.',
-    img: IMG.maitri,
-    tagline: 'Continuous year-round polar atmospheric and geomagnetism laboratory for 36+ years.',
-    description:
-      'Constructed during the 8th Indian Antarctic Expedition on an ice-free rocky oasis. Maitri accommodates up to 25 winter-over researchers studying ozone layer dynamics, auroral electrojets, black carbon aerosol transport, and permafrost thermodynamics.',
-    researchFocus: [
-      'Atmospheric Chemistry & Total Column Ozone',
-      'Geomagnetic Pulsations & Ionospheric Physics',
-      'Permafrost Dynamics & Glacial Mass Balance',
-      'Lake Priyadarshini Limnological Ecology',
-    ],
-    achievements: [
-      '36+ years of continuous meteorological time series',
-      'First permanent inland biological observatory in East Antarctica',
-      'Global Atmosphere Watch (WMO-GAW) contributing station',
-    ],
-    officialUrl: 'https://ncpor.res.in/antarcticas/display/376-maitri-',
-    officialSource: 'NCPOR · Maitri Base',
-  },
-  {
+const LIVE_STATIONS: Record<HeroStationId, LiveTelemetry> = {
+  bharati: {
     id: 'bharati',
     name: 'Bharati Polar Station',
-    commissioned: 2012,
     region: 'Larsemann Hills, East Antarctica',
-    latLong: '69°24′28″S, 76°11′14″E',
-    elevation: '35 m a.s.l.',
-    img: IMG.bharati,
-    tagline: 'State-of-the-art modular station with direct maritime and satellite earth observation access.',
-    description:
-      'India’s third Antarctic base, engineered with 134 prefabricated shipping containers on elevated stilts to withstand blizzards exceeding 200 km/h. Houses specialized oceanographic laboratories and satellite telemetry ground terminals for ISRO/NRSC.',
-    researchFocus: [
-      'Southern Ocean Biogeochemistry & Carbon Uptake',
-      'Satellite Ground Station (IRS/Oceansat/Cartosat)',
-      'Coastal Glaciology & Shallow Firn Cores',
-      'Extreme Environment Microbial Genomics',
-    ],
-    achievements: [
-      'Real-time satellite telemetry downlink for Indian Earth Observation satellites',
-      'Deep CTD hydrographic ocean transects across polar fronts',
-      'Certified zero-liquid discharge environmental design compliance',
-    ],
-    officialUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
-    officialSource: 'NCPOR · Bharati Base',
+    temp: '-11.2°C',
+    wind: '18 kts SSE',
+    telemetryMetric: 'ISRO Telemetry Active',
+    telemetryLabel: 'Satellite Downlink',
+    sunStatus: 'Polar Summer Window',
+    coordinates: '69°24′S, 76°11′E',
+    elevation: '35 m',
+    established: 2012,
+    photo: IMG.bharati,
+    status: 'Operational',
   },
-  {
+  maitri: {
+    id: 'maitri',
+    name: 'Maitri Research Base',
+    region: 'Schirmacher Oasis, East Antarctica',
+    temp: '-16.4°C',
+    wind: '12 kts E',
+    telemetryMetric: '284 DU (Normal)',
+    telemetryLabel: 'Total Column Ozone',
+    sunStatus: 'Low Horizon Angle (14°)',
+    coordinates: '70°45′S, 11°44′E',
+    elevation: '130 m',
+    established: 1989,
+    photo: IMG.maitri,
+    status: 'Active Observation',
+  },
+  himadri: {
     id: 'himadri',
     name: 'Himadri Arctic Station',
-    commissioned: 2008,
-    region: 'Ny-Ålesund, Spitsbergen, Svalbard',
-    latLong: '78°55′00″N, 11°56′00″E',
-    elevation: '20 m a.s.l.',
-    img: IMG.himadri,
-    tagline: 'India’s permanent scientific gateway to the High Arctic and polar climate amplification.',
-    description:
-      'Located at 79° North in the world’s northernmost permanent civilian research settlement. Anchors India’s research into Arctic warming amplification, Kongsfjorden fjord hydrography, and inter-hemispheric teleconnections with the Indian Monsoon.',
-    researchFocus: [
-      'Kongsfjorden Fjord Oceanographic Dynamics',
-      'IndARC Multi-Sensor Moored Observatory Network',
-      'Arctic-Monsoon Inter-Hemispheric Teleconnections',
-      'Snow Albedo Feedback & Atmospheric Aerosols',
-    ],
-    achievements: [
-      'Deployment of IndARC: India’s first moored underwater ocean observatory in Kongsfjorden (2014)',
-      'Over 200 Indian scientists hosted for High-Arctic fieldwork',
-      'Active scientific contributor to the International Arctic Science Committee (IASC)',
-    ],
-    officialUrl: 'https://ncpor.res.in/arctics/display/394-himadri',
-    officialSource: 'NCPOR · Himadri Station',
+    region: 'Ny-Ålesund, Svalbard (79°N)',
+    temp: '-4.1°C',
+    wind: '08 kts NW',
+    telemetryMetric: '192m Fjord Array',
+    telemetryLabel: 'IndARC Deep Mooring',
+    sunStatus: 'Arctic Twilight',
+    coordinates: '78°55′N, 11°56′E',
+    elevation: '20 m',
+    established: 2008,
+    photo: IMG.himadri,
+    status: 'Operational',
   },
-]
-
-const INDIAN_STATIONS_HI: StationDossier[] = [
-  {
-    id: 'maitri',
-    name: 'मैत्री अनुसंधान केंद्र',
-    commissioned: 1989,
-    region: 'शिर्माकर ओएसिस, पूर्वी अंटार्कटिका',
-    latLong: '70°45′57″S, 11°44′09″E',
-    elevation: '130 मीटर समुद्र तल से',
-    img: IMG.maitri,
-    tagline: '36+ वर्षों से निरंतर संचालित ध्रुवीय वायुमंडलीय एवं भू-चुंबकत्व प्रयोगशाला।',
-    description:
-      '8वें भारतीय अंटार्कटिक अभियान के दौरान बर्फ-मुक्त चट्टानी ओएसिस पर निर्मित। मैत्री 25 शीतकालीन शोधकर्ताओं को आश्रय देता है जो ओजोन परत, ऑरोरल इलेक्ट्रोलेट्स, ब्लैक कार्बन एरोसोल और पर्माफ्रॉस्ट का अध्ययन करते हैं।',
-    researchFocus: [
-      'वायुमंडलीय रसायन विज्ञान एवं ओजोन निगरानी',
-      'भू-चुंबकीय स्पंदन एवं आयनमंडलीय भौतिकी',
-      'पर्माफ्रॉस्ट गतिशीलता एवं हिमनद संतुलन',
-      'प्रियदर्शिनी झील लिम्नोलॉजिकल पारिस्थितिकी',
-    ],
-    achievements: [
-      '36+ वर्षों की सतत मौसम संबंधी समय श्रृंखला',
-      'पूर्वी अंटार्कटिका में पहली स्थायी अंतर्देशीय वेधशाला',
-      'ग्लोबल एटमॉस्फियर वॉच (WMO-GAW) योगदानकर्ता स्टेशन',
-    ],
-    officialUrl: 'https://ncpor.res.in/antarcticas/display/376-maitri-',
-    officialSource: 'एनसीपीओआर · मैत्री बेस',
-  },
-  {
-    id: 'bharati',
-    name: 'भारती ध्रुवीय स्टेशन',
-    commissioned: 2012,
-    region: 'लार्समैन हिल्स, पूर्वी अंटार्कटिका',
-    latLong: '69°24′28″S, 76°11′14″E',
-    elevation: '35 मीटर समुद्र तल से',
-    img: IMG.bharati,
-    tagline: 'प्रत्यक्ष समुद्री और उपग्रह पृथ्वी अवलोकन पहुंच वाली अत्याधुनिक मॉड्यूलर वेधशाला।',
-    description:
-      'भारत का तीसरा अंटार्कटिक बेस, जिसे 200 किमी/घंटा से अधिक के बर्फीले तूफानों का सामना करने के लिए ऊंचे खंभों पर 134 पूर्वनिर्मित कंटेनरों के साथ तैयार किया गया है। यहाँ इसरो/एनआरएससी के लिए उपग्रह टेलीमेट्री ग्राउंड टर्मिनल स्थापित हैं।',
-    researchFocus: [
-      'दक्षिणी महासागर जैव-भू-रसायन एवं कार्बन अवशोषण',
-      'उपग्रह ग्राउंड स्टेशन (आईआरएस/ओशनसैट/कार्टोसैट)',
-      'तटीय हिमनद विज्ञान एवं फ़िर्न कोर नमूने',
-      'चरम वातावरण माइक्रोबियल जीनोमिक्स',
-    ],
-    achievements: [
-      'भारतीय पृथ्वी अवलोकन उपग्रहों के लिए वास्तविक समय टेलीमेट्री',
-      'ध्रुवीय मोर्चों पर गहरे सीटीडी हाइड्रोग्राफिक महासागरीय अवलोकन',
-      'शून्य-तरल निर्वहन पर्यावरण प्रमाणन अनुपालन',
-    ],
-    officialUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
-    officialSource: 'एनसीपीओआर · भारती बेस',
-  },
-  {
-    id: 'himadri',
-    name: 'हिमाद्री आर्कटिक स्टेशन',
-    commissioned: 2008,
-    region: 'नाय-एलेसुंड, स्पिट्सबर्गेन, स्वालबार्ड',
-    latLong: '78°55′00″N, 11°56′00″E',
-    elevation: '20 मीटर समुद्र तल से',
-    img: IMG.himadri,
-    tagline: 'उच्च आर्कटिक और ध्रुवीय जलवायु प्रवर्धन के लिए भारत का स्थायी वैज्ञानिक प्रवेश द्वार।',
-    description:
-      'दुनिया की सबसे उत्तरी स्थायी नागरिक अनुसंधान बस्ती में 79° उत्तर में स्थित। यह कोंग्सफजॉर्डन जल विज्ञान और भारतीय मानसून के साथ इसके अंतर्संबंधों पर भारत के अनुसंधान को आधार प्रदान करता है।',
-    researchFocus: [
-      'कोंग्सफजॉर्डन फ्योर्ड समुद्र विज्ञान गतिशीलता',
-      'IndARC मल्टी-सेंसर मूरिंग वेधशाला नेटवर्क',
-      'आर्कटिक-मानसून टेलीकनेक्शन अध्ययन',
-      'स्नो एल्बिडो फीडबैक एवं वायुमंडलीय एरोसोल',
-    ],
-    achievements: [
-      'IndARC की स्थापना: कोंग्सफजॉर्डन में भारत की पहली जलमग्न वेधशाला (2014)',
-      'उच्च-आर्कटिक अनुसंधान के लिए 200 से अधिक भारतीय वैज्ञानिकों की मेज़बानी',
-      'अंतर्राष्ट्रीय आर्कटिक विज्ञान समिति (IASC) में सक्रिय योगदानकर्ता',
-    ],
-    officialUrl: 'https://ncpor.res.in/arctics/display/394-himadri',
-    officialSource: 'एनसीपीओआर · हिमाद्री स्टेशन',
-  },
-]
+}
 
 export default function Home() {
   const { isHindi, trans } = useLanguage()
-  const [selectedStation, setSelectedStation] = useState<string>('bharati')
+  const [heroStation, setHeroStation] = useState<HeroStationId>('bharati')
+  const [heroViewMode, setHeroViewMode] = useState<'radar' | 'camera'>('radar')
+  const [activeRealm, setActiveRealm] = useState<PolarRealm>('antarctica')
   const [eduMode, setEduMode] = useState<'simple' | 'scientific'>('simple')
   const [copiedAbstract, setCopiedAbstract] = useState(false)
-  const [knowledgeCategory, setKnowledgeCategory] = useState<string>('all')
 
-  const stationsData = isHindi ? INDIAN_STATIONS_HI : INDIAN_STATIONS
   const featuredExpedition = expeditions[0]
-  const currentStation =
-    stationsData.find(s => s.id === selectedStation) || stationsData[0]
-
-  // Filtered knowledge repository items
-  const filteredKnowledge = knowledgeItems
-    .filter(k => {
-      if (knowledgeCategory === 'all') return true
-      if (knowledgeCategory === 'reports') return k.type.toLowerCase().includes('report')
-      if (knowledgeCategory === 'papers') return k.type.toLowerCase().includes('paper') || k.type.toLowerCase().includes('monograph')
-      if (knowledgeCategory === 'datasets') return k.type.toLowerCase().includes('dataset')
-      return true
-    })
-    .slice(0, 4)
+  const st = LIVE_STATIONS[heroStation]
 
   // Southern Ocean Sea-Ice Extent (2024–2025 Climatology vs 1981–2010 Mean)
   const seaIceCurrent: ChartPoint[] = [
@@ -233,237 +118,467 @@ export default function Home() {
   ]
 
   return (
-    <div className="space-y-0">
-      {/* 1. CINEMATIC EDITORIAL HERO */}
-      <section className="relative overflow-hidden bg-slate-950 text-white min-h-[78vh] flex items-center">
-        {/* High-Resolution Polar Photography Backdrop */}
-        <img
-          src={HERO_IMAGE}
-          alt="Antarctic continental polar ice sheet"
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-35 filter saturate-90"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/40" />
+    <div className="bg-[#edf5fb] dark:bg-[#07131e] text-slate-900 dark:text-slate-100 selection:bg-cyan-500/20 selection:text-cyan-900 min-h-screen">
+      {/* ========================================================================= */}
+      {/* 1. LUXURY SPLIT HERO WITH LIVE POLAR TELEMETRY RADAR WIDGET              */}
+      {/* ========================================================================= */}
+      <section className="relative overflow-hidden pt-20 pb-14 sm:pt-28 sm:pb-20 border-b border-sky-200/70 dark:border-slate-800/80 bg-gradient-to-b from-[#d6ecf9] via-[#e6f3fa] to-[#edf5fb] dark:from-[#0b1d2e] dark:via-[#091724] dark:to-[#07131e]">
+        {/* Apple-style subtle ambient light reflections */}
+        <div className="absolute -top-40 right-10 w-[550px] h-[550px] bg-gradient-to-br from-cyan-300/35 via-sky-200/40 to-transparent dark:from-cyan-500/15 dark:via-sky-600/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 -left-20 w-[420px] h-[420px] bg-gradient-to-tr from-sky-300/30 via-blue-200/25 to-transparent dark:from-sky-600/10 dark:via-blue-800/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative container-wide py-16 sm:py-24 lg:py-28">
-          <Reveal>
-            <div className="max-w-4xl">
-              {/* Sovereign Institutional Identifier */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/30 bg-sky-950/70 text-sky-200 text-xs font-mono tracking-wider uppercase mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-                <span>{trans('Government of India · Ministry of Earth Sciences · NCPOR', 'भारत सरकार · पृथ्वी विज्ञान मंत्रालय · एनसीपीओआर')}</span>
-              </div>
+        {/* Ambient Rotating Polar Astrolabe in Hero Background */}
+        <div className="absolute -top-20 -right-20 md:right-8 w-[580px] h-[580px] lg:w-[700px] lg:h-[700px] pointer-events-none select-none opacity-45 md:opacity-65 dark:opacity-25">
+          {/* Outer Clockwise Rotating Degree Ring */}
+          <svg className="w-full h-full animate-spin-slow" viewBox="0 0 500 500" fill="none">
+            <circle cx="250" cy="250" r="236" stroke="#0284c7" strokeWidth="1.2" strokeDasharray="3 7" opacity="0.45" />
+            <circle cx="250" cy="250" r="212" stroke="#38bdf8" strokeWidth="1" opacity="0.35" />
+            <circle cx="250" cy="250" r="186" stroke="#0ea5e9" strokeWidth="1" strokeDasharray="8 8" opacity="0.25" />
+            {/* Azimuth Degree Markers */}
+            <text x="250" y="24" textAnchor="middle" fill="#0369a1" fontSize="10" fontFamily="monospace" fontWeight="bold">000° N</text>
+            <text x="478" y="254" textAnchor="middle" fill="#0369a1" fontSize="10" fontFamily="monospace" fontWeight="bold">090° E</text>
+            <text x="250" y="488" textAnchor="middle" fill="#0369a1" fontSize="10" fontFamily="monospace" fontWeight="bold">180° S</text>
+            <text x="22" y="254" textAnchor="middle" fill="#0369a1" fontSize="10" fontFamily="monospace" fontWeight="bold">270° W</text>
+            <text x="410" y="95" textAnchor="middle" fill="#0284c7" fontSize="8" fontFamily="monospace" opacity="0.6">045°</text>
+            <text x="410" y="415" textAnchor="middle" fill="#0284c7" fontSize="8" fontFamily="monospace" opacity="0.6">135°</text>
+            <text x="90" y="415" textAnchor="middle" fill="#0284c7" fontSize="8" fontFamily="monospace" opacity="0.6">225°</text>
+            <text x="90" y="95" textAnchor="middle" fill="#0284c7" fontSize="8" fontFamily="monospace" opacity="0.6">315°</text>
+          </svg>
 
-              {/* Commanding Headline */}
-              <h1 className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-[76px] font-bold tracking-tight leading-[1.0] text-white">
-                {isHindi ? (
-                  <>
-                    ध्रुवों के <br />
-                    <span className="text-sky-300">रहस्यमयी विज्ञान को जानें।</span>
-                  </>
-                ) : (
-                  <>
-                    Discover the <br />
-                    <span className="text-sky-300">Science of the Poles.</span>
-                  </>
-                )}
-              </h1>
-
-              {/* Supporting Narrative */}
-              <p className="mt-6 text-base sm:text-xl text-slate-300 max-w-2xl leading-relaxed font-normal">
-                {trans(
-                  "India’s sovereign digital repository archiving 44 years of Antarctic, Arctic, and Southern Ocean expeditions. Access peer-reviewed publications, open cryospheric datasets, and AI-assisted scientific dissemination.",
-                  "अंटार्कटिक, आर्कटिक और दक्षिणी महासागर अभियानों के 44 वर्षों का भारत का संप्रभु डिजिटल संग्रह। सहकर्मी-समीक्षित शोध पत्र, खुले क्रायोस्फेरिक डेटासेट और एआई-संचालित वैज्ञानिक प्रसार का अन्वेषण करें।"
-                )}
-              </p>
-
-              {/* Clear Primary Actions */}
-              <div className="mt-8 flex flex-wrap items-center gap-3.5">
-                <Link
-                  to="/expeditions"
-                  className="btn bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl transition duration-200 inline-flex items-center gap-2"
-                >
-                  <Compass className="w-4 h-4 text-slate-950" />
-                  {trans('Explore Expeditions (1981–2025)', 'अभियानों का अन्वेषण करें (1981–2025)')}
-                </Link>
-                <Link
-                  to="/datasets"
-                  className="btn bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl border border-white/20 transition duration-200 inline-flex items-center gap-2"
-                >
-                  <Database className="w-4 h-4 text-sky-300" />
-                  {trans('Explore Research Datasets', 'शोध डेटासेट देखें')}
-                </Link>
-              </div>
-
-              {/* Subtle Coordinates Annotation */}
-              <div className="mt-12 text-[11px] font-mono text-slate-400 flex flex-wrap items-center gap-x-5 gap-y-1">
-                <span>70°45′S 11°44′E · {trans('MAITRI', 'मैत्री')}</span>
-                <span className="text-slate-600 hidden sm:inline">|</span>
-                <span>69°24′S 76°11′E · {trans('BHARATI', 'भारती')}</span>
-                <span className="text-slate-600 hidden sm:inline">|</span>
-                <span>78°55′N 11°56′E · {trans('HIMADRI', 'हिमाद्री')}</span>
-              </div>
-            </div>
-
-            {/* Dignified Institutional Metrics Strip */}
-            <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl text-left">
-              <div>
-                <div className="font-display text-2xl sm:text-3xl font-bold text-white">44</div>
-                <div className="text-xs text-slate-400 mt-0.5">{trans('Annual Antarctic Expeditions', 'वार्षिक अंटार्कटिक अभियान')}</div>
-              </div>
-              <div>
-                <div className="font-display text-2xl sm:text-3xl font-bold text-white">3</div>
-                <div className="text-xs text-slate-400 mt-0.5">{trans('Permanent Research Stations', 'स्थायी अनुसंधान केंद्र')}</div>
-              </div>
-              <div>
-                <div className="font-display text-2xl sm:text-3xl font-bold text-white">2008</div>
-                <div className="text-xs text-slate-400 mt-0.5">{trans('Arctic Outpost Established', 'आर्कटिक स्टेशन स्थापित')}</div>
-              </div>
-              <div>
-                <div className="font-display text-2xl sm:text-3xl font-bold text-white">100%</div>
-                <div className="text-xs text-slate-400 mt-0.5">{trans('Open Scientific Access', 'खुली वैज्ञानिक पहुँच')}</div>
-              </div>
-            </div>
-          </Reveal>
+          {/* Inner Counter-Clockwise Rotating Coordinate Graticule */}
+          <div className="absolute inset-[14%]">
+            <svg className="w-full h-full animate-spin-reverse-slow" viewBox="0 0 360 360" fill="none">
+              <circle cx="180" cy="180" r="150" stroke="#0284c7" strokeWidth="1" strokeDasharray="2 6" opacity="0.4" />
+              <circle cx="180" cy="180" r="110" stroke="#38bdf8" strokeWidth="1.2" strokeDasharray="14 14" opacity="0.35" />
+              <circle cx="180" cy="180" r="70" stroke="#0ea5e9" strokeWidth="1" opacity="0.3" />
+              <line x1="180" y1="15" x2="180" y2="345" stroke="#0284c7" strokeWidth="0.8" strokeDasharray="4 4" opacity="0.25" />
+              <line x1="15" y1="180" x2="345" y2="180" stroke="#0284c7" strokeWidth="0.8" strokeDasharray="4 4" opacity="0.25" />
+              <circle cx="180" cy="30" r="3.5" fill="#0ea5e9" opacity="0.7" />
+              <circle cx="330" cy="180" r="3.5" fill="#0ea5e9" opacity="0.7" />
+              <circle cx="180" cy="330" r="3.5" fill="#0ea5e9" opacity="0.7" />
+              <circle cx="30" cy="180" r="3.5" fill="#0ea5e9" opacity="0.7" />
+            </svg>
+          </div>
         </div>
-      </section>
 
-      {/* 2. INDIA'S POLAR PRESENCE: EDITORIAL STATION EXPLORER */}
-      <Section className="bg-white">
-        <Container>
+        <Container className="relative">
           <Reveal>
-            <div className="mb-10 max-w-3xl">
-              <span className="text-xs font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                {trans('Sovereign Research Infrastructure', 'संप्रभु अनुसंधान अवसंरचना')}
-              </span>
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-950 mt-1.5 tracking-tight">
-                {trans('Three Stations. One Scientific Frontier.', 'तीन अनुसंधान केंद्र। एक वैज्ञानिक क्षितिज।')}
-              </h2>
-              <p className="mt-3 text-base sm:text-lg text-slate-600 leading-relaxed">
-                {trans(
-                  "From the historic ice-sheet outpost of Dakshin Gangotri in 1983 to the modern modular laboratories of Bharati and the high-latitude Arctic station of Himadri, India maintains an active year-round sovereign polar research presence under the Ministry of Earth Sciences.",
-                  "1983 में दक्षिण गंगोत्री की ऐतिहासिक चौकी से लेकर भारती की अत्याधुनिक प्रयोगशालाओं और हिमाद्री के उच्च-अक्षांश आर्कटिक स्टेशन तक, भारत पृथ्वी विज्ञान मंत्रालय के अंतर्गत वर्ष पर्यंत ध्रुवीय अनुसंधान बनाए हुए है।"
-                )}
-              </p>
-            </div>
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+              {/* LEFT COLUMN: Editorial Typography & Intentional Action */}
+              <div className="lg:col-span-7 space-y-6">
+                {/* Refined Pill Badge with Rotating Polar Compass */}
+                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-sky-200 dark:border-slate-700 shadow-[0_2px_10px_-2px_rgba(15,23,42,0.06)] text-[11px] font-mono tracking-wide text-slate-700 dark:text-slate-300">
+                  <span className="flex h-4 w-4 relative items-center justify-center">
+                    <Compass className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 animate-spin-slow" />
+                  </span>
+                  <span className="font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
+                    {trans('National Polar Science Gateway', 'राष्ट्रीय ध्रुवीय विज्ञान द्वार')}
+                  </span>
+                  <span className="text-slate-300 dark:text-slate-600">|</span>
+                  <span className="text-cyan-700 dark:text-cyan-400 font-medium">{trans('MoES · NCPOR', 'पृथ्वी विज्ञान मंत्रालय')}</span>
+                </div>
 
-            {/* Asymmetrical Magazine Layout: Station Navigation Rail + Editorial Showcase */}
-            <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-start">
-              {/* Station Navigation Rail */}
-              <div className="space-y-2.5">
-                {stationsData.map(station => {
-                  const isSelected = selectedStation === station.id
-                  return (
-                    <button
-                      key={station.id}
-                      onClick={() => setSelectedStation(station.id)}
-                      className={cn(
-                        'w-full p-4 sm:p-5 rounded-2xl border text-left transition-all duration-200 flex items-center justify-between group',
-                        isSelected
-                          ? 'border-sky-500 bg-sky-50/60 shadow-xs'
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
-                      )}
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-display font-bold text-slate-950 text-base sm:text-lg">
-                            {station.name}
-                          </span>
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5 font-mono">
-                          {station.region} · {trans('Est.', 'स्था.')} {station.commissioned}
+                {/* Commanding Headline */}
+                <h1 className="font-display text-4xl sm:text-5xl lg:text-[62px] font-bold tracking-tight text-slate-950 dark:text-white leading-[1.08]">
+                  {isHindi ? (
+                    <>
+                      ध्रुवों के रहस्यमयी विज्ञान का <br />
+                      <span className="bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-700 dark:from-cyan-400 dark:via-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
+                        संप्रभु राष्ट्रीय मंच।
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Deciphering Earth’s <br />
+                      <span className="bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-700 dark:from-cyan-400 dark:via-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
+                        Frozen Frontiers.
+                      </span>
+                    </>
+                  )}
+                </h1>
+
+                {/* Subtitle with High Typography Hierarchy */}
+                <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
+                  {trans(
+                    "India's sovereign polar archive connecting 44 years of Antarctic, Arctic, and Southern Ocean expeditions, open cryospheric data, and AI-assisted scientific dissemination.",
+                    "अंटार्कटिका, आर्कटिक और दक्षिणी महासागर में भारत के 44 वर्षों के वैज्ञानिक अभियानों, खुले क्रायोस्फेरिक डेटासेट और एआई-संचालित विज्ञान प्रसार का एकीकृत डिजिटल मंच।"
+                  )}
+                </p>
+
+                {/* Action Buttons: Apple/Linear Luxury Buttons */}
+                <div className="pt-2 flex flex-wrap items-center gap-3.5">
+                  <a
+                    href="#polar-map"
+                    className="group px-6 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-900 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm shadow-[0_4px_14px_0_rgba(15,23,42,0.18)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.25)] transition-all duration-200 inline-flex items-center gap-2"
+                  >
+                    <Globe2 className="w-4 h-4 text-cyan-400 dark:text-slate-950 group-hover:rotate-45 transition-transform duration-500" />
+                    <span>{trans('Explore 3D Polar Map', '3D ध्रुवीय मानचित्र')}</span>
+                  </a>
+
+                  <Link
+                    to="/expeditions"
+                    className="px-5 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-sky-50/60 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-xs sm:text-sm border border-sky-200/90 dark:border-slate-700 shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:border-sky-300 transition duration-200 inline-flex items-center gap-2"
+                  >
+                    <Compass className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                    <span>{trans('Expeditions (1st–44th)', 'अभियान (1981–2025)')}</span>
+                  </Link>
+
+                  <Link
+                    to="/datasets"
+                    className="px-5 py-3.5 rounded-xl bg-cyan-100/70 dark:bg-cyan-950/60 hover:bg-cyan-200/60 dark:hover:bg-cyan-900/60 text-cyan-950 dark:text-cyan-200 font-semibold text-xs sm:text-sm border border-cyan-300/80 dark:border-cyan-800 transition duration-200 inline-flex items-center gap-2"
+                  >
+                    <Database className="w-4 h-4 text-cyan-800 dark:text-cyan-300" />
+                    <span>{trans('Open Data Portal', 'ओपन डेटासेट')}</span>
+                  </Link>
+                </div>
+
+                {/* Micro Stat Badges */}
+                <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">44 Missions</span>
+                    <span>(1981–2025)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">3 Bases</span>
+                    <span>(Year-round)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">100% Open Data</span>
+                    <span>(NPDC)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN: Interactive Live Polar Telemetry & 360° Radar Card */}
+              <div className="lg:col-span-5">
+                <div className="rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-sky-200 dark:border-slate-800 shadow-[0_12px_36px_-6px_rgba(15,23,42,0.1),0_2px_8px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_36px_-6px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-300">
+                  {/* Station Selector Bar & View Mode Toggle */}
+                  <div className="p-3 bg-sky-50/70 dark:bg-slate-950 border-b border-sky-200/70 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                    {/* Station Selector */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => setHeroStation('bharati')}
+                        className={cn(
+                          'px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
+                          heroStation === 'bharati'
+                            ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-xs border border-sky-200 dark:border-slate-700'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        )}
+                      >
+                        Bharati
+                      </button>
+                      <button
+                        onClick={() => setHeroStation('maitri')}
+                        className={cn(
+                          'px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
+                          heroStation === 'maitri'
+                            ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-xs border border-sky-200 dark:border-slate-700'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        )}
+                      >
+                        Maitri
+                      </button>
+                      <button
+                        onClick={() => setHeroStation('himadri')}
+                        className={cn(
+                          'px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
+                          heroStation === 'himadri'
+                            ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-xs border border-sky-200 dark:border-slate-700'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        )}
+                      >
+                        Himadri
+                      </button>
+                    </div>
+
+                    {/* View Mode Toggle: Radar vs Camera */}
+                    <div className="flex items-center gap-1 bg-white/90 dark:bg-slate-850 p-0.5 rounded-lg border border-sky-200 dark:border-slate-700">
+                      <button
+                        onClick={() => setHeroViewMode('radar')}
+                        className={cn(
+                          'px-2 py-0.5 rounded text-[11px] font-mono font-medium inline-flex items-center gap-1 transition-all',
+                          heroViewMode === 'radar'
+                            ? 'bg-slate-950 dark:bg-sky-500 text-cyan-300 dark:text-slate-950 shadow-2xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        )}
+                        title="360° Live Polar Radar Scanner"
+                      >
+                        <Radio className="w-3 h-3 text-cyan-400 dark:text-slate-950 animate-pulse" />
+                        <span>Radar</span>
+                      </button>
+                      <button
+                        onClick={() => setHeroViewMode('camera')}
+                        className={cn(
+                          'px-2 py-0.5 rounded text-[11px] font-mono font-medium inline-flex items-center gap-1 transition-all',
+                          heroViewMode === 'camera'
+                            ? 'bg-slate-950 dark:bg-sky-500 text-white dark:text-slate-950 shadow-2xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        )}
+                        title="Outpost Camera View"
+                      >
+                        <Eye className="w-3 h-3 text-sky-400 dark:text-slate-950" />
+                        <span>Cam</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* DISPLAY CONTAINER: 360° Polar Radar Scanner OR Camera View */}
+                  {heroViewMode === 'radar' ? (
+                    <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-b from-[#031326] via-[#081f38] to-[#041224] text-white select-none">
+                      {/* Grid background */}
+                      <div className="absolute inset-0 bg-polar-grid opacity-15" />
+
+                      {/* Concentric Polar Latitude Rings */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        {/* Outer Polar Ring (60°S) */}
+                        <div className="w-[88%] h-[88%] rounded-full border border-cyan-500/20" />
+                        {/* Middle Polar Ring (70°S) */}
+                        <div className="absolute w-[64%] h-[64%] rounded-full border border-cyan-400/25 border-dashed" />
+                        {/* Inner Polar Ring (80°S) */}
+                        <div className="absolute w-[40%] h-[40%] rounded-full border border-cyan-400/30" />
+                        {/* South Pole Center */}
+                        <div className="absolute w-2 h-2 rounded-full bg-cyan-400/80 shadow-[0_0_8px_#22d3ee]" />
+                        {/* Graticule Crosshairs */}
+                        <div className="absolute w-[92%] h-[1px] bg-cyan-500/15" />
+                        <div className="absolute h-[92%] w-[1px] bg-cyan-500/15" />
+                      </div>
+
+                      {/* Rotating Outer Azimuth Dial */}
+                      <div className="absolute inset-2 flex items-center justify-center pointer-events-none">
+                        <svg className="w-full h-full animate-spin-slow" viewBox="0 0 300 300" fill="none">
+                          <circle cx="150" cy="150" r="140" stroke="#06b6d4" strokeWidth="1" strokeDasharray="3 9" opacity="0.4" />
+                          <circle cx="150" cy="150" r="130" stroke="#38bdf8" strokeWidth="0.75" opacity="0.25" />
+                          <text x="150" y="16" textAnchor="middle" fill="#38bdf8" fontSize="8" fontFamily="monospace">000°N</text>
+                          <text x="286" y="153" textAnchor="middle" fill="#38bdf8" fontSize="8" fontFamily="monospace">090°E</text>
+                          <text x="150" y="292" textAnchor="middle" fill="#38bdf8" fontSize="8" fontFamily="monospace">180°S</text>
+                          <text x="14" y="153" textAnchor="middle" fill="#38bdf8" fontSize="8" fontFamily="monospace">270°W</text>
+                        </svg>
+                      </div>
+
+                      {/* Counter-Rotating Latitude Ring */}
+                      <div className="absolute inset-10 flex items-center justify-center pointer-events-none">
+                        <svg className="w-full h-full animate-spin-reverse-slow" viewBox="0 0 200 200" fill="none">
+                          <circle cx="100" cy="100" r="95" stroke="#0ea5e9" strokeWidth="1" strokeDasharray="4 8" opacity="0.3" />
+                          <circle cx="100" cy="100" r="70" stroke="#38bdf8" strokeWidth="0.8" strokeDasharray="12 12" opacity="0.35" />
+                          <circle cx="100" cy="5" r="2.5" fill="#22d3ee" />
+                          <circle cx="195" cy="100" r="2.5" fill="#22d3ee" />
+                          <circle cx="100" cy="195" r="2.5" fill="#22d3ee" />
+                          <circle cx="5" cy="100" r="2.5" fill="#22d3ee" />
+                        </svg>
+                      </div>
+
+                      {/* 360° Real-time Sweeping Radar Beam */}
+                      <div
+                        className="absolute inset-0 origin-center animate-radar-sweep pointer-events-none"
+                        style={{
+                          background:
+                            'conic-gradient(from 0deg at 50% 50%, rgba(6, 182, 212, 0.45) 0deg, rgba(6, 182, 212, 0.08) 45deg, transparent 65deg)',
+                        }}
+                      />
+
+                      {/* Orbiting Polar Satellite (ISRO Oceansat-3) */}
+                      <div className="absolute inset-4 flex items-center justify-center pointer-events-none">
+                        <div
+                          className="w-[82%] h-[82%] rounded-full border border-sky-400/20 animate-spin-slow"
+                          style={{ animationDuration: '16s' }}
+                        >
+                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-slate-950/80 px-1.5 py-0.5 rounded-full border border-sky-400/50">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                            <span className="text-[7px] font-mono text-cyan-200">ISRO OCEANSAT-3</span>
+                          </div>
                         </div>
                       </div>
-                      <ChevronRight
-                        className={cn(
-                          'w-5 h-5 transition-transform text-slate-400 group-hover:text-slate-600',
-                          isSelected && 'text-sky-600 rotate-90'
-                        )}
-                      />
-                    </button>
-                  )
-                })}
 
-                <div className="pt-4 flex items-center gap-4">
-                  <Link to="/expeditions" className="btn-primary text-xs !py-2.5">
-                    <Compass className="w-3.5 h-3.5" /> {trans('All 44 Expeditions', 'सभी 44 अभियान')}
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1"
-                  >
-                    {trans('National Polar Policy', 'राष्ट्रीय ध्रुवीय नीति')} <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Large Authentic Editorial Showcase */}
-              <div className="editorial-frame bg-slate-50 overflow-hidden shadow-sm">
-                <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
-                  <img
-                    src={currentStation.img}
-                    alt={currentStation.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent" />
-
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-white">
-                    <span className="bg-slate-900/80 px-2.5 py-1 rounded border border-white/10">
-                      {currentStation.latLong}
-                    </span>
-                    <span className="bg-slate-900/80 px-2.5 py-1 rounded border border-white/10">
-                      Elev. {currentStation.elevation}
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <span className="text-xs font-mono uppercase tracking-widest text-sky-300 font-semibold">
-                      {trans('NCPOR Operational Outpost', 'एनसीपीओआर परिचालन चौकी')}
-                    </span>
-                    <h3 className="font-display text-2xl sm:text-3xl font-bold mt-1 text-white">
-                      {currentStation.name}
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="p-6 sm:p-8 bg-white space-y-5">
-                  <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-                    {currentStation.description}
-                  </p>
-
-                  <div>
-                    <div className="text-[11px] font-mono uppercase tracking-widest text-slate-400 font-semibold mb-2.5">
-                      {trans('Core Scientific Focus Areas', 'प्रमुख वैज्ञानिक अनुसंधान क्षेत्र')}
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {currentStation.researchFocus.map(focus => (
-                        <div key={focus} className="flex items-start gap-2 text-xs text-slate-700">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-600 mt-0.5 shrink-0" />
-                          <span>{focus}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-500">
-                    <span>{trans('Ministry of Earth Sciences · NCPOR', 'पृथ्वी विज्ञान मंत्रालय · एनसीपीओआर')}</span>
-                    <div className="flex items-center gap-4">
-                      {currentStation.officialUrl && (
-                        <a
-                          href={currentStation.officialUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sky-700 font-semibold hover:underline inline-flex items-center gap-1"
-                        >
-                          <span>{trans('Official NCPOR Dossier', 'आधिकारिक एनसीपीओआर डॉसियर')}</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                      <Link
-                        to="/expeditions"
-                        className="text-slate-600 hover:text-slate-900 hover:underline flex items-center gap-1"
+                      {/* Interactive Radar Blip 1: Bharati (69°S, 76°E) */}
+                      <button
+                        onClick={() => setHeroStation('bharati')}
+                        className="group/blip absolute top-[64%] left-[68%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer z-10 transition-transform hover:scale-125"
                       >
-                        {trans('Expedition Archive', 'अभियान पुरालेख')} <ArrowUpRight className="w-3.5 h-3.5" />
-                      </Link>
+                        <span className="relative flex h-3 w-3 items-center justify-center">
+                          <span className={cn(
+                            'absolute inline-flex h-full w-full rounded-full opacity-75',
+                            heroStation === 'bharati' ? 'bg-emerald-400 animate-ping' : 'bg-cyan-400'
+                          )} />
+                          <span className={cn(
+                            'relative inline-flex rounded-full h-2 w-2 shadow-[0_0_8px]',
+                            heroStation === 'bharati' ? 'bg-emerald-400 shadow-emerald-400' : 'bg-cyan-300 shadow-cyan-300'
+                          )} />
+                        </span>
+                        <span className={cn(
+                          'text-[8px] font-mono font-bold tracking-tight px-1 py-0.2 rounded mt-0.5 backdrop-blur-xs',
+                          heroStation === 'bharati'
+                            ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-500/60'
+                            : 'bg-slate-950/70 text-slate-300'
+                        )}>
+                          BHARATI (69°S)
+                        </span>
+                      </button>
+
+                      {/* Interactive Radar Blip 2: Maitri (70°S, 11°E) */}
+                      <button
+                        onClick={() => setHeroStation('maitri')}
+                        className="group/blip absolute top-[70%] left-[34%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer z-10 transition-transform hover:scale-125"
+                      >
+                        <span className="relative flex h-3 w-3 items-center justify-center">
+                          <span className={cn(
+                            'absolute inline-flex h-full w-full rounded-full opacity-75',
+                            heroStation === 'maitri' ? 'bg-cyan-400 animate-ping' : 'bg-sky-400'
+                          )} />
+                          <span className={cn(
+                            'relative inline-flex rounded-full h-2 w-2 shadow-[0_0_8px]',
+                            heroStation === 'maitri' ? 'bg-cyan-400 shadow-cyan-400' : 'bg-sky-300 shadow-sky-300'
+                          )} />
+                        </span>
+                        <span className={cn(
+                          'text-[8px] font-mono font-bold tracking-tight px-1 py-0.2 rounded mt-0.5 backdrop-blur-xs',
+                          heroStation === 'maitri'
+                            ? 'bg-cyan-950/90 text-cyan-300 border border-cyan-500/60'
+                            : 'bg-slate-950/70 text-slate-300'
+                        )}>
+                          MAITRI (70°S)
+                        </span>
+                      </button>
+
+                      {/* Interactive Radar Blip 3: Himadri (79°N, 12°E, Arctic Node) */}
+                      <button
+                        onClick={() => setHeroStation('himadri')}
+                        className="group/blip absolute top-[20%] left-[50%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer z-10 transition-transform hover:scale-125"
+                      >
+                        <span className="relative flex h-3 w-3 items-center justify-center">
+                          <span className={cn(
+                            'absolute inline-flex h-full w-full rounded-full opacity-75',
+                            heroStation === 'himadri' ? 'bg-amber-400 animate-ping' : 'bg-amber-400/60'
+                          )} />
+                          <span className={cn(
+                            'relative inline-flex rounded-full h-2 w-2 shadow-[0_0_8px]',
+                            heroStation === 'himadri' ? 'bg-amber-400 shadow-amber-400' : 'bg-amber-300 shadow-amber-300'
+                          )} />
+                        </span>
+                        <span className={cn(
+                          'text-[8px] font-mono font-bold tracking-tight px-1 py-0.2 rounded mt-0.5 backdrop-blur-xs',
+                          heroStation === 'himadri'
+                            ? 'bg-amber-950/90 text-amber-300 border border-amber-500/60'
+                            : 'bg-slate-950/70 text-slate-300'
+                        )}>
+                          HIMADRI (79°N)
+                        </span>
+                      </button>
+
+                      {/* Top HUD Telemetry Overlay */}
+                      <div className="absolute top-2.5 left-3 right-3 flex items-center justify-between text-[9px] font-mono text-cyan-300/90 pointer-events-none">
+                        <div className="flex items-center gap-1.5 bg-slate-950/80 px-2 py-0.5 rounded border border-cyan-500/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          <span>POLAR RADAR · 9.41 GHz</span>
+                        </div>
+                        <div className="bg-slate-950/80 px-2 py-0.5 rounded border border-cyan-500/30">
+                          <span>360° AZIMUTH SWEEP</span>
+                        </div>
+                      </div>
+
+                      {/* Bottom HUD Target Lock Readout */}
+                      <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-[10px] font-mono pointer-events-none">
+                        <div className="bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded border border-cyan-500/40 text-cyan-200">
+                          <span className="text-cyan-400 font-bold">TARGET: </span>
+                          <span>{st.name.toUpperCase()} [{st.coordinates}]</span>
+                        </div>
+                        <div className="bg-slate-950/85 backdrop-blur-md px-2 py-1 rounded border border-cyan-500/40 text-slate-300 text-[9px]">
+                          {st.status}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Station Photo Banner with Sleek Vignette */
+                    <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                      <img
+                        src={st.photo}
+                        alt={st.name}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
+
+                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-xs font-mono text-white">
+                        <span className="bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/20 text-[11px]">
+                          {st.coordinates}
+                        </span>
+                        <span className="bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/20 text-[11px]">
+                          Elev. {st.elevation}
+                        </span>
+                      </div>
+
+                      <div className="absolute bottom-3 left-4 right-4 text-white">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-300 font-semibold block">
+                          {st.region}
+                        </span>
+                        <h3 className="font-display text-xl font-bold leading-tight mt-0.5">
+                          {st.name}
+                        </h3>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Telemetry Sensor Dashboard Grid */}
+                  <div className="p-5 space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Sensor 1: Temperature */}
+                      <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
+                          <span>Temperature</span>
+                          <ThermometerSnowflake className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+                        </div>
+                        <div className="font-display text-2xl font-bold text-slate-950 dark:text-white mt-1">
+                          {st.temp}
+                        </div>
+                      </div>
+
+                      {/* Sensor 2: Wind Speed */}
+                      <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
+                          <span>Surface Wind</span>
+                          <Wind className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+                        </div>
+                        <div className="font-display text-2xl font-bold text-slate-950 dark:text-white mt-1">
+                          {st.wind}
+                        </div>
+                      </div>
+
+                      {/* Sensor 3: Specific Telemetry */}
+                      <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
+                          <span className="truncate">{st.telemetryLabel}</span>
+                          <Activity className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                        </div>
+                        <div className="font-sans text-xs font-bold text-slate-950 dark:text-white mt-1.5 truncate">
+                          {st.telemetryMetric}
+                        </div>
+                      </div>
+
+                      {/* Sensor 4: Solar/Sun Elevation */}
+                      <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
+                          <span>Solar Condition</span>
+                          <Sun className="w-3.5 h-3.5 text-amber-500" />
+                        </div>
+                        <div className="font-sans text-xs font-bold text-slate-950 dark:text-white mt-1.5 truncate">
+                          {st.sunStatus}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Footer Link */}
+                    <div className="pt-2 flex items-center justify-between text-xs border-t border-slate-100 dark:border-slate-800">
+                      <span className="font-mono text-slate-400 dark:text-slate-500">Est. {st.established} · Sovereign Outpost</span>
+                      <a
+                        href={st.id === 'himadri' ? 'https://ncpor.res.in/arctics/display/394-himadri' : `https://ncpor.res.in/antarcticas/display/${st.id === 'maitri' ? '376-maitri-' : '377-bharati'}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-cyan-700 dark:text-cyan-400 hover:text-cyan-900 dark:hover:text-cyan-300 font-semibold inline-flex items-center gap-1 hover:underline"
+                      >
+                        <span>Official NCPOR Dossier</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -471,133 +586,297 @@ export default function Home() {
             </div>
           </Reveal>
         </Container>
-      </Section>
+      </section>
 
-      {/* 3. INTERACTIVE POLAR MAP */}
-      <Section className="bg-slate-50 border-y border-slate-200">
+      {/* ========================================================================= */}
+      {/* 2. SUBTLE LIVE POLAR OBSERVATION TICKER (MISSION CONTROL STRIP)          */}
+      {/* ========================================================================= */}
+      <PolarTelemetryTicker />
+
+      {/* ========================================================================= */}
+      {/* 3. THREE POLAR REALMS: LUXURY EDITORIAL SHOWCASE                          */}
+      {/* ========================================================================= */}
+      <Section className="py-16 sm:py-24 bg-[#edf5fb] dark:bg-[#07131e] border-b border-sky-200/70 dark:border-slate-800/80">
         <Container>
           <Reveal>
-            <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                  {trans('Interactive Cartography', 'इंटरैक्टिव मानचित्रण')}
-                </span>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 mt-1">
-                  {trans('Polar Stations & Voyage Tracks', 'ध्रुवीय स्टेशन एवं समुद्री मार्ग')}
-                </h2>
-                <p className="text-sm text-slate-600 mt-1 max-w-xl">
-                  {trans(
-                    'Explore sovereign Indian bases, international partner stations, and maritime voyage corridors connecting Goa and Cape Town to Antarctica and Svalbard.',
-                    'भारतीय अनुसंधान केंद्रों, अंतर्राष्ट्रीय सहयोगी स्टेशनों और गोवा व केप टाउन से अंटार्कटिका व स्वालबार्ड तक समुद्री मार्गों का अन्वेषण करें।'
-                  )}
-                </p>
-              </div>
-              <Link to="/about#mission" className="btn-outline text-xs !py-2 !px-4 shrink-0">
-                {trans('Logistics & Projection Details', 'लॉजिस्टिक्स एवं प्रक्षेप विवरण')} <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
+            <div className="max-w-3xl mb-12">
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-400 font-bold">
+                {trans('Sovereign Polar Geometry', 'संप्रभु ध्रुवीय उपस्थिति')}
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-950 dark:text-white mt-2 tracking-tight">
+                {trans('The Three Polar Realms', 'भारत के तीन ध्रुवीय क्षेत्र')}
+              </h2>
+              <p className="mt-3 text-slate-600 dark:text-slate-300 text-base leading-relaxed">
+                {trans(
+                  'India operates continuous sovereign scientific stations across both geographical poles and the Himalayan Third Pole to monitor global climate teleconnections.',
+                  'भारत वैश्विक जलवायु संतुलन की निगरानी के लिए दोनों भौगोलिक ध्रुवों और हिमालयी तीसरे ध्रुव पर स्थायी संप्रभु अनुसंधान केंद्र संचालित करता है।'
+                )}
+              </p>
             </div>
 
-            <PolarMap />
+            {/* 3 Luxury Horizontal Architectural Cards */}
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Realm 1: Antarctica */}
+              <div className="group rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div>
+                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                    <img
+                      src={IMG.bharati}
+                      alt="Antarctica Bharati Station"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[10px] font-mono font-bold text-slate-900 dark:text-slate-100 uppercase border border-transparent dark:border-slate-700">
+                        South Pole (70°S)
+                      </span>
+                    </div>
+                    <div className="absolute bottom-3 left-4 right-4 text-white">
+                      <h3 className="font-display text-xl font-bold">Antarctica</h3>
+                      <div className="text-xs text-cyan-300 font-mono">Maitri (1989) & Bharati (2012)</div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 space-y-3">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {trans(
+                        'Over 44 consecutive annual expeditions studying the Antarctic Ice Sheet, total column ozone hole recovery, and Southern Ocean carbon sinks.',
+                        'अंटार्कटिक हिम चादर, ओजोन परत की बहाली और दक्षिणी महासागर कार्बन अवशोषण का 44 वर्षों का निरंतर अध्ययन।'
+                      )}
+                    </p>
+
+                    <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                        <span>Year-round wintering crew of 49 scientists</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                        <span>ISRO Earth Observation satellite downlink</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 pt-0 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-xs font-semibold text-cyan-700 dark:text-cyan-400">
+                  <a
+                    href="https://ncpor.res.in/antarcticas"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>NCPOR Antarctic Portal</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <Link to="/expeditions" className="text-slate-800 dark:text-slate-200 hover:text-cyan-700 dark:hover:text-cyan-400 inline-flex items-center gap-1">
+                    <span>Missions →</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Realm 2: High Arctic */}
+              <div className="group rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div>
+                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                    <img
+                      src={IMG.himadri}
+                      alt="Himadri Arctic Station"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[10px] font-mono font-bold text-slate-900 dark:text-slate-100 uppercase border border-transparent dark:border-slate-700">
+                        High Arctic (79°N)
+                      </span>
+                    </div>
+                    <div className="absolute bottom-3 left-4 right-4 text-white">
+                      <h3 className="font-display text-xl font-bold">The Arctic</h3>
+                      <div className="text-xs text-cyan-300 font-mono">Himadri (2008) & IndARC (2014)</div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 space-y-3">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {trans(
+                        'Located 1,230 km from the North Pole at Ny-Ålesund, Svalbard. Investigates Arctic amplification and marine fjord dynamics.',
+                        'उत्तरी ध्रुव से मात्र 1,230 किमी दूर स्वालबार्ड में स्थित। आर्कटिक जलवायु प्रवर्धन और समुद्री फ्योर्ड जलविज्ञान का अध्ययन।'
+                      )}
+                    </p>
+
+                    <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                        <span>IndARC multi-sensor underwater mooring (192m)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                        <span>Arctic-Indian Monsoon teleconnection research</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 pt-0 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-xs font-semibold text-cyan-700 dark:text-cyan-400">
+                  <a
+                    href="https://ncpor.res.in/arctics"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>NCPOR Arctic Portal</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <Link to="/expeditions" className="text-slate-800 dark:text-slate-200 hover:text-cyan-700 dark:hover:text-cyan-400 inline-flex items-center gap-1">
+                    <span>Missions →</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Realm 3: The Third Pole (Himalayas) */}
+              <div className="group rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div>
+                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                    <img
+                      src={IMG.glacier}
+                      alt="Himansh Himalayan Cryosphere"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[10px] font-mono font-bold text-slate-900 dark:text-slate-100 uppercase border border-transparent dark:border-slate-700">
+                        The Third Pole (4,050m)
+                      </span>
+                    </div>
+                    <div className="absolute bottom-3 left-4 right-4 text-white">
+                      <h3 className="font-display text-xl font-bold">The Third Pole</h3>
+                      <div className="text-xs text-cyan-300 font-mono">Himansh Station (2016)</div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 space-y-3">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {trans(
+                        'Chandra Basin glaciological observatory in Lahaul-Spiti quantifying glacier mass balance and meltwater contributions to North Indian rivers.',
+                        'लाहौल-स्पीति में स्थित वेधशाला जो हिमनदों के द्रव्यमान संतुलन और उत्तर भारत की नदियों में हिमनद जल आपूर्ति की निगरानी करती है।'
+                      )}
+                    </p>
+
+                    <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                        <span>Benchmark monitoring of Sutri Dhaka & Batal glaciers</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                        <span>Critical water security data for 1.4 billion people</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 pt-0 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-xs font-semibold text-cyan-700 dark:text-cyan-400">
+                  <a
+                    href="https://ncpor.res.in/pages/display/268-himalaya"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>NCPOR Cryosphere Portal</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <Link to="/datasets" className="text-slate-800 dark:text-slate-200 hover:text-cyan-700 dark:hover:text-cyan-400 inline-flex items-center gap-1">
+                    <span>Datasets →</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
           </Reveal>
         </Container>
       </Section>
 
-      {/* 4. DATA STORY: OBSERVATIONAL CLIMATOLOGY & MONSOON TELECONNECTION */}
-      <Section className="bg-white">
+      {/* ========================================================================= */}
+      {/* 4. "DID YOU KNOW?" SCIENCE HOOK CARDS                                     */}
+      {/* ========================================================================= */}
+      <Section className="py-16 sm:py-24 bg-gradient-to-b from-[#edf5fb] via-[#e2f0fa] to-[#edf5fb] dark:from-[#07131e] dark:via-[#091724] dark:to-[#07131e] border-b border-sky-200/70 dark:border-slate-800/80">
         <Container>
           <Reveal>
-            {/* Prominent High-Level Story Headline */}
-            <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-100">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                  {trans('Observational Climatology', 'अवलोकन जलवायु विज्ञान')}
-                </span>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 mt-1">
-                  {trans('Southern Ocean Sea-Ice Climatology', 'दक्षिणी महासागर समुद्री बर्फ जलवायु विज्ञान')}
-                </h2>
-                <p className="text-sm text-slate-600 mt-1 max-w-xl">
-                  {trans(
-                    'Monthly sea-ice area observations compared against the 1981–2010 satellite baseline.',
-                    '1981–2010 के उपग्रह आधारभूत स्तर की तुलना में मासिक समुद्री बर्फ क्षेत्र अवलोकन।'
-                  )}
-                </p>
-              </div>
-
-              {/* Large Highlighted Statistic */}
-              <div className="flex items-baseline gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 shrink-0">
-                <div>
-                  <div className="text-[10px] font-mono uppercase text-slate-500 tracking-wider">
-                    {trans('Seasonal Minimum', 'मौसमी न्यूनतम')}
-                  </div>
-                  <div className="font-display text-3xl sm:text-4xl font-bold text-slate-950">
-                    13.8 <span className="text-sm font-sans font-normal text-slate-500">{trans('M km²', 'मि. वर्ग किमी')}</span>
-                  </div>
-                </div>
-                <div className="border-l border-slate-200 pl-4">
-                  <div className="text-[10px] font-mono uppercase text-sky-800 font-semibold tracking-wider">
-                    {trans('Baseline Anomaly', 'आधार रेखा विसंगति')}
-                  </div>
-                  <div className="font-display text-xl sm:text-2xl font-bold text-sky-600">
-                    -0.8 <span className="text-xs font-sans font-normal text-slate-500">{trans('M km²', 'मि. वर्ग किमी')}</span>
-                  </div>
-                </div>
-              </div>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-400 font-bold">
+                {trans('Curated Discoveries', 'रोचक वैज्ञानिक तथ्य')}
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 dark:text-white mt-2">
+                {trans('Did You Know? Polar Science Secrets', 'क्या आप जानते हैं? ध्रुवों के अनसुलझे रहस्य')}
+              </h2>
             </div>
 
-            {/* Asymmetric Layout: Chart + Scientific Context */}
-            <div className="grid lg:grid-cols-[1.5fr_1fr] gap-8 items-stretch">
-              <LineChart
-                badge={trans('NSIDC / NCPOR OBSERVATIONS', 'एनएसआईडीसी / एनसीपीओआर अवलोकन')}
-                title={trans('Monthly Observational Sea-Ice Extent', 'मासिक अवलोकित समुद्री बर्फ विस्तार')}
-                subtitle={trans(
-                  'Comparison between 2024–2025 measurements and the 1981–2010 satellite climatological baseline.',
-                  '2024–2025 के मापों और 1981–2010 के उपग्रह जलवायु आधार रेखा की तुलना।'
-                )}
-                source={trans('1981–2010 Baseline', '1981–2010 आधार रेखा')}
-                unit={trans(' M km²', ' मि. वर्ग किमी')}
-                data={seaIceCurrent}
-                baseline={seaIceBaseline}
-                height={270}
-                yLabel={trans('Million Square Kilometers (M km²)', 'मिलियन वर्ग किलोमीटर (मि. वर्ग किमी)')}
-                accent="#0284c7"
-              />
-
-              {/* Scientific Context Narrative */}
-              <div className="editorial-frame p-6 sm:p-7 bg-slate-50 flex flex-col justify-between">
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="p-7 rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_4px_16px_rgba(15,23,42,0.04)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-md transition-all flex flex-col justify-between">
                 <div>
-                  <span className="text-xs font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                    {trans('Monsoon Teleconnection', 'मानसून अंतर्संबंध')}
-                  </span>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-950 mt-1.5">
-                    {trans('How Polar Sea Ice Modulates the Indian Monsoon', 'ध्रुवीय समुद्री बर्फ भारतीय मानसून को कैसे प्रभावित करती है')}
+                  <div className="text-2xl mb-3">🌧️</div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white">
+                    {trans('Antarctica Modulates Indian Rainfall', 'अंटार्कटिका से नियंत्रित होता है भारतीय मानसून')}
                   </h3>
-                  <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-2.5">
                     {trans(
-                      '"Variations in Southern Ocean sea surface temperatures alter the position of the Intertropical Convergence Zone (ITCZ). Changes in Antarctic sea ice propagate northward through the Mascarene High, modulating cross-equatorial moisture transport and the strength of India’s Southwest Monsoon."',
-                      '"दक्षिणी महासागर के समुद्री सतह तापमान में विविधता अंतर-उष्णकटिबंधीय अभिसरण क्षेत्र (ITCZ) की स्थिति को बदलती है। अंटार्कटिक समुद्री बर्फ में परिवर्तन मस्करेन हाई के माध्यम से उत्तर की ओर बढ़ता है, जिससे भारत के दक्षिण-पश्चिम मानसून की नमी और तीव्रता प्रभावित होती है।"'
+                      'Antarctic sea ice cold surges propagate across the equator, directly regulating the Mascarene High pressure cell that pushes moisture toward the Indian subcontinent.',
+                      'अंटार्कटिका में समुद्री बर्फ के बदलाव मस्करेन हाई दबाव को बदलते हैं, जो भारत में मानसूनी बारिश लाने वाली प्रमुख मौसमी प्रणाली है।'
                     )}
                   </p>
-                  <div className="mt-3 text-xs font-mono text-slate-500 flex flex-wrap items-center justify-between gap-2">
-                    <span>{trans('— NCPOR Polar Climate Dynamics Group', '— एनसीपीओआर ध्रुवीय जलवायु गतिशीलता समूह')}</span>
-                    <a
-                      href="https://nsidc.org/data/seaice_index"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sky-700 hover:text-sky-900 hover:underline inline-flex items-center gap-1 font-semibold"
-                    >
-                      <span>{trans('NSIDC Sea Ice Index', 'एनएसआईडीसी इंडेक्स')}</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
                 </div>
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
+                  <Link to="/datasets" className="text-xs font-semibold text-cyan-700 dark:text-cyan-400 hover:underline inline-flex items-center gap-1">
+                    <span>Explore Teleconnection Data →</span>
+                  </Link>
+                </div>
+              </div>
 
-                <div className="mt-6 pt-5 border-t border-slate-200 flex items-center gap-3">
-                  <Link to="/datasets" className="btn-primary text-xs !py-2.5 flex-1 text-center">
-                    {trans('Browse 18 Datasets', '18 डेटासेट ब्राउज़ करें')} <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                  <Link to="/publications" className="btn-outline text-xs !py-2.5 flex-1 text-center">
-                    {trans('Peer Publications', 'सहकर्मी प्रकाशन')}
-                  </Link>
+              <div className="p-7 rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_4px_16px_rgba(15,23,42,0.04)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                  <div className="text-2xl mb-3">🏗️</div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white">
+                    {trans('Bharati’s 200 km/h Blizzard Envelope', '200 किमी/घंटा तूफानों का सामना करता भारती')}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-2.5">
+                    {trans(
+                      'Bharati is built on aerodynamic stilts wrapped in specialized thermal panels. Polar gales blow cleanly under the building, preventing snow drifts from burying the structure.',
+                      'भारती स्टेशन को विशेष खंभों पर ऊंचा उठाया गया है जिससे 200 किमी/घंटे की हवाएं इमारत के नीचे से सुरक्षित निकल जाती हैं।'
+                    )}
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
+                  <a
+                    href="https://ncpor.res.in/antarcticas/display/377-bharati"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-semibold text-cyan-700 dark:text-cyan-400 hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Station Architectural Dossier ↗</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="p-7 rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_4px_16px_rgba(15,23,42,0.04)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                  <div className="text-2xl mb-3">🌊</div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white">
+                    {trans('IndARC: 192m Deep Under Arctic Ice', 'आर्कटिक समुद्र में 192 मीटर नीचे IndARC')}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-2.5">
+                    {trans(
+                      'India operates IndARC, a multi-sensor mooring anchored 192m deep in Kongsfjorden fjord, recording Atlantic water intrusion year-round beneath frozen pack ice.',
+                      'भारत का IndARC रोबोटिक वेधशाला कोंग्सफजॉर्डन में 192 मीटर गहरे बर्फीले समुद्र के भीतर साल भर अटलांटिक धाराओं को रिकॉर्ड करता है।'
+                    )}
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
+                  <a
+                    href="https://ncpor.res.in/arctics/display/398-indarc"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-semibold text-cyan-700 dark:text-cyan-400 hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>IndARC Observatory Portal ↗</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -605,539 +884,249 @@ export default function Home() {
         </Container>
       </Section>
 
-      {/* 5. 44TH INDIAN ANTARCTIC EXPEDITION (EDITORIAL MAGAZINE SPREAD) */}
-      <Section className="bg-slate-50 border-t border-slate-200">
+      {/* ========================================================================= */}
+      {/* 5. INTERACTIVE 3D POLAR MAP SPOTLIGHT                                     */}
+      {/* ========================================================================= */}
+      <Section id="polar-map" className="py-16 sm:py-24 bg-[#edf5fb] dark:bg-[#07131e] border-b border-sky-200/70 dark:border-slate-800/80">
         <Container>
           <Reveal>
             <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                  {trans('Flagship Mission Dispatch', 'प्रमुख मिशन प्रेषण')}
+                <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-400 font-bold">
+                  {trans('Interactive 3D Projection', '3D इंटरैक्टिव मानचित्र')}
                 </span>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 mt-1">
-                  {trans('The 44th Indian Antarctic Expedition', '44वाँ भारतीय अंटार्कटिक अभियान')}
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 dark:text-white mt-2">
+                  {trans('Polar Stations & Voyage Tracks', 'ध्रुवीय स्टेशन एवं समुद्री मार्ग')}
                 </h2>
-              </div>
-              <Link to="/expeditions" className="btn-outline text-xs !py-2 !px-4">
-                {trans('Full 44-Expedition Archive', 'पूर्ण 44-अभियान पुरालेख')} <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {/* Asymmetric Magazine Spread: Authentic Vessel Image + Expedition Milestones */}
-            <div className="grid lg:grid-cols-[1.35fr_1fr] gap-8 items-stretch">
-              <div className="editorial-frame overflow-hidden group bg-slate-900 relative shadow-sm">
-                {/* Desktop / Tablet Viewport (sm and up) with full cinematic overlay */}
-                <div className="hidden sm:block relative aspect-[16/11] overflow-hidden">
-                  <img
-                    src={featuredExpedition.image}
-                    alt={featuredExpedition.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
-
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-white">
-                    <span className="bg-slate-900/80 px-2.5 py-1 rounded border border-white/10">
-                      {trans('MISSION:', 'मिशन:')} {featuredExpedition.shortTitle}
-                    </span>
-                    <span className="bg-slate-900/80 px-2.5 py-1 rounded border border-white/10">
-                      {trans('VESSEL:', 'पोत:')} {featuredExpedition.vessel}
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-6 left-6 right-6 text-white">
-                    <span className="font-mono text-xs text-sky-300 uppercase tracking-widest font-semibold">
-                      {trans('Southern Ocean & East Antarctica', 'दक्षिणी महासागर एवं पूर्वी अंटार्कटिका')}
-                    </span>
-                    <h3 className="font-display text-2xl sm:text-3xl font-bold mt-1 text-white">
-                      {isHindi ? '44वाँ भारतीय वैज्ञानिक अंटार्कटिक अभियान' : featuredExpedition.title}
-                    </h3>
-                    <p className="text-sm text-slate-300 mt-2 max-w-xl leading-relaxed">
-                      {isHindi
-                        ? 'दक्षिणी महासागर और पूर्वी अंटार्कटिका में आइस-शीट मॉडलिंग, वायुमंडलीय वेधशाला और समुद्री हिमनद विज्ञान का संचालन।'
-                        : featuredExpedition.overview}
-                    </p>
-
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      <Link
-                        to={`/expeditions/${featuredExpedition.id}`}
-                        className="btn bg-white hover:bg-sky-100 text-slate-950 font-semibold text-xs px-4 py-2.5 rounded-xl inline-flex items-center gap-1.5"
-                      >
-                        {trans('Open Expedition Logbook', 'अभियान लॉगबुक खोलें')} <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                      <Link
-                        to={`/publications?expedition=${featuredExpedition.id}`}
-                        className="btn bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2.5 rounded-xl border border-white/20"
-                      >
-                        {trans('Resulting Research', 'संबंधित शोध')}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mobile Viewport (< sm): Stacked image banner + clear readable content */}
-                <div className="sm:hidden">
-                  <div className="relative aspect-[16/9] overflow-hidden">
-                    <img
-                      src={featuredExpedition.image}
-                      alt={featuredExpedition.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[10px] font-mono text-white">
-                      <span className="bg-slate-900/85 px-2 py-0.5 rounded border border-white/10">
-                        {featuredExpedition.shortTitle}
-                      </span>
-                      <span className="bg-slate-900/85 px-2 py-0.5 rounded border border-white/10">
-                        {featuredExpedition.vessel}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-5 text-white bg-slate-950 space-y-2.5">
-                    <span className="font-mono text-[10px] text-sky-300 uppercase tracking-widest font-semibold block">
-                      {trans('Southern Ocean & East Antarctica', 'दक्षिणी महासागर एवं पूर्वी अंटार्कटिका')}
-                    </span>
-                    <h3 className="font-display text-xl font-bold text-white leading-snug">
-                      {isHindi ? '44वाँ भारतीय वैज्ञानिक अंटार्कटिक अभियान' : featuredExpedition.title}
-                    </h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {isHindi
-                        ? 'दक्षिणी महासागर और पूर्वी अंटार्कटिका में आइस-शीट मॉडलिंग और वेधशाला संचालन।'
-                        : featuredExpedition.overview}
-                    </p>
-                    <div className="pt-2 flex flex-wrap gap-2">
-                      <Link
-                        to={`/expeditions/${featuredExpedition.id}`}
-                        className="btn bg-white hover:bg-sky-100 text-slate-950 font-semibold text-xs px-3.5 py-2 rounded-lg inline-flex items-center gap-1.5"
-                      >
-                        {trans('Open Logbook', 'लॉगबुक खोलें')} <ArrowRight className="w-3 h-3" />
-                      </Link>
-                      <Link
-                        to={`/publications?expedition=${featuredExpedition.id}`}
-                        className="btn bg-white/10 hover:bg-white/20 text-white text-xs px-3.5 py-2 rounded-lg border border-white/20"
-                      >
-                        {trans('Research', 'शोध')}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Voyage Chronology & Objectives */}
-              <div className="flex flex-col gap-5 justify-between">
-                <div className="editorial-frame p-6 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold mb-3">
-                    {trans('Voyage Milestones (2024–2025)', 'यात्रा के प्रमुख पड़ाव (2024–2025)')}
-                  </div>
-                  <ol className="relative border-l border-slate-200 ml-2 space-y-3.5 my-1">
-                    {(isHindi ? [
-                      { date: 'नवंबर 2024', event: 'एमवी वासिली गोलोवनिन केप टाउन से रवाना' },
-                      { date: 'दिसंबर 2024', event: 'मैत्री बेस पर 44वें दल का आगमन एवं वैज्ञानिक उपकरणों की स्थापना' },
-                      { date: 'जनवरी 2025', event: 'लार्समैन हिल्स भारती स्टेशन पर समुद्री सीटीडी एवं कोरिंग' },
-                      { date: 'मार्च 2025', event: 'शीतकालीन दल की तैनाती एवं वापसी यात्रा' },
-                    ] : featuredExpedition.timeline.slice(0, 4)).map((t, i) => (
-                      <li key={t.date} className="pl-5">
-                        <span
-                          className={cn(
-                            'absolute -left-1.5 w-3 h-3 rounded-full border-2 border-white',
-                            i === 0 ? 'bg-sky-500' : 'bg-slate-300'
-                          )}
-                        />
-                        <div className="font-mono text-[10px] uppercase text-sky-800 font-semibold">
-                          {t.date}
-                        </div>
-                        <div className="text-xs font-medium text-slate-800 mt-0.5">{t.event}</div>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-
-                <div className="editorial-frame p-6 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold mb-3">
-                    {trans('Key Field Science Objectives', 'प्रमुख क्षेत्रीय वैज्ञानिक उद्देश्य')}
-                  </div>
-                  <ul className="space-y-2.5">
-                    {(isHindi ? [
-                      { title: 'क्रायोस्फेरिक आइस शीट कोरिंग', description: 'प्राचीन जलवायु और बर्फ पिघलने की दर का अध्ययन करने के लिए 100 मीटर फ़िर्न कोर का निष्कर्षण।' },
-                      { title: 'दक्षिणी महासागर हाइड्रोग्राफी', description: 'ध्रुवीय मोर्चों के पार तापमान और लवणता प्रोफाइल के लिए 24 गहरे सीटीडी कास्ट।' },
-                      { title: 'ग्रीनहाउस गैस एवं एरोसोल निगरानी', description: 'मैत्री वेधशाला में ब्लैक कार्बन और क्षोभमंडलीय ओजोन का निरंतर संवेदन।' },
-                    ] : featuredExpedition.highlights).map(h => (
-                      <li key={h.title} className="flex gap-2.5 text-xs">
-                        <span className="w-5 h-5 rounded-md bg-sky-100 text-sky-800 grid place-items-center shrink-0 font-bold text-[11px]">
-                          ✓
-                        </span>
-                        <div>
-                          <div className="font-bold text-slate-950">{h.title}</div>
-                          <div className="text-slate-600 mt-0.5">{h.description}</div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* 6. POLAR KNOWLEDGE REPOSITORY: DOCUMENT / ARCHIVE INTERFACE */}
-      <Section className="bg-white">
-        <Container>
-          <Reveal>
-            <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                  {trans('Open Research Archive', 'खुला शोध पुरालेख')}
-                </span>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 mt-1">
-                  {trans('Polar Knowledge Repository', 'ध्रुवीय ज्ञान रिपॉजिटरी')}
-                </h2>
-                <p className="text-sm text-slate-600 mt-1 max-w-xl">
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-xl">
                   {trans(
-                    'Technical reports, monographs, peer-reviewed journal papers, and policy records preserved for national research access.',
-                    'तकनीकी रिपोर्ट, शोध पत्र, मोनोग्राफ और नीति दस्तावेज राष्ट्रीय अनुसंधान उपयोग हेतु संरक्षित।'
+                    'Inspect sovereign Indian bases, international partner stations, and maritime voyage corridors connecting Goa and Cape Town to Antarctica and Svalbard.',
+                    'भारतीय अनुसंधान केंद्रों, अंतर्राष्ट्रीय स्टेशनों और गोवा व केप टाउन से अंटार्कटिका व स्वालबार्ड तक समुद्री मार्गों का 3D में अन्वेषण करें।'
                   )}
                 </p>
               </div>
 
-              {/* Category Filter Pills */}
-              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 overflow-x-auto no-scrollbar max-w-full shrink-0">
-                <button
-                  onClick={() => setKnowledgeCategory('all')}
-                  className={cn(
-                    'px-3 py-1.5 rounded-lg text-xs font-medium transition',
-                    knowledgeCategory === 'all'
-                      ? 'bg-white text-slate-950 font-bold shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  )}
-                >
-                  {trans('All', 'सभी')}
-                </button>
-                <button
-                  onClick={() => setKnowledgeCategory('reports')}
-                  className={cn(
-                    'px-3 py-1.5 rounded-lg text-xs font-medium transition',
-                    knowledgeCategory === 'reports'
-                      ? 'bg-white text-slate-950 font-bold shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  )}
-                >
-                  {trans('Reports', 'रिपोर्ट्स')}
-                </button>
-                <button
-                  onClick={() => setKnowledgeCategory('papers')}
-                  className={cn(
-                    'px-3 py-1.5 rounded-lg text-xs font-medium transition',
-                    knowledgeCategory === 'papers'
-                      ? 'bg-white text-slate-950 font-bold shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  )}
-                >
-                  {trans('Papers', 'शोध पत्र')}
-                </button>
-                <button
-                  onClick={() => setKnowledgeCategory('datasets')}
-                  className={cn(
-                    'px-3 py-1.5 rounded-lg text-xs font-medium transition',
-                    knowledgeCategory === 'datasets'
-                      ? 'bg-white text-slate-950 font-bold shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  )}
-                >
-                  {trans('Datasets', 'डेटासेट्स')}
-                </button>
-              </div>
-            </div>
-
-            {/* Document/Archive Interface (Subtle Separators, Not Floating Cards) */}
-            <div className="border border-slate-200 rounded-2xl divide-y divide-slate-100 overflow-hidden bg-white">
-              {filteredKnowledge.map(k => (
-                <Link
-                  key={k.id}
-                  to={`/knowledge/${k.id}`}
-                  className="p-5 sm:p-6 hover:bg-slate-50/80 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4 group"
-                >
-                  <div className="max-w-3xl space-y-1.5">
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                      <span className="px-2 py-0.5 rounded bg-sky-50 text-sky-800 font-semibold border border-sky-200">
-                        {k.type}
-                      </span>
-                      <span className="text-slate-400">·</span>
-                      <span className="text-slate-500">{k.category}</span>
-                      <span className="text-slate-400">·</span>
-                      <span className="text-slate-500">{k.year}</span>
-                    </div>
-                    <h3 className="font-display text-lg sm:text-xl font-bold text-slate-950 group-hover:text-sky-700 transition-colors">
-                      {k.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2">
-                      {k.excerpt}
-                    </p>
-                    <div className="text-xs text-slate-400 font-mono pt-0.5">
-                      {trans('Lead:', 'प्रमुख:')} {k.author}
-                    </div>
-                  </div>
-
-                  <div className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-sky-700 group-hover:translate-x-1 transition-transform">
-                    <span>{trans('Read Document', 'दस्तावेज़ पढ़ें')}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-6 text-center">
               <Link
-                to="/knowledge"
-                className="btn-outline text-xs !py-2.5 !px-5 inline-flex items-center gap-1.5"
+                to="/explore"
+                className="btn bg-slate-950 hover:bg-slate-900 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400 text-white font-semibold text-xs !py-3 !px-5 rounded-xl shadow-sm inline-flex items-center gap-2 shrink-0"
               >
-                {trans(`Search Complete Polar Knowledge Index (${knowledgeItems.length} Artifacts)`, `संपूर्ण ध्रुवीय ज्ञान अनुक्रमणिका खोजें (${knowledgeItems.length} प्रविष्टियाँ)`)} <ArrowRight className="w-3.5 h-3.5" />
+                <Globe2 className="w-4 h-4 text-cyan-400 dark:text-slate-950 group-hover:rotate-45 transition-transform duration-500" />
+                <span>{trans('Full Screen Map Mode', 'पूर्ण स्क्रीन मानचित्र')}</span>
               </Link>
+            </div>
+
+            {/* Polar Map container in Apple-like clean viewport */}
+            <div className="rounded-3xl bg-white/90 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] overflow-hidden p-2 sm:p-3">
+              <PolarMap />
             </div>
           </Reveal>
         </Container>
       </Section>
 
-      {/* 7. DUAL-LENS LEARNING LABORATORY (SIH SMART EDUCATION THEME) */}
-      <Section className="bg-slate-50 border-y border-slate-200">
+      {/* ========================================================================= */}
+      {/* 6. OBSERVATIONAL CLIMATOLOGY & SEA ICE DATA STORY                         */}
+      {/* ========================================================================= */}
+      <Section className="py-16 sm:py-24 bg-gradient-to-b from-[#edf5fb] via-[#e2f0fa] to-[#edf5fb] dark:from-[#07131e] dark:via-[#091724] dark:to-[#07131e] border-b border-sky-200/70 dark:border-slate-800/80">
         <Container>
           <Reveal>
-            <div className="editorial-frame p-6 sm:p-10 bg-white">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+            <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-sky-200/70 dark:border-slate-800">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-400 font-bold">
+                  {trans('Satellite Telemetry Baseline', 'उपग्रह अवलोकन')}
+                </span>
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 dark:text-white mt-2">
+                  {trans('Southern Ocean Sea-Ice Climatology', 'दक्षिणी महासागर समुद्री बर्फ विस्तार')}
+                </h2>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-xl">
+                  {trans(
+                    'Monthly observational extent compared against the 1981–2010 satellite baseline.',
+                    '1981–2010 के ऐतिहासिक उपग्रह औसत की तुलना में वर्तमान समुद्री बर्फ क्षेत्र का अवलोकन।'
+                  )}
+                </p>
+              </div>
+
+              <div className="flex items-baseline gap-5 bg-white/95 dark:bg-slate-900 backdrop-blur-md p-4 rounded-2xl border border-sky-200/90 dark:border-slate-800 shadow-2xs shrink-0">
                 <div>
-                  <div className="text-xs font-mono tracking-wider uppercase text-sky-800 font-semibold flex items-center gap-2">
-                    <GraduationCap className="w-4 h-4 text-sky-600" />
-                    {trans('SIH 2026 Theme · Smart Education', 'एसआईएच 2026 थीम · स्मार्ट शिक्षा')}
+                  <div className="text-[10px] font-mono uppercase text-slate-400">Seasonal Min</div>
+                  <div className="font-display text-3xl font-extrabold text-slate-950 dark:text-white">
+                    13.8 <span className="text-sm font-sans font-normal text-slate-500 dark:text-slate-400">M km²</span>
                   </div>
-                  <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-950 mt-1.5">
-                    {trans('Dual-Lens Learning Laboratory', 'द्वि-स्तरीय शिक्षण प्रयोगशाला')}
-                  </h2>
-                  <p className="text-sm text-slate-600 max-w-2xl mt-1.5 leading-relaxed">
+                </div>
+                <div className="border-l border-slate-200 dark:border-slate-800 pl-4">
+                  <div className="text-[10px] font-mono uppercase text-cyan-800 dark:text-cyan-400 font-semibold">Baseline Anomaly</div>
+                  <div className="font-display text-xl font-bold text-cyan-600 dark:text-cyan-400">
+                    -0.8 <span className="text-xs font-sans font-normal text-slate-500 dark:text-slate-400">M km²</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-[1.5fr_1fr] gap-8 items-stretch">
+              <div className="p-6 rounded-3xl bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 shadow-xs">
+                <LineChart
+                  badge={trans('NSIDC / NCPOR OBSERVATIONS', 'एनएसआईडीसी / एनसीपीओआर अवलोकन')}
+                  title={trans('Monthly Observational Sea-Ice Extent', 'मासिक अवलोकित समुद्री बर्फ विस्तार')}
+                  subtitle={trans(
+                    'Comparison between 2024–2025 measurements and the 1981–2010 satellite climatological baseline.',
+                    '2024–2025 के मापों और 1981–2010 के उपग्रह जलवायु आधार रेखा की तुलना।'
+                  )}
+                  source={trans('1981–2010 Baseline', '1981–2010 आधार रेखा')}
+                  unit={trans(' M km²', ' मि. वर्ग किमी')}
+                  data={seaIceCurrent}
+                  baseline={seaIceBaseline}
+                  height={260}
+                  yLabel={trans('Million Square Kilometers (M km²)', 'मिलियन वर्ग किमी')}
+                  accent="#0284c7"
+                />
+              </div>
+
+              <div className="p-7 rounded-3xl bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-400 font-bold">
+                    {trans('Monsoon Teleconnection', 'जलवायु अंतर्संबंध')}
+                  </span>
+                  <h3 className="font-display text-xl font-bold text-slate-950 dark:text-white mt-1.5">
+                    {trans('How Polar Ice Modulates India’s Rain', 'ध्रुवीय बर्फ भारतीय वर्षा को कैसे नियंत्रित करती है')}
+                  </h3>
+                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     {trans(
-                      'Calibrate polar science concepts dynamically: choose foundational explanations for school students, or rigorous technical descriptions for university researchers.',
-                      'ध्रुवीय विज्ञान के सिद्धांतों को अनुकूलित करें: स्कूली छात्रों के लिए सरल व्याख्या, अथवा विश्वविद्यालयी शोधकर्ताओं के लिए गूढ़ तकनीकी विवरण चुनें।'
+                      '"Variations in Southern Ocean ice alter the position of the Intertropical Convergence Zone (ITCZ). Changes propagate northward across the equator, modulating cross-equatorial moisture transport for the Indian Monsoon."',
+                      '"दक्षिणी महासागर की बर्फ में परिवर्तन भूमध्य रेखा के पार नमी परिवहन को प्रभावित करते हैं, जिससे भारत के दक्षिण-पश्चिम मानसून की तीव्रता निर्धारित होती है।"'
+                    )}
+                  </p>
+                  <div className="mt-4 text-xs font-mono text-slate-500 dark:text-slate-400 flex items-center justify-between">
+                    <span>— NCPOR Polar Climate Group</span>
+                    <a
+                      href="https://nsidc.org/data/seaice_index"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-cyan-700 dark:text-cyan-400 hover:text-cyan-900 dark:hover:text-cyan-300 font-semibold inline-flex items-center gap-1"
+                    >
+                      <span>NSIDC Index ↗</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                  <Link to="/datasets" className="btn bg-slate-950 hover:bg-slate-900 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400 text-white font-semibold text-xs !py-3 flex-1 text-center rounded-xl shadow-xs">
+                    {trans('Browse 18 Datasets', '18 डेटासेट देखें')} →
+                  </Link>
+                  <Link to="/publications" className="btn bg-white hover:bg-sky-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-sky-200 dark:border-slate-700 text-xs !py-3 flex-1 text-center font-semibold rounded-xl">
+                    {trans('Peer Papers', 'शोध पत्र')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* ========================================================================= */}
+      {/* 7. DUAL-LENS SMART EDUCATION (SIH 2026 THEME SHOWCASE)                    */}
+      {/* ========================================================================= */}
+      <Section className="py-16 sm:py-24 bg-[#edf5fb] dark:bg-[#07131e] border-b border-sky-200/70 dark:border-slate-800/80">
+        <Container>
+          <Reveal>
+            <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[#e4f2fb] via-sky-50/80 to-white dark:from-slate-900 dark:via-[#091724] dark:to-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-sm dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-sky-200/70 dark:border-slate-800">
+                <div>
+                  <div className="text-xs font-mono tracking-wider uppercase text-cyan-700 dark:text-cyan-400 font-bold flex items-center gap-2">
+                    <GraduationCap className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                    {trans('SIH 2026 Problem ID: 26063 · Smart Education Lab', 'स्मार्ट शिक्षा प्रयोगशाला · एसआईएच 2026')}
+                  </div>
+                  <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-950 dark:text-white mt-2">
+                    {trans('Dual-Lens Adaptive Learning', 'द्वि-स्तरीय अनुकूलित शिक्षण')}
+                  </h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 max-w-2xl mt-1.5 leading-relaxed">
+                    {trans(
+                      'Dynamically calibrate polar science: switch between foundational intuition for school students and rigorous thermodynamic formulations for researchers.',
+                      'स्कूली छात्रों के लिए सरल व रोचक व्याख्या, अथवा शोधकर्ताओं के लिए गूढ़ वैज्ञानिक समीकरण — एक क्लिक में स्विच करें।'
                     )}
                   </p>
                 </div>
 
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-                  <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="inline-flex p-1 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 shadow-2xs">
                     <button
                       onClick={() => setEduMode('simple')}
                       className={cn(
-                        'px-3.5 py-2 rounded-lg text-xs font-semibold transition',
+                        'px-4 py-2 rounded-lg text-xs font-semibold transition-all',
                         eduMode === 'simple'
-                          ? 'bg-slate-950 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-slate-950 text-white dark:bg-sky-500 dark:text-slate-950 shadow-xs font-bold'
+                          : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
                       )}
                     >
-                      {trans('Foundational (Student)', 'बुनियादी (छात्र)')}
+                      {trans('Foundational (Student)', 'सरल व्याख्या (छात्र)')}
                     </button>
                     <button
                       onClick={() => setEduMode('scientific')}
                       className={cn(
-                        'px-3.5 py-2 rounded-lg text-xs font-semibold transition',
+                        'px-4 py-2 rounded-lg text-xs font-semibold transition-all',
                         eduMode === 'scientific'
-                          ? 'bg-slate-950 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-slate-950 text-white dark:bg-sky-500 dark:text-slate-950 shadow-xs font-bold'
+                          : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
                       )}
                     >
                       {trans('Scientific (Researcher)', 'वैज्ञानिक (शोधकर्ता)')}
                     </button>
                   </div>
-                  <Link to="/education" className="btn-primary text-xs !py-2">
-                    {trans('All Modules', 'सभी मॉड्यूल')} <ArrowRight className="w-3.5 h-3.5" />
+                  <Link to="/education" className="btn bg-slate-950 hover:bg-slate-900 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400 text-white font-semibold text-xs !py-2.5 px-4 rounded-xl shadow-xs inline-flex items-center gap-1.5">
+                    {trans('Enter Lab', 'लैब खोलें')} <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               </div>
 
-              {/* Interactive Dual-Lens Calibration Preview */}
-              <div className="mt-8 grid lg:grid-cols-[1.4fr_1fr] gap-8 items-stretch">
-                <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                  <div>
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                      {trans('Curriculum Chapter Preview', 'पाठ्यक्रम अध्याय पूर्वावलोकन')}
-                    </div>
-                    <h3 className="font-display text-xl font-bold text-slate-950 mt-1">
-                      {trans('Why the Poles Are Cold: Solar Angles & Albedo Feedback', 'ध्रुव इतने ठंडे क्यों हैं: सूर्य के कोण एवं एल्बिडो प्रभाव')}
-                    </h3>
-
-                    <div className="mt-4 p-5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold mb-2">
-                        {eduMode === 'simple'
-                          ? trans('STUDENT & PUBLIC EXPLANATION', 'छात्र एवं जनसाधारण स्पष्टीकरण')
-                          : trans('ACADEMIC SCIENTIFIC EXPLANATION', 'अकादमिक वैज्ञानिक व्याख्या')}
-                      </div>
-                      <p className="text-sm text-slate-800 leading-relaxed font-normal">
-                        {eduMode === 'simple'
-                          ? trans(
-                              'The poles receive sunlight at a sharp, slanted angle. This spreads the exact same solar energy over a much wider surface area than at the equator. In addition, pristine white snow reflects up to 90% of incoming sunlight straight back into space like a giant mirror.',
-                              'ध्रुवों पर सूर्य की किरणें अत्यंत तिरछे कोण पर पहुँचती हैं। इससे भूमध्य रेखा की तुलना में समान सौर ऊर्जा बहुत बड़े क्षेत्र में फैल जाती है। इसके अलावा, धवल श्वेत बर्फ एक विशाल दर्पण की तरह आने वाली 90% धूप को अंतरिक्ष में वापस परावर्तित कर देती है।'
-                            )
-                          : trans(
-                              'High polar solar zenith angles attenuate insolation per unit horizontal surface area due to geometric spread and longer atmospheric pathlengths. Combined with a planetary snow and sea-ice albedo of 0.80 to 0.90, net radiative deficits persist across polar latitudes year-round.',
-                              'उच्च ध्रुवीय सौर चरम कोण ज्यामितीय प्रसार और लंबे वायुमंडलीय पथ के कारण प्रति इकाई क्षैतिज सतह क्षेत्र में आतपन को कम करते हैं। 0.80 से 0.90 के ग्रह हिम और समुद्री बर्फ एल्बिडो के संयोजन से, ध्रुवीय अक्षांशों पर वर्ष भर शुद्ध विकिरण घाटा बना रहता है।'
-                            )}
-                      </p>
-                    </div>
+              <div className="mt-8 grid lg:grid-cols-2 gap-8 items-center">
+                <div className="p-6 sm:p-7 rounded-2xl bg-white/95 dark:bg-slate-950/70 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 shadow-xs space-y-3">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-700 dark:text-cyan-400 font-bold">
+                    {eduMode === 'simple'
+                      ? trans('STUDENT LENS · EVERYDAY INTUITION', 'छात्र स्तर · सहज उदाहरण')
+                      : trans('RESEARCHER LENS · THERMODYNAMIC FORMULATION', 'शोधकर्ता स्तर · अकादमिक व्याख्या')}
                   </div>
-
-                  <div className="mt-4 flex items-center justify-between text-xs">
-                    <span className="font-mono text-slate-500">{trans('Linked to 44th ISEA radiation datasets', '44वें आईएसईए सौर विकिरण डेटासेट से संबद्ध')}</span>
-                    <Link to="/education" className="text-sky-800 font-bold hover:underline">
-                      {trans('Take Chapter Quiz →', 'अध्याय प्रश्नोत्तरी हल करें →')}
+                  <h3 className="font-display text-xl font-bold text-slate-950 dark:text-white">
+                    {trans('Why Are The Poles Cold? Solar Angles & Albedo', 'ध्रुव इतने ठंडे क्यों हैं? सूर्य के कोण और एल्बिडो')}
+                  </h3>
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed pt-1">
+                    {eduMode === 'simple'
+                      ? trans(
+                          'The poles receive sunlight at a sharp, slanted angle. This spreads the exact same heat over a huge surface area. Pristine white snow also acts like a giant mirror, bouncing up to 90% of sunlight right back into space.',
+                          'ध्रुवों पर सूरज की किरणें तिरछी पड़ती हैं, जिससे सौर ऊर्जा बहुत बड़े क्षेत्र में फैल जाती है। इसके अलावा, चमकदार सफेद बर्फ एक विशाल शीशे की तरह 90% धूप को सीधे अंतरिक्ष में वापस परावर्तित कर देती है।'
+                        )
+                      : trans(
+                          'High polar solar zenith angles attenuate insolation per unit horizontal surface area due to geometric spread and longer atmospheric pathlengths. Combined with a planetary snow and sea-ice albedo of 0.80 to 0.90, net radiative deficits persist across polar latitudes year-round.',
+                          'उच्च ध्रुवीय सौर चरम कोण ज्यामितीय प्रसार और लंबे वायुमंडलीय पथ के कारण प्रति इकाई सतह क्षेत्र में आतपन को कम करते हैं। 0.80 से 0.90 के बर्फ एल्बिडो के कारण ध्रुवीय अक्षांशों पर शुद्ध विकिरण घाटा बना रहता है।'
+                        )}
+                  </p>
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <span className="text-slate-500 dark:text-slate-400 font-mono">Linked to 44th ISEA Radiation Sensors</span>
+                    <Link to="/education" className="text-cyan-700 dark:text-cyan-400 font-bold hover:underline">
+                      {trans('Take Comprehension Quiz →', 'प्रश्नोत्तरी हल करें →')}
                     </Link>
                   </div>
                 </div>
 
-                {/* 3-Step Educational Framework */}
-                <div className="space-y-3 flex flex-col justify-between">
-                  <div className="p-4 rounded-xl border border-slate-200 bg-white">
-                    <div className="font-display font-bold text-slate-950 text-sm flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-800 grid place-items-center text-xs font-bold">1</span>
-                      <span>{trans('Dual-Lens Calibration', 'द्वि-स्तरीय अनुकूलन')}</span>
-                    </div>
-                    <p className="text-xs text-slate-600 mt-1 pl-7">
-                      {trans(
-                        'Accessible explanations for middle schools; rigorous thermodynamic formulations for university scholars.',
-                        'माध्यमिक विद्यालयों के लिए सुगम व्याख्या; शोधकर्ताओं के लिए सटीक थर्मोडायनामिक समीकरण।'
-                      )}
-                    </p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-slate-200 bg-white">
-                    <div className="font-display font-bold text-slate-950 text-sm flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-800 grid place-items-center text-xs font-bold">2</span>
-                      <span>{trans('Linked In-Situ Evidence', 'प्रत्यक्ष जमीनी साक्ष्य')}</span>
-                    </div>
-                    <p className="text-xs text-slate-600 mt-1 pl-7">
-                      {trans(
-                        'Every module is tied directly to real Indian expeditions, research stations, and open datasets.',
-                        'प्रत्येक मॉड्यूल वास्तविक भारतीय अभियानों, शोध केंद्रों और खुले डेटासेट से सीधे जुड़ा है।'
-                      )}
-                    </p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-slate-200 bg-white">
-                    <div className="font-display font-bold text-slate-950 text-sm flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-800 grid place-items-center text-xs font-bold">3</span>
-                      <span>{trans('Polar Scholar Certification', 'ध्रुवीय विद्वान प्रमाणन')}</span>
-                    </div>
-                    <p className="text-xs text-slate-600 mt-1 pl-7">
-                      {trans(
-                        'Interactive conceptual quizzes with instant verification and downloadable scholar completion badges.',
-                        'तत्काल परिणाम एवं डाउनलोड करने योग्य डिजिटल प्रमाणपत्र के साथ संवादात्मक प्रश्नोत्तरी।'
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* 8. AI SCIENCE COMMUNICATOR ENGINE (EDITORIAL TRANSFORMATION PIPELINE) */}
-      <Section className="bg-slate-950 text-white overflow-hidden relative">
-        <Container className="relative">
-          <Reveal>
-            <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10 items-center">
-              <div>
-                <div className="text-xs font-mono uppercase tracking-wider text-sky-400 font-semibold mb-2 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-                  {trans('AI Science Dissemination Pipeline', 'एआई विज्ञान प्रसार प्रणाली')}
-                </div>
-                <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-                  {trans('From Peer Review to Public Reach.', 'सहकर्मी समीक्षा से जन-जन तक।')}
-                </h2>
-                <p className="mt-4 text-slate-300 text-base leading-relaxed">
-                  {trans(
-                    'Bridge the gap between specialized cryospheric papers and public understanding. Transform technical expedition reports into calibrated classroom lessons, press releases, social digests, and video scripts.',
-                    'विशिष्ट क्रायोस्फेरिक शोध पत्रों और आम जनता की समझ के बीच की दूरी को मिटाएं। तकनीकी अभियान रिपोर्टों को कक्षा पाठों, प्रेस विज्ञप्तियों, सोशल मीडिया सारांशों और वीडियो स्क्रिप्ट में बदलें।'
-                  )}
-                </p>
-
-                {/* Clear 3-Stage Transformation Process */}
-                <div className="mt-6 space-y-3 text-xs font-mono text-slate-300">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-lg bg-sky-950 border border-sky-400/40 grid place-items-center text-sky-300 font-bold">
-                      1
-                    </span>
-                    <span>{trans('Technical Input: Research paper abstract, thesis, or expedition log', 'तकनीकी इनपुट: शोध पत्र सारांश, थीसिस या अभियान लॉगबुक')}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-lg bg-sky-950 border border-sky-400/40 grid place-items-center text-sky-300 font-bold">
-                      2
-                    </span>
-                    <span>{trans('Audience Calibration: Student, Educator, Researcher, or Media', 'लक्षित पाठक वर्ग: छात्र, शिक्षक, शोधकर्ता या मीडिया')}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-lg bg-sky-950 border border-sky-400/40 grid place-items-center text-sky-300 font-bold">
-                      3
-                    </span>
-                    <span>{trans('Multi-Channel Output: 5 dissemination-ready editorial formats', 'मल्टी-चैनल आउटपुट: 5 प्रसार-तैयार संपादकीय प्रारूप')}</span>
-                  </div>
-                </div>
-
-                <div className="mt-8 flex items-center gap-4">
-                  <Link
-                    to="/communicator"
-                    className="btn bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs px-5 py-3 rounded-xl inline-flex items-center gap-1.5"
-                  >
-                    {trans('Launch AI Communicator', 'एआई कम्यूनिकेटर शुरू करें')} <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                  <span className="text-[11px] font-mono text-slate-400">
-                    {trans('Rule-guided scientific accuracy', 'सटीक वैज्ञानिक नियमों पर आधारित')}
-                  </span>
-                </div>
-              </div>
-
-              {/* Sample Transformation Demonstration */}
-              <div className="editorial-frame border-white/10 bg-white/5 p-6 sm:p-7 space-y-4 shadow-lg">
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <span className="text-xs font-mono text-sky-300 uppercase tracking-widest font-semibold">
-                    {trans('Input: Maitri Atmospheric Science Paper', 'इनपुट: मैत्री वायुमंडलीय विज्ञान शोध पत्र')}
-                  </span>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(
-                        'Continuous equivalent black carbon (EBC) observations at Maitri demonstrate episodic long-range aerosol transport from biomass burning in Southern Africa.'
-                      )
-                      setCopiedAbstract(true)
-                      setTimeout(() => setCopiedAbstract(false), 1500)
-                    }}
-                    className="text-[10px] font-mono text-slate-400 hover:text-white flex items-center gap-1"
-                  >
-                    {copiedAbstract ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                    {copiedAbstract ? trans('COPIED', 'कॉपी किया') : trans('COPY', 'कॉपी')}
-                  </button>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-black/40 border border-white/10 text-xs font-mono text-slate-300 leading-relaxed">
-                  {trans(
-                    '"Continuous equivalent black carbon (EBC) observations at Maitri demonstrate episodic long-range aerosol transport from biomass burning in Southern Africa into pristine East Antarctica..."',
-                    '"मैत्री में निरंतर समकक्ष ब्लैक कार्बन (EBC) अवलोकन दक्षिणी अफ्रीका में बायोमास जलने से प्राचीन पूर्वी अंटार्कटिका में लंबी दूरी के एरोसोल परिवहन को प्रदर्शित करते हैं..."'
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <div className="text-[10px] font-mono text-sky-300 font-semibold uppercase tracking-wider">
-                      {trans('Student Explanation', 'छात्रों के लिए व्याख्या')}
-                    </div>
-                    <div className="text-slate-300 text-xs mt-1.5 leading-relaxed">
-                      {trans(
-                        '"Soot from forest fires thousands of miles away can travel across the ocean winds all the way to pristine Antarctic snow."',
-                        '"हजारों मील दूर जंगलों की आग से निकला धुआँ और कालिख समुद्री हवाओं के सहारे अंटार्कटिका की प्राचीन बर्फ तक पहुँच सकती है।"'
-                      )}
+                <div className="space-y-3">
+                  <div className="p-4 rounded-xl border border-sky-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-950/70 backdrop-blur-md shadow-2xs flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-slate-800 text-sky-950 dark:text-sky-300 border border-transparent dark:border-slate-700 grid place-items-center text-xs font-bold shrink-0">1</span>
+                    <div>
+                      <div className="text-xs font-bold text-slate-950 dark:text-white">{trans('Dual-Lens Adaptive Depth', 'द्वि-स्तरीय अनुकूलित शिक्षा')}</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">{trans('School students to university level in 1-click.', 'छात्रों से लेकर शोधकर्ताओं तक के लिए अनुकूल।')}</div>
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <div className="text-[10px] font-mono text-sky-300 font-semibold uppercase tracking-wider">
-                      {trans('Social / Media Digest', 'सोशल / मीडिया सारांश')}
+
+                  <div className="p-4 rounded-xl border border-sky-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-950/70 backdrop-blur-md shadow-2xs flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-slate-800 text-sky-950 dark:text-sky-300 border border-transparent dark:border-slate-700 grid place-items-center text-xs font-bold shrink-0">2</span>
+                    <div>
+                      <div className="text-xs font-bold text-slate-950 dark:text-white">{trans('Ground Truth Data Linking', 'प्रत्यक्ष इन-सिटू साक्ष्य')}</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">{trans('Every lesson points to real station datasets.', 'प्रत्येक पाठ वास्तविक स्टेशन डेटा से जुड़ा है।')}</div>
                     </div>
-                    <div className="text-slate-300 text-xs mt-1.5 leading-relaxed">
-                      {trans(
-                        '"Why does Antarctica have smoke particles? Indian scientists at Maitri track long-range southern hemisphere winds. ❄️🌏"',
-                        '"अंटार्कटिका में धुएं के कण कैसे पहुंचे? मैत्री स्टेशन पर भारतीय वैज्ञानिक दक्षिणी गोलार्ध की लंबी दूरी की हवाओं को ट्रैक कर रहे हैं। ❄️🌏"'
-                      )}
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-sky-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-950/70 backdrop-blur-md shadow-2xs flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-slate-800 text-sky-950 dark:text-sky-300 border border-transparent dark:border-slate-700 grid place-items-center text-xs font-bold shrink-0">3</span>
+                    <div>
+                      <div className="text-xs font-bold text-slate-950 dark:text-white">{trans('Polar Scholar Certification', 'ध्रुवीय विद्वान प्रमाणन')}</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">{trans('Pass interactive quizzes to earn your badge.', 'प्रश्नोत्तरी उत्तीर्ण कर डिजिटल बैज प्राप्त करें।')}</div>
                     </div>
                   </div>
                 </div>
@@ -1147,109 +1136,103 @@ export default function Home() {
         </Container>
       </Section>
 
-      {/* 9. VISUAL DISPATCHES: ASYMMETRICAL EDITORIAL PHOTOGRAPHY GRID */}
-      <Section className="bg-white">
+      {/* ========================================================================= */}
+      {/* 8. PLATFORM GATEWAY WORKFLOWS (LINEAR-STYLE REFINED CARDS)                 */}
+      {/* ========================================================================= */}
+      <Section className="py-16 sm:py-24 bg-gradient-to-b from-[#edf5fb] via-[#e2f0fa] to-[#edf5fb] dark:from-[#07131e] dark:via-[#091724] dark:to-[#07131e] border-b border-sky-200/70 dark:border-slate-800/80">
         <Container>
           <Reveal>
-            <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-sky-800 font-semibold">
-                  {trans('Visual Science Archive', 'दृश्य विज्ञान पुरालेख')}
-                </span>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 mt-1">
-                  {trans('Dispatches From the Ice', 'बर्फ के मैदानों से प्रेषण')}
-                </h2>
-              </div>
-              <Link to="/media" className="btn-outline text-xs !py-2 !px-4">
-                {trans('Open Full Media Gallery', 'पूर्ण मीडिया गैलरी खोलें')} <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-400 font-bold">
+                {trans('Explore Platform', 'मंच का अन्वेषण')}
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 dark:text-white mt-2">
+                {trans('Everything You Can Explore in POLARIS', 'पोलारिस में क्या-क्या उपलब्ध है')}
+              </h2>
             </div>
 
-            {/* Asymmetrical Photo Grid with Authentic Polar Science Imagery */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Feature Hero Photo (Ice Core Examination) */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <Link
-                to="/media"
-                className="group relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 md:col-span-2 aspect-[16/10] shadow-2xs"
+                to="/expeditions"
+                className="group p-6 rounded-3xl bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all flex flex-col justify-between"
               >
-                <img
-                  src={IMG.iceCore}
-                  alt="Scientist examines an ice core"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-sky-300 font-semibold">
-                    {trans('Cryosphere Glaciology', 'क्रायोस्फीयर हिमनद विज्ञान')}
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-slate-800 text-slate-900 dark:text-sky-300 border border-sky-200 dark:border-slate-700 grid place-items-center font-bold mb-4 group-hover:scale-110 group-hover:bg-cyan-50 dark:group-hover:bg-slate-700 group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-all">
+                    <Compass className="w-5 h-5 animate-spin-slow" />
                   </div>
-                  <div className="text-base font-bold mt-0.5">
-                    {trans('Ice Core Paleoclimate Extraction & Stratigraphy', 'आइस कोर प्राचीन जलवायु निष्कर्षण एवं स्तरिकी')}
-                  </div>
-                  <div className="text-xs text-slate-300 mt-0.5">
-                    {trans('Analyzing trapped atmospheric gases to reconstruct ancient monsoon cycles.', 'प्राचीन मानसूनी चक्रों के पुनर्निर्माण के लिए फंसी वायुमंडलीय गैसों का विश्लेषण।')}
-                  </div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
+                    {trans('Polar Expeditions', 'ध्रुवीय अभियान')}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                    {trans('1st to 44th annual Antarctic campaigns, Arctic IndARC logs, and Southern Ocean voyages.', '1 से 44वें अंटार्कटिक और आर्कटिक अभियानों का संपूर्ण इतिहास।')}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-cyan-700 dark:text-cyan-400">
+                  <span>{trans('44 Missions', '44 अभियान')}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
 
-              {/* Supporting Photo 1 (Bharati Modular Station) */}
               <Link
-                to="/media"
-                className="group relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 aspect-[16/10] shadow-2xs"
+                to="/datasets"
+                className="group p-6 rounded-3xl bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all flex flex-col justify-between"
               >
-                <img
-                  src={IMG.bharati}
-                  alt="Bharati Antarctic station"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-sky-300 font-semibold">
-                    {trans('Larsemann Hills, East Antarctica', 'लार्समैन हिल्स, पूर्वी अंटार्कटिका')}
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-slate-800 text-slate-900 dark:text-sky-300 border border-sky-200 dark:border-slate-700 grid place-items-center font-bold mb-4 group-hover:scale-110 group-hover:bg-cyan-50 dark:group-hover:bg-slate-700 group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-all">
+                    <Database className="w-5 h-5" />
                   </div>
-                  <div className="text-sm font-bold mt-0.5">{trans('Bharati Polar Station', 'भारती ध्रुवीय स्टेशन')}</div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
+                    {trans('Open Datasets', 'खुले डेटासेट्स')}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                    {trans('Atmospheric black carbon, ocean CTD depth profiles, and sea ice concentrations.', 'ब्लैक कार्बन, सीटीडी समुद्र विज्ञान और समुद्री बर्फ के खुले डेटासेट।')}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-cyan-700 dark:text-cyan-400">
+                  <span>{trans('Verified NPDC', 'एनपीडीसी सत्यापित')}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
 
-              {/* Supporting Photo 2 (Kongsfjorden Glacier Front) */}
               <Link
-                to="/media"
-                className="group relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 aspect-[16/10] shadow-2xs"
+                to="/communicator"
+                className="group p-6 rounded-3xl bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all flex flex-col justify-between"
               >
-                <img
-                  src={IMG.glacier}
-                  alt="Kongsfjorden glacier front"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-sky-300 font-semibold">
-                    {trans('Svalbard, High Arctic', 'स्वालबार्ड, उच्च आर्कटिक')}
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-slate-800 text-slate-900 dark:text-sky-300 border border-sky-200 dark:border-slate-700 grid place-items-center font-bold mb-4 group-hover:scale-110 group-hover:bg-cyan-50 dark:group-hover:bg-slate-700 group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-all">
+                    <Sparkles className="w-5 h-5" />
                   </div>
-                  <div className="text-sm font-bold mt-0.5">{trans('Kongsfjorden Fjord Glacier Calving', 'कोंग्सफजॉर्डन फ्योर्ड हिमनद विखंडन')}</div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
+                    {trans('AI Communicator', 'एआई विज्ञान संवादक')}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                    {trans('Translate complex research papers into lessons, social posts, and video scripts in seconds.', 'जटिल वैज्ञानिक शोध पत्रों को सरल भाषा और वीडियो स्क्रिप्ट में बदलें।')}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-cyan-700 dark:text-cyan-400">
+                  <span>{trans('Rule-Guided AI', 'एआई अनुवादक')}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
 
-              {/* Supporting Photo 3 (Historical Dakshin Gangotri) */}
               <Link
                 to="/media"
-                className="group relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 md:col-span-2 aspect-[16/10] shadow-2xs"
+                className="group p-6 rounded-3xl bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all flex flex-col justify-between"
               >
-                <img
-                  src={IMG.dakshinGangotri}
-                  alt="Dakshin Gangotri station archive"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-sky-300 font-semibold">
-                    {trans('Historical National Archive', 'ऐतिहासिक राष्ट्रीय पुरालेख')}
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-slate-800 text-slate-900 dark:text-sky-300 border border-sky-200 dark:border-slate-700 grid place-items-center font-bold mb-4 group-hover:scale-110 group-hover:bg-cyan-50 dark:group-hover:bg-slate-700 group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-all">
+                    <Eye className="w-5 h-5" />
                   </div>
-                  <div className="text-base font-bold mt-0.5">
-                    {trans('Dakshin Gangotri: India’s First Permanent Antarctic Base (1983)', 'दक्षिण गंगोत्री: भारत का पहला स्थायी अंटार्कटिक बेस (1983)')}
-                  </div>
-                  <div className="text-xs text-slate-300 mt-0.5">
-                    {trans('Constructed during the 3rd Indian Antarctic Expedition on the ice shelf.', 'हिम शेल्फ़ पर तीसरे भारतीय अंटार्कटिक अभियान के दौरान निर्मित।')}
-                  </div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
+                    {trans('Media & Photos', 'मीडिया एवं छायाचित्र')}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                    {trans('Authentic expedition photo archive, ice sheet operations, and field dispatches.', 'भारतीय अभियानों के वास्तविक छायाचित्र, आइस शीट ऑपरेशन और वीडियो।')}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-cyan-700 dark:text-cyan-400">
+                  <span>{trans('View Gallery', 'गैलरी देखें')}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             </div>
@@ -1257,50 +1240,52 @@ export default function Home() {
         </Container>
       </Section>
 
-      {/* 10. INSTITUTIONAL CALL-TO-ACTION */}
-      <section className="bg-slate-950 text-white py-16 sm:py-20 border-t border-slate-800">
-        <Container className="text-center">
+      {/* ========================================================================= */}
+      {/* 9. MINIMALIST LUXURY INSTITUTIONAL CALL-TO-ACTION                         */}
+      {/* ========================================================================= */}
+      <section className="py-20 bg-slate-950 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-950/40 via-slate-950 to-slate-950" />
+        <Container className="relative text-center">
           <Reveal>
-            <div className="max-w-3xl mx-auto">
-              <span className="text-xs font-mono uppercase tracking-widest text-sky-400 font-semibold">
-                {trans('National Polar Science Collaboration', 'राष्ट्रीय ध्रुवीय विज्ञान सहयोग')}
+            <div className="max-w-2xl mx-auto space-y-4">
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-400 font-bold">
+                {trans('Sovereign Polar Science Gateway', 'राष्ट्रीय ध्रुवीय विज्ञान द्वार')}
               </span>
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mt-2">
-                {trans('Explore India’s Polar Knowledge Frontier', 'भारत के ध्रुवीय ज्ञान क्षितिज का अन्वेषण करें')}
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
+                {trans('Explore India’s Polar Heritage', 'भारत की ध्रुवीय यात्रा का अन्वेषण करें')}
               </h2>
-              <p className="mt-3.5 text-slate-300 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
                 {trans(
-                  'Whether analyzing Southern Ocean hydrographic casts, exploring curriculum modules for schools, or discovering the 44-year legacy of Indian polar expeditions, POLARIS is your national digital gateway.',
-                  'चाहे दक्षिणी महासागर के हाइड्रोग्राफिक आंकड़ों का विश्लेषण करना हो, स्कूलों के लिए शिक्षण मॉड्यूल देखना हो, या भारतीय अभियानों के 44 साल के गौरवशाली इतिहास को जानना हो, पोलारिस आपका राष्ट्रीय डिजिटल प्रवेश द्वार है।'
+                  'Explore interactive 3D maps, open satellite datasets, educational curriculum modules, or ask questions to POLARIS AI.',
+                  '3D मानचित्र, उपग्रह डेटासेट और स्मार्ट शिक्षा मॉड्यूल का अनुभव करें, अथवा पोलारिस एआई से कोई भी प्रश्न पूछें।'
                 )}
               </p>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  to="/expeditions"
-                  className="btn bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold px-6 py-3 rounded-xl inline-flex items-center gap-2 text-xs sm:text-sm"
+              <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href="#polar-map"
+                  className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs sm:text-sm shadow-md transition duration-200 inline-flex items-center gap-2"
                 >
-                  <Compass className="w-4 h-4" /> {trans('Explore Expeditions (1st–44th)', 'अभियानों का अन्वेषण करें (1st–44th)')}
-                </Link>
-                <Link
-                  to="/datasets"
-                  className="btn bg-white/10 hover:bg-white/20 text-white font-medium px-6 py-3 rounded-xl border border-white/20 inline-flex items-center gap-2 text-xs sm:text-sm"
-                >
-                  <Database className="w-4 h-4" /> {trans('Access Polar Datasets', 'ध्रुवीय डेटासेट देखें')}
-                </Link>
+                  <Globe2 className="w-4 h-4 text-cyan-600" />
+                  <span>{trans('Open 3D Polar Map', '3D मानचित्र खोलें')}</span>
+                </a>
                 <Link
                   to="/education"
-                  className="btn bg-white/10 hover:bg-white/20 text-white font-medium px-6 py-3 rounded-xl border border-white/20 inline-flex items-center gap-2 text-xs sm:text-sm"
+                  className="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm border border-slate-800 transition duration-200 inline-flex items-center gap-2"
                 >
-                  <GraduationCap className="w-4 h-4" /> {trans('Smart Education Modules', 'स्मार्ट शिक्षा मॉड्यूल')}
+                  <GraduationCap className="w-4 h-4 text-cyan-400" />
+                  <span>{trans('Smart Education Lab', 'स्मार्ट शिक्षा प्रयोगशाला')}</span>
+                </Link>
+                <Link
+                  to="/about"
+                  className="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium text-xs sm:text-sm border border-slate-800 transition duration-200"
+                >
+                  {trans('About POLARIS & MoES', 'संस्थागत विवरण')}
                 </Link>
               </div>
 
-              <div className="mt-10 text-xs font-mono text-slate-400 tracking-wider">
-                {trans(
-                  'GOVERNMENT OF INDIA · MINISTRY OF EARTH SCIENCES · NATIONAL CENTRE FOR POLAR AND OCEAN RESEARCH',
-                  'भारत सरकार · पृथ्वी विज्ञान मंत्रालय · राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र'
-                )}
+              <div className="pt-10 text-[11px] font-mono text-slate-500 tracking-wider uppercase">
+                MINISTRY OF EARTH SCIENCES · NATIONAL CENTRE FOR POLAR AND OCEAN RESEARCH · SMART INDIA HACKATHON 2026
               </div>
             </div>
           </Reveal>

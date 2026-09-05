@@ -96,22 +96,27 @@ export default function PublicationDetail() {
   }
 
   return (
-    <div>
-      <div className="bg-gradient-to-b from-polar-50/80 to-white border-b border-polar-100">
-        <Container className="py-12 sm:py-16">
+    <div className="min-h-screen bg-[#edf5fb]">
+      {/* Luxury Hero Banner */}
+      <div className="bg-gradient-to-b from-sky-100/80 via-sky-50/50 to-[#edf5fb] border-b border-sky-200/90 relative overflow-hidden">
+        {/* Slow-rotating celestial orbit watermark */}
+        <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full border border-sky-300/40 pointer-events-none animate-[spin_60s_linear_infinite]" />
+        <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full border border-dashed border-sky-400/30 pointer-events-none animate-[spin_90s_linear_infinite_reverse]" />
+
+        <Container className="py-12 sm:py-16 relative z-10">
           <Reveal>
-            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-widest text-polar-500 hover:text-polar-900 mb-4">
-              <ArrowLeft className="w-3.5 h-3.5" /> {trans('Back', 'वापस')}
+            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-sky-800 hover:text-sky-950 mb-4 font-semibold transition-colors">
+              <ArrowLeft className="w-3.5 h-3.5" /> {trans('Back to Publications', 'प्रकाशनों पर वापस जाएं')}
             </button>
-            <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-accent/90">{p.area} · {p.journal} · {p.year}</div>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-polar-950 mt-3 max-w-4xl leading-[1.15]">{p.title}</h1>
-            <p className="mt-4 font-mono text-sm text-polar-600">{p.authors.join(', ')}</p>
+            <div className="text-[10px] font-mono uppercase tracking-widest text-sky-800 font-bold bg-sky-50/80 border border-sky-200/80 inline-block px-3 py-1 rounded-full">{p.area} · {p.journal} · {p.year}</div>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-950 mt-4 max-w-4xl leading-[1.18]">{p.title}</h1>
+            <p className="mt-4 font-mono text-sm text-slate-600 font-medium">{p.authors.join(', ')}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <button onClick={handleCite} className="btn-primary">
+              <button onClick={handleCite} className="btn-primary rounded-xl shadow-xs">
                 <Copy className="w-4 h-4" /> {trans('Copy APA Citation', 'APA साइटेशन कॉपी करें')}
               </button>
               {p.doi && (
-                <button onClick={handleDoi} className="btn-outline">
+                <button onClick={handleDoi} className="btn-outline rounded-xl bg-white/90 shadow-xs">
                   <ExternalLink className="w-4 h-4" /> {trans(`View via DOI (${p.doi})`, `DOI के माध्यम से देखें (${p.doi})`)}
                 </button>
               )}
@@ -120,10 +125,10 @@ export default function PublicationDetail() {
                   href={p.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-polar-700 hover:text-polar-950"
+                  className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-sky-900 hover:text-sky-950 rounded-xl bg-white/90 shadow-xs font-semibold"
                 >
                   <span>{trans('Official NCPOR Archive', 'आधिकारिक NCPOR संग्रह')}</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-cyan-accent" />
+                  <ExternalLink className="w-3.5 h-3.5 text-sky-600" />
                 </a>
               )}
             </div>
@@ -131,21 +136,21 @@ export default function PublicationDetail() {
         </Container>
       </div>
 
-      <Section className="py-10">
+      <Section className="py-12 pb-20">
         <Container>
-          <div className="grid lg:grid-cols-3 gap-10">
-            <div className="lg:col-span-2 space-y-8">
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
               <Reveal>
-                <div>
-                  <h2 className="font-display text-xl font-semibold text-polar-950 mb-3">{trans('Abstract', 'शोध सार (Abstract)')}</h2>
-                  <p className="text-polar-700 leading-relaxed text-base">{p.abstract}</p>
+                <div className="p-6 sm:p-8 rounded-2xl bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft space-y-4">
+                  <h2 className="font-display text-xl font-bold text-slate-950 border-b border-sky-100 pb-3">{trans('Abstract', 'शोध सार (Abstract)')}</h2>
+                  <p className="text-slate-800 leading-relaxed text-base font-normal font-sans">{p.abstract}</p>
                 </div>
               </Reveal>
 
               <Reveal>
-                <div className="p-6 rounded-2xl bg-polar-50/60 border border-polar-100 space-y-3">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400">{trans('Bibliographic Citation', 'ग्रंथ सूची उद्धरण (Bibliographic Citation)')}</div>
-                  <div className="text-sm font-mono text-polar-800 bg-white p-4 rounded-xl border border-polar-100 break-words">
+                <div className="p-6 rounded-2xl bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft space-y-3">
+                  <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold">{trans('Bibliographic Citation', 'ग्रंथ सूची उद्धरण (Bibliographic Citation)')}</div>
+                  <div className="text-sm font-mono text-slate-800 bg-sky-50/50 p-4 rounded-xl border border-sky-100 break-words leading-relaxed">
                     {buildApaCitation(p)}
                   </div>
                 </div>
@@ -154,29 +159,29 @@ export default function PublicationDetail() {
 
             {/* Sidebar metadata */}
             <div className="space-y-6">
-              <div className="rounded-2xl border border-polar-100 p-5 bg-white space-y-3 text-sm">
-                <div className="text-xs font-mono uppercase tracking-wider text-polar-400">{trans('Publication Details', 'प्रकाशन विवरण')}</div>
-                <div className="space-y-2">
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Year', 'वर्ष')}</span><span className="text-polar-900 font-mono text-xs">{p.year}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Journal', 'जर्नल / पत्रिका')}</span><span className="text-polar-900">{p.journal}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Discipline', 'वैज्ञानिक विषय')}</span><span className="text-polar-900">{p.area}</span></div>
-                  <div className="flex justify-between"><span className="text-polar-500">{trans('Peer Reviewed', 'सहकर्मी समीक्षित')}</span><span className="text-emerald-600 font-medium text-xs">{trans('Yes', 'हाँ (प्रमाणित)')}</span></div>
+              <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft space-y-4 text-sm">
+                <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold border-b border-sky-100 pb-2">{trans('Publication Details', 'प्रकाशन विवरण')}</div>
+                <div className="space-y-2.5">
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Year', 'वर्ष')}</span><span className="text-slate-900 font-mono text-xs font-bold">{p.year}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Journal', 'जर्नल / पत्रिका')}</span><span className="text-slate-900 font-semibold">{p.journal}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Discipline', 'वैज्ञानिक विषय')}</span><span className="text-slate-900 font-semibold">{p.area}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500 font-medium">{trans('Peer Reviewed', 'सहकर्मी समीक्षित')}</span><span className="text-emerald-700 font-semibold text-xs">{trans('Yes', 'हाँ (प्रमाणित)')}</span></div>
                 </div>
               </div>
 
               {/* Official Repository Verification */}
-              <div className="rounded-2xl border border-polar-100 p-5 bg-white space-y-3 text-sm">
-                <div className="text-xs font-mono uppercase tracking-wider text-polar-400">
+              <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft space-y-3 text-sm">
+                <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold border-b border-sky-100 pb-2">
                   {trans('Institutional Repository', 'संस्थागत अनुसंधान संग्रह')}
                 </div>
-                <p className="text-xs text-polar-600 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed font-sans">
                   {trans('National Centre for Polar and Ocean Research (NCPOR) · MoES Science Repository', 'राष्ट्रीय ध्रुवीय एवं समुद्री अनुसंधान केंद्र (NCPOR) · पृथ्वी विज्ञान मंत्रालय')}
                 </p>
                 <a
                   href={p.sourceUrl || "https://ncpor.res.in/pages/display/230-library-and-publication"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-accent hover:text-cyan-700 underline underline-offset-4 decoration-cyan-accent/40"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono text-sky-800 hover:text-sky-950 font-bold underline underline-offset-4 decoration-sky-300"
                 >
                   <span>{p.sourceLabel || "NCPOR Scientific Repository"}</span>
                   <ExternalLink className="w-3 h-3 shrink-0" />
@@ -185,22 +190,22 @@ export default function PublicationDetail() {
 
               {/* Linked Expedition */}
               {exp && (
-                <div className="rounded-2xl border border-polar-100 p-5 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400 mb-2">{trans('Stemming From Expedition', 'संबद्ध वैज्ञानिक अभियान')}</div>
-                  <Link to={`/expeditions/${exp.id}`} className="block p-2.5 rounded-lg hover:bg-polar-50 border border-transparent hover:border-polar-100 transition group">
-                    <div className="text-xs font-medium text-polar-900 group-hover:text-cyan-accent line-clamp-2">{exp.title}</div>
-                    <div className="text-[10px] font-mono text-polar-400 mt-0.5">{exp.region} · {exp.year}</div>
+                <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft">
+                  <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold mb-2 border-b border-sky-100 pb-2">{trans('Stemming From Expedition', 'संबद्ध वैज्ञानिक अभियान')}</div>
+                  <Link to={`/expeditions/${exp.id}`} className="block p-3 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200 transition group">
+                    <div className="text-xs font-semibold text-slate-900 group-hover:text-sky-900 line-clamp-2 font-display">{exp.title}</div>
+                    <div className="text-[10px] font-mono text-slate-500 mt-1">{exp.region} · {exp.year}</div>
                   </Link>
                 </div>
               )}
 
               {/* Linked Dataset */}
               {ds && (
-                <div className="rounded-2xl border border-polar-100 p-5 bg-white">
-                  <div className="text-xs font-mono uppercase tracking-wider text-polar-400 mb-2">{trans('Underlying Open Dataset', 'आधारभूत ओपन डेटासेट')}</div>
-                  <Link to={`/datasets/${ds.id}`} className="block p-2.5 rounded-lg hover:bg-polar-50 border border-transparent hover:border-polar-100 transition group">
-                    <div className="text-xs font-medium text-polar-900 group-hover:text-cyan-accent line-clamp-2">{ds.title}</div>
-                    <div className="text-[10px] font-mono text-polar-400 mt-0.5">{ds.area} · {ds.format}</div>
+                <div className="rounded-2xl border border-sky-200/90 p-6 bg-white/95 backdrop-blur-md shadow-soft">
+                  <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold mb-2 border-b border-sky-100 pb-2">{trans('Underlying Open Dataset', 'आधारभूत ओपन डेटासेट')}</div>
+                  <Link to={`/datasets/${ds.id}`} className="block p-3 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200 transition group">
+                    <div className="text-xs font-semibold text-slate-900 group-hover:text-sky-900 line-clamp-2 font-display">{ds.title}</div>
+                    <div className="text-[10px] font-mono text-slate-500 mt-1">{ds.area} · {ds.format}</div>
                   </Link>
                 </div>
               )}
@@ -211,8 +216,8 @@ export default function PublicationDetail() {
 
       {/* Toast notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-polar-950 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-polar-800 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <Check className="w-3.5 h-3.5 text-cyan-accent" />
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-950 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-800 flex items-center gap-2 animate-fade-up">
+          <Check className="w-3.5 h-3.5 text-sky-400" />
           <span>{toast}</span>
         </div>
       )}

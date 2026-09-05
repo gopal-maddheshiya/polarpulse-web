@@ -21,23 +21,23 @@ const SECTIONS = [
 
 export default function Explore() {
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb] dark:bg-[#07131e]">
       <PageHeader
         eyebrow="Platform Sitemap & Architecture"
         title="Interactive Platform Navigator"
         sub="Navigate India’s unified polar portal. From stereographic station cartography to open-access datasets and AI-assisted dissemination workflows."
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
-            <Compass className="w-3.5 h-3.5 text-sky-600" /> FULL PORTAL SITEMAP
+          <span className="editorial-badge-light bg-sky-50/90 dark:bg-slate-900/90 border-sky-300 dark:border-slate-700 text-sky-900 dark:text-sky-300 font-semibold px-3 py-1.5 rounded-full shadow-xs">
+            <Compass className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 animate-[spin_20s_linear_infinite]" /> FULL PORTAL SITEMAP
           </span>
-          <span className="editorial-badge-light">
+          <span className="editorial-badge-light bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium px-3 py-1.5 rounded-full">
             NCPOR · MINISTRY OF EARTH SCIENCES
           </span>
         </div>
       </PageHeader>
 
-      <Section>
+      <Section className="bg-[#edf5fb] dark:bg-[#07131e]">
         <Container>
           <Reveal>
             <SectionHeader
@@ -45,12 +45,14 @@ export default function Explore() {
               title="Global Station Network"
               sub="Click any sovereign or international station to inspect geographic coordinates, elevation, and linked Indian expedition campaigns."
             />
-            <PolarMap />
+            <div className="bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 rounded-3xl p-3 md:p-4 shadow-soft">
+              <PolarMap />
+            </div>
           </Reveal>
         </Container>
       </Section>
 
-      <Section className="!pt-0">
+      <Section className="!pt-0 pb-20 bg-[#edf5fb] dark:bg-[#07131e]">
         <Container>
           <Reveal>
             <SectionHeader
@@ -58,36 +60,37 @@ export default function Explore() {
               title="Explore POLARIS by Domain"
               sub="Access every core functional pillar designed for researchers, students, educators, and science communicators."
             />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {SECTIONS.map(s => {
                 const Icon = s.icon
                 return (
                   <Link
                     key={s.title}
                     to={s.to}
-                    className="editorial-frame p-6 bg-white hover:border-sky-400 hover:shadow-md transition-all group flex flex-col justify-between"
+                    className="p-6 bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 rounded-2xl hover:border-sky-400 dark:hover:border-sky-500/60 hover:shadow-lg dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.5)] transition-all duration-300 group flex flex-col justify-between hover:-translate-y-1 relative overflow-hidden"
                   >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 grid place-items-center text-sky-800 group-hover:bg-slate-950 group-hover:text-sky-300 transition-colors">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-sky-100/50 dark:from-sky-500/10 to-transparent rounded-bl-full pointer-events-none" />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between gap-2 mb-4">
+                        <div className="w-11 h-11 rounded-xl bg-sky-50 dark:bg-slate-800 border border-sky-200/80 dark:border-slate-700 grid place-items-center text-sky-800 dark:text-sky-300 group-hover:bg-slate-950 group-hover:text-sky-300 dark:group-hover:bg-sky-500 dark:group-hover:text-slate-950 transition-all shadow-xs">
                           <Icon className="w-5 h-5" />
                         </div>
-                        <span className="editorial-badge-light text-[9px] font-bold">
+                        <span className="text-[10px] font-mono font-bold tracking-wider px-2.5 py-1 rounded-full bg-sky-50/80 dark:bg-slate-800 border border-sky-200/80 dark:border-slate-700 text-sky-800 dark:text-sky-300">
                           {s.badge}
                         </span>
                       </div>
 
-                      <h3 className="font-display font-bold text-slate-900 text-base group-hover:text-sky-900 mt-1">
+                      <h3 className="font-display font-bold text-slate-900 dark:text-white text-base group-hover:text-sky-950 dark:group-hover:text-sky-300 transition-colors">
                         {s.title}
                       </h3>
-                      <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-2.5 leading-relaxed font-sans">
                         {s.desc}
                       </p>
                     </div>
 
-                    <div className="mt-5 pt-3 border-t border-slate-100 inline-flex items-center gap-1 text-xs font-semibold text-sky-800 group-hover:text-slate-950">
+                    <div className="mt-6 pt-3.5 border-t border-sky-100/80 dark:border-slate-800 inline-flex items-center gap-1.5 text-xs font-semibold text-sky-800 dark:text-sky-400 group-hover:text-slate-950 dark:group-hover:text-sky-300 transition-colors relative z-10">
                       <span>Open Section</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform text-sky-600 dark:text-sky-400" />
                     </div>
                   </Link>
                 )

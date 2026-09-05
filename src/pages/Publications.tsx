@@ -74,7 +74,7 @@ export default function Publications() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#edf5fb]">
       <PageHeader
         eyebrow={trans('Scholarly Research Library', 'विद्वत्तापूर्ण शोध पुस्तकालय')}
         title={trans('Peer-Reviewed Publications', 'सहकर्मी-समीक्षित शोध प्रकाशन')}
@@ -84,29 +84,29 @@ export default function Publications() {
         )}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="editorial-badge-light bg-sky-50 border-sky-300 text-sky-900 font-semibold">
+          <span className="editorial-badge-light bg-sky-50/90 border-sky-300 text-sky-900 font-semibold px-3 py-1.5 rounded-full shadow-xs">
             <BookOpen className="w-3.5 h-3.5 text-sky-600" /> {trans('SCOPUS & WEB OF SCIENCE INDEXED', 'स्कोपास एवं वेब ऑफ साइंस अनुक्रमित')}
           </span>
-          <span className="editorial-badge-light">
+          <span className="editorial-badge-light bg-white/80 border-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-full">
             {trans('OPEN ACCESS DOI REPOSITORY', 'मुक्त पहुँच डीओआई रिपॉजिटरी')}
           </span>
         </div>
       </PageHeader>
 
-      <Section>
+      <Section className="pb-20">
         <Container>
           <Reveal>
             {/* Search and Filters Bar */}
-            <div className="editorial-frame p-5 mb-8 bg-white space-y-4">
+            <div className="p-6 mb-8 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {/* Search Input */}
-                <div className="flex-1 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-2.5 min-w-[240px]">
-                  <Search className="w-4 h-4 text-slate-400" />
+                <div className="flex-1 flex items-center gap-2 rounded-xl border border-sky-200/80 bg-sky-50/30 px-3.5 py-2.5 min-w-[240px] focus-within:border-sky-400 transition-colors">
+                  <Search className="w-4 h-4 text-sky-600" />
                   <input
                     value={q}
                     onChange={e => setQ(e.target.value)}
                     placeholder={trans('Search by title, author, keyword, or journal…', 'शीर्षक, लेखक, कीवर्ड या जर्नल द्वारा खोजें…')}
-                    className="flex-1 bg-transparent outline-none text-sm placeholder:text-slate-400 font-sans"
+                    className="flex-1 bg-transparent outline-none text-sm placeholder:text-slate-400 font-sans text-slate-800"
                   />
                   {q && (
                     <button onClick={() => setQ('')} className="text-slate-400 hover:text-slate-700">
@@ -120,7 +120,7 @@ export default function Publications() {
                   <select
                     value={area}
                     onChange={e => setArea(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                    className="rounded-xl border border-sky-200/80 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40"
                   >
                     {AREAS.map(a => (
                       <option key={a} value={a}>
@@ -132,7 +132,7 @@ export default function Publications() {
                   <select
                     value={year}
                     onChange={e => setYear(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                    className="rounded-xl border border-sky-200/80 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40"
                   >
                     {years.map(y => (
                       <option key={y} value={y}>
@@ -144,7 +144,7 @@ export default function Publications() {
                   <select
                     value={expedition}
                     onChange={e => setExpedition(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 max-w-[160px]"
+                    className="rounded-xl border border-sky-200/80 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40 max-w-[160px]"
                   >
                     <option value="All">All Expeditions</option>
                     {expeditionsList.map(exp => (
@@ -166,17 +166,17 @@ export default function Publications() {
               </div>
 
               {/* Discipline Quick Filters */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 mr-2">Discipline:</span>
+              <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-sky-100">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-sky-900 font-bold mr-2">Discipline:</span>
                 {AREAS.map(a => (
                   <button
                     key={a}
                     onClick={() => setArea(a)}
                     className={cn(
-                      'text-xs px-2.5 py-1 rounded-lg transition font-medium',
+                      'text-xs px-3 py-1 rounded-lg transition-all font-semibold',
                       area === a 
-                        ? 'bg-polar-950 text-white font-semibold' 
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        ? 'bg-slate-950 text-white shadow-xs' 
+                        : 'bg-sky-50/60 text-slate-700 hover:bg-sky-100/70'
                     )}
                   >
                     {a}
@@ -188,8 +188,8 @@ export default function Publications() {
 
           {loading ? (
             <div className="py-20 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-                <Compass className="w-5 h-5" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3 shadow-xs">
+                <Compass className="w-6 h-6" />
               </div>
               <p className="text-sm font-medium text-slate-700">Loading polar knowledge...</p>
             </div>
@@ -202,9 +202,9 @@ export default function Publications() {
           ) : (
             <>
               {/* Results count */}
-              <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-5">
-                <span>Displaying {filtered.length} indexed scientific publication{filtered.length === 1 ? '' : 's'}</span>
-                <span>NCPOR REPOSITORY · PEER REVIEWED</span>
+              <div className="flex items-center justify-between text-xs font-mono text-slate-600 mb-5">
+                <span>Displaying <strong className="text-slate-900">{filtered.length}</strong> indexed scientific publication{filtered.length === 1 ? '' : 's'}</span>
+                <span className="text-sky-800 font-semibold">NCPOR REPOSITORY · PEER REVIEWED</span>
               </div>
 
               {/* Publications List */}
@@ -224,19 +224,19 @@ export default function Publications() {
               ) : (
                 <div className="space-y-4">
                   {filtered.map((pub, idx) => (
-                    <Reveal key={pub.id} delay={idx * 35}>
-                      <div className="group bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-slate-300 transition flex flex-col md:flex-row md:items-center justify-between gap-5">
+                    <Reveal key={pub.id} delay={idx * 30}>
+                      <div className="group bg-white/95 backdrop-blur-md rounded-2xl border border-sky-200/90 p-5 sm:p-6 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-5">
                         <div className="space-y-2 flex-1">
                           {/* Badges */}
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="editorial-badge-light bg-sky-50 border-sky-200 text-sky-900 font-semibold !text-[10px]">
+                            <span className="editorial-badge-light bg-sky-50 border-sky-200 text-sky-900 font-semibold !text-[10px] px-2.5 py-0.5 rounded-full">
                               {pub.area}
                             </span>
-                            <span className="text-[11px] font-mono text-slate-400">
+                            <span className="text-[11px] font-mono text-slate-500 font-medium">
                               {pub.journal} ({pub.year})
                             </span>
                             {pub.doi && (
-                              <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
+                              <span className="text-[10px] font-mono text-slate-500 bg-sky-50/60 border border-sky-100 px-2 py-0.5 rounded">
                                 DOI: {pub.doi}
                               </span>
                             )}
@@ -244,7 +244,7 @@ export default function Publications() {
 
                           {/* Title */}
                           <Link to={`/publications/${pub.id}`}>
-                            <h3 className="font-display text-base sm:text-lg font-semibold text-slate-900 group-hover:text-sky-700 transition leading-snug">
+                            <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 group-hover:text-sky-950 transition-colors leading-snug">
                               {pub.title}
                             </h3>
                           </Link>
@@ -255,26 +255,26 @@ export default function Publications() {
                           </p>
 
                           {/* Abstract preview */}
-                          <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-sans">
                             {pub.abstract}
                           </p>
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-2 shrink-0 md:flex-col md:items-end">
+                        <div className="flex items-center gap-2.5 shrink-0 md:flex-col md:items-end">
                           <button
                             onClick={(e) => handleCopyCitation(pub, e)}
-                            className="btn-outline !py-2 !px-3 text-xs inline-flex items-center gap-1.5"
+                            className="btn-outline !py-2 !px-3 text-xs inline-flex items-center gap-1.5 rounded-xl bg-white"
                             title="Copy APA Citation"
                           >
                             {copiedId === pub.id ? (
                               <>
                                 <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                <span className="text-emerald-700 font-medium">Copied</span>
+                                <span className="text-emerald-700 font-semibold">Copied</span>
                               </>
                             ) : (
                               <>
-                                <Copy className="w-3.5 h-3.5 text-slate-400" />
+                                <Copy className="w-3.5 h-3.5 text-slate-500" />
                                 <span>Cite</span>
                               </>
                             )}
@@ -282,10 +282,10 @@ export default function Publications() {
 
                           <Link
                             to={`/publications/${pub.id}`}
-                            className="btn-primary !py-2 !px-3.5 text-xs inline-flex items-center gap-1"
+                            className="btn-primary !py-2 !px-4 text-xs inline-flex items-center gap-1 rounded-xl"
                           >
                             <span>Read</span>
-                            <ArrowRight className="w-3 h-3" />
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
                         </div>
                       </div>

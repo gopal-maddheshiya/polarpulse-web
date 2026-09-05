@@ -5,15 +5,18 @@ import App from './App.tsx'
 import './index.css'
 import { SearchProvider } from './context/SearchContext'
 import { LanguageProvider } from './context/LanguageContext'
+import { ThemeProvider } from './context/ThemeContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <LanguageProvider>
-        <SearchProvider>
-          <App />
-        </SearchProvider>
-      </LanguageProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <SearchProvider>
+            <App />
+          </SearchProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,
 )
