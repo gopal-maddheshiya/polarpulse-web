@@ -115,6 +115,22 @@ export default function ExpeditionDetail() {
                 <div className="flex items-start gap-2"><Users className="w-4 h-4 text-polar-400 mt-0.5" /><div><span className="text-polar-500">{trans('Lead:', 'अभियान नेता:')}</span> <span className="text-polar-900">{exp.lead}</span></div></div>
                 <div className="flex items-start gap-2"><FileText className="w-4 h-4 text-polar-400 mt-0.5" /><div><span className="text-polar-500">{trans('Focus:', 'वैज्ञानिक फोकस:')}</span> <span className="text-polar-900">{exp.researchAreas.join(', ')}</span></div></div>
               </div>
+              {exp.sourceUrl && (
+                <div className="mt-5 pt-4 border-t border-polar-100 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                  <span className="text-polar-500">
+                    {trans('Official Registry:', 'आधिकारिक पुरालेख:')}{' '}
+                    <span className="text-polar-800 font-semibold">{exp.sourceLabel || 'NCPOR / MoES'}</span>
+                  </span>
+                  <a
+                    href={exp.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-700 hover:text-sky-900 font-semibold hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>{trans('Verify at NCPOR Portal', 'एनसीपीओआर पोर्टल पर सत्यापित करें')} ↗</span>
+                  </a>
+                </div>
+              )}
             </div>
           </Reveal>
         </Container>

@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { getMedia, type MediaItem } from '../services/polarisService'
 import { PageHeader } from '../components/ui/Page'
 import { Container, EmptyState, Section, SectionHeader } from '../components/ui/Primitives'
-import { X, Play, Image as ImageIcon, FileBarChart2, ChevronLeft, ChevronRight, Compass } from 'lucide-react'
+import { X, Play, Image as ImageIcon, FileBarChart2, ChevronLeft, ChevronRight, Compass, ExternalLink } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { Reveal } from '../lib/reveal'
 import { useLanguage } from '../context/LanguageContext'
@@ -235,8 +235,22 @@ export default function Media() {
             </div>
 
             {/* Modal Caption */}
-            <div className="p-4 bg-slate-900/90 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300">
-              <p className="max-w-xl leading-relaxed">{mediaList[lightbox].caption}</p>
+            <div className="p-4 bg-slate-900/90 border-t border-slate-800 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 text-xs text-slate-300">
+              <div className="max-w-xl space-y-1">
+                <p className="leading-relaxed">{mediaList[lightbox].caption}</p>
+                {mediaList[lightbox].sourceUrl && (
+                  <a
+                    href={mediaList[lightbox].sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    className="inline-flex items-center gap-1 text-[11px] font-mono text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+                  >
+                    <span>{mediaList[lightbox].sourceLabel || trans('Verify at Official NCPOR Portal', 'आधिकारिक NCPOR पोर्टल पर सत्यापित करें')}</span>
+                    <ExternalLink className="w-3 h-3 shrink-0" />
+                  </a>
+                )}
+              </div>
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => setLightbox((lightbox - 1 + mediaList.length) % mediaList.length)}

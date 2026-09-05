@@ -10,6 +10,8 @@ export interface Publication {
   expedition: string
   dataset?: string
   type: 'Journal' | 'Conference' | 'Report'
+  sourceUrl?: string
+  sourceLabel?: string
 }
 
 export const publications: Publication[] = [
@@ -26,6 +28,8 @@ export const publications: Publication[] = [
     expedition: 'isro-44',
     dataset: 'ds-atm-001',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/386-science-in-antarctica',
+    sourceLabel: 'NCPOR Antarctic Science Archive',
   },
   {
     id: 'pub-2025-01',
@@ -40,6 +44,8 @@ export const publications: Publication[] = [
     expedition: 'isro-44',
     dataset: 'ds-oce-002',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/pages/display/270-southern-ocean',
+    sourceLabel: 'NCPOR Southern Ocean Research',
   },
   {
     id: 'pub-2024-01',
@@ -54,6 +60,8 @@ export const publications: Publication[] = [
     expedition: 'isro-43',
     dataset: 'ds-bio-004',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/372-biological-sciences',
+    sourceLabel: 'NCPOR Biological Sciences',
   },
   {
     id: 'pub-2024-02',
@@ -68,6 +76,8 @@ export const publications: Publication[] = [
     expedition: 'isro-43',
     dataset: 'ds-geo-005',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/370-geoscience',
+    sourceLabel: 'NCPOR Antarctic Geosciences',
   },
   {
     id: 'pub-2024-05',
@@ -82,6 +92,8 @@ export const publications: Publication[] = [
     expedition: 'arctic-2024',
     dataset: 'ds-gla-006',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/arctics/display/390-publications',
+    sourceLabel: 'NCPOR Arctic Publications Repository',
   },
   {
     id: 'pub-2023-02',
@@ -96,6 +108,8 @@ export const publications: Publication[] = [
     expedition: 'so-cruise-2023',
     dataset: 'ds-oce-008',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/pages/display/270-southern-ocean',
+    sourceLabel: 'NCPOR Southern Ocean Research',
   },
   {
     id: 'pub-2023-01',
@@ -110,6 +124,8 @@ export const publications: Publication[] = [
     expedition: 'isro-42',
     dataset: 'ds-gla-010',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/371-cryosphere-sciences',
+    sourceLabel: 'NCPOR Cryosphere Sciences',
   },
   {
     id: 'pub-2022-01',
@@ -124,5 +140,7 @@ export const publications: Publication[] = [
     expedition: 'himalaya-glacier-2022',
     dataset: 'ds-gla-009',
     type: 'Journal',
+    sourceUrl: 'https://ncpor.res.in/pages/display/268-himalaya',
+    sourceLabel: 'NCPOR Himalayan Cryosphere (HiCOM)',
   },
 ]

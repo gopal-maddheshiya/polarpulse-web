@@ -20,6 +20,8 @@ export interface Expedition {
   datasets: string[]
   publications: string[]
   highlights: { title: string; description: string }[]
+  sourceUrl?: string
+  sourceLabel?: string
 }
 
 export const expeditions: Expedition[] = [
@@ -35,6 +37,8 @@ export const expeditions: Expedition[] = [
     researchAreas: ['Atmospheric Sciences', 'Oceanography', 'Glaciology'],
     lead: 'NCPOR · Ministry of Earth Sciences',
     image: IMG.ship,
+    sourceUrl: 'https://ncpor.res.in/antarcticas',
+    sourceLabel: 'NCPOR · Indian Scientific Expedition to Antarctica',
     overview:
       'A flagship annual expedition conducting year-round atmospheric, oceanographic and cryospheric observations in the Southern Ocean and East Antarctic region, supporting climate and geoscience research.',
     timeline: [
@@ -79,6 +83,8 @@ export const expeditions: Expedition[] = [
     researchAreas: ['Geology', 'Biology', 'Atmospheric Sciences'],
     lead: 'NCPOR · Ministry of Earth Sciences',
     image: IMG.research,
+    sourceUrl: 'https://ncpor.res.in/antarcticas',
+    sourceLabel: 'NCPOR · Indian Scientific Expedition to Antarctica',
     overview:
       'Summer expedition focused on geological mapping, microbial biodiversity and atmospheric chemistry around the Larsemann Hills and Schirmacher Oasis.',
     timeline: [
@@ -114,6 +120,8 @@ export const expeditions: Expedition[] = [
     researchAreas: ['Atmospheric Sciences', 'Glaciology', 'Oceanography'],
     lead: 'NCPOR · Ministry of Earth Sciences',
     image: IMG.arctic,
+    sourceUrl: 'https://ncpor.res.in/arctics',
+    sourceLabel: 'NCPOR · Indian Arctic Programme (Ny-Ålesund)',
     overview:
       'A summer campaign in the Svalbard archipelago supporting atmospheric, glaciological and fjord observatories operated under the Himadri research framework.',
     timeline: [
@@ -150,6 +158,8 @@ export const expeditions: Expedition[] = [
     researchAreas: ['Oceanography', 'Climate'],
     lead: 'NCPOR · Ministry of Earth Sciences',
     image: IMG.ocean,
+    sourceUrl: 'https://ncpor.res.in/pages/display/270-southern-ocean',
+    sourceLabel: 'NCPOR · Southern Ocean Research Programme',
     overview:
       'A meridional cruise covering the Indian Ocean sector of the Southern Ocean, contributing to global hydrographic and biogeochemical reference datasets.',
     timeline: [
@@ -183,6 +193,8 @@ export const expeditions: Expedition[] = [
     researchAreas: ['Glaciology', 'Climate'],
     lead: 'NCPOR collaborative programme',
     image: IMG.glacier,
+    sourceUrl: 'https://ncpor.res.in/pages/display/268-himalaya',
+    sourceLabel: 'NCPOR · Himalayan Cryosphere Programme (HiCOM)',
     overview:
       'Long-term monitoring of benchmark glaciers in the western Himalaya, complementing polar cryospheric studies.',
     timeline: [
@@ -213,6 +225,8 @@ export const expeditions: Expedition[] = [
     researchAreas: ['Geology', 'Glaciology', 'Atmospheric Sciences'],
     lead: 'NCPOR · Ministry of Earth Sciences',
     image: IMG.station,
+    sourceUrl: 'https://ncpor.res.in/antarcticas',
+    sourceLabel: 'NCPOR · Indian Scientific Expedition to Antarctica',
     overview:
       'Pre-Antarctic Treaty Consultative Meeting support expedition — focused on long-term observatories and summer field campaigns.',
     timeline: [

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import {
   Sparkles, X, Send, ArrowRight, CornerDownLeft, RefreshCw,
   Compass, MapPin, ShieldCheck, ChevronDown, Check, GraduationCap,
-  Layers, Volume2, Globe, MessageSquare, AlertCircle
+  Layers, Volume2, Globe, MessageSquare, AlertCircle, ExternalLink
 } from 'lucide-react'
 import {
   askPolarisAI, extractPageContext, getPageSuggestions,
@@ -138,7 +138,7 @@ export default function PolarisAI() {
   const displayedBufferRef = useRef('')
   const typingTimerRef = useRef<any>(null)
   const isCompleteRef = useRef(false)
-  const pendingDoneRef = useRef<{ fullText: string; source: string; sourceUrl?: string } | null>(null)
+  const pendingDoneRef = useRef<{ fullText: string; source: string; sourceUrl?: string; officialSourceUrl?: string; officialSourceLabel?: string } | null>(null)
 
   // Current page context
   const pageContext: PageContext = useMemo(() => {
@@ -215,7 +215,7 @@ export default function PolarisAI() {
       } else if (isCompleteRef.current && pendingDoneRef.current) {
         clearInterval(typingTimerRef.current)
         typingTimerRef.current = null
-        const { fullText, source, sourceUrl } = pendingDoneRef.current
+        const { fullText, source, sourceUrl, officialSourceUrl, officialSourceLabel } = pendingDoneRef.current
         setMessages(prev => [
           ...prev,
           {
@@ -224,6 +224,8 @@ export default function PolarisAI() {
             content: fullText,
             source,
             sourceUrl,
+            officialSourceUrl,
+            officialSourceLabel,
             timestamp: Date.now(),
           },
         ])
@@ -240,10 +242,10 @@ export default function PolarisAI() {
       onChunk: (_delta, accumulated) => {
         targetBufferRef.current = accumulated
       },
-      onDone: (fullText, source, sourceUrl) => {
+      onDone: (fullText, source, sourceUrl, officialSourceUrl, officialSourceLabel) => {
         targetBufferRef.current = fullText
         isCompleteRef.current = true
-        pendingDoneRef.current = { fullText, source, sourceUrl }
+        pendingDoneRef.current = { fullText, source, sourceUrl, officialSourceUrl, officialSourceLabel }
       },
       onError: () => {
         if (typingTimerRef.current) {
@@ -471,20 +473,36 @@ export default function PolarisAI() {
                 </div>
 
                 {/* Source attribution on assistant responses */}
-                {msg.role === 'assistant' && msg.source && (
-                  <div className="mt-1.5 ml-1 text-[10px] font-mono text-slate-500 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3 h-3 text-sky-600 shrink-0" />
-                    {msg.sourceUrl ? (
+                {msg.role === 'assistant' && (msg.source || msg.officialSourceUrl) && (
+                  <div className="mt-1.5 ml-1 text-[10px] font-mono text-slate-500 flex flex-wrap items-center gap-2">
+                    {msg.source && (
+                      <div className="flex items-center gap-1.5">
+                        <ShieldCheck className="w-3 h-3 text-sky-600 shrink-0" />
+                        {msg.sourceUrl ? (
+                          <a
+                            href={msg.sourceUrl}
+                            className="text-sky-700 hover:text-sky-900 hover:underline inline-flex items-center gap-1 font-medium transition"
+                            title="View in POLARIS Repository"
+                          >
+                            <span>{msg.source}</span>
+                            <ArrowRight className="w-2.5 h-2.5" />
+                          </a>
+                        ) : (
+                          <span>{msg.source}</span>
+                        )}
+                      </div>
+                    )}
+                    {msg.officialSourceUrl && (
                       <a
-                        href={msg.sourceUrl}
-                        className="text-sky-700 hover:text-sky-900 hover:underline inline-flex items-center gap-1 font-medium transition"
-                        title="View in POLARIS Repository"
+                        href={msg.officialSourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-cyan-700 hover:text-cyan-900 hover:underline inline-flex items-center gap-1 font-medium transition"
+                        title="Verify at Official Government Portal"
                       >
-                        <span>{msg.source}</span>
-                        <ArrowRight className="w-2.5 h-2.5" />
+                        <span>{msg.officialSourceLabel || 'Official Govt Source'}</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
                       </a>
-                    ) : (
-                      <span>{msg.source}</span>
                     )}
                   </div>
                 )}

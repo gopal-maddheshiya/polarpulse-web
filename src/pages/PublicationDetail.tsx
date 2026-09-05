@@ -115,6 +115,17 @@ export default function PublicationDetail() {
                   <ExternalLink className="w-4 h-4" /> {trans(`View via DOI (${p.doi})`, `DOI के माध्यम से देखें (${p.doi})`)}
                 </button>
               )}
+              {p.sourceUrl && (
+                <a
+                  href={p.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-polar-700 hover:text-polar-950"
+                >
+                  <span>{trans('Official NCPOR Archive', 'आधिकारिक NCPOR संग्रह')}</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-cyan-accent" />
+                </a>
+              )}
             </div>
           </Reveal>
         </Container>
@@ -151,6 +162,25 @@ export default function PublicationDetail() {
                   <div className="flex justify-between"><span className="text-polar-500">{trans('Discipline', 'वैज्ञानिक विषय')}</span><span className="text-polar-900">{p.area}</span></div>
                   <div className="flex justify-between"><span className="text-polar-500">{trans('Peer Reviewed', 'सहकर्मी समीक्षित')}</span><span className="text-emerald-600 font-medium text-xs">{trans('Yes', 'हाँ (प्रमाणित)')}</span></div>
                 </div>
+              </div>
+
+              {/* Official Repository Verification */}
+              <div className="rounded-2xl border border-polar-100 p-5 bg-white space-y-3 text-sm">
+                <div className="text-xs font-mono uppercase tracking-wider text-polar-400">
+                  {trans('Institutional Repository', 'संस्थागत अनुसंधान संग्रह')}
+                </div>
+                <p className="text-xs text-polar-600 leading-relaxed">
+                  {trans('National Centre for Polar and Ocean Research (NCPOR) · MoES Science Repository', 'राष्ट्रीय ध्रुवीय एवं समुद्री अनुसंधान केंद्र (NCPOR) · पृथ्वी विज्ञान मंत्रालय')}
+                </p>
+                <a
+                  href={p.sourceUrl || "https://ncpor.res.in/pages/display/230-library-and-publication"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-accent hover:text-cyan-700 underline underline-offset-4 decoration-cyan-accent/40"
+                >
+                  <span>{p.sourceLabel || "NCPOR Scientific Repository"}</span>
+                  <ExternalLink className="w-3 h-3 shrink-0" />
+                </a>
               </div>
 
               {/* Linked Expedition */}

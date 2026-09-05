@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getKnowledgeById, getExpeditionById, getDatasetById, getPublicationById, type KnowledgeItem, type Expedition, type Dataset, type Publication } from '../services/polarisService'
-import { ArrowLeft, Tag, FileText, Database, BookOpen, Compass, Calendar, User2, GraduationCap, Newspaper, BookOpenCheck } from 'lucide-react'
+import { ArrowLeft, Tag, FileText, Database, BookOpen, Compass, Calendar, User2, GraduationCap, Newspaper, BookOpenCheck, ExternalLink } from 'lucide-react'
 import { Container, EmptyState, Section, SectionHeader } from '../components/ui/Primitives'
 import { Reveal } from '../lib/reveal'
 import { useLanguage } from '../context/LanguageContext'
@@ -114,6 +114,19 @@ export default function KnowledgeDetail() {
               <div className="flex items-center gap-1.5"><User2 className="w-3.5 h-3.5 text-polar-400" /><span>{k.author}</span></div>
               <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-polar-400" /><span>{k.year}</span></div>
             </div>
+            {k.sourceUrl && (
+              <div className="mt-6">
+                <a
+                  href={k.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-polar-700 hover:text-polar-950"
+                >
+                  <span>{trans('Verify Official Source', 'आधिकारिक स्रोत सत्यापित करें')}</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-cyan-accent" />
+                </a>
+              </div>
+            )}
           </Reveal>
         </Container>
       </div>
@@ -155,6 +168,22 @@ export default function KnowledgeDetail() {
                   <div className="flex justify-between"><span className="text-polar-400">{trans('Year', 'वर्ष')}</span><span className="font-medium text-polar-900">{k.year}</span></div>
                   <div className="flex justify-between"><span className="text-polar-400">{trans('Author', 'लेखक / वैज्ञानिक')}</span><span className="font-medium text-polar-900">{k.author}</span></div>
                 </div>
+                {k.sourceUrl && (
+                  <div className="pt-3 border-t border-polar-100">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-polar-400 mb-1">
+                      {trans('Official Reference Source', 'आधिकारिक संदर्भ स्रोत')}
+                    </div>
+                    <a
+                      href={k.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-accent hover:text-cyan-700 underline underline-offset-4 decoration-cyan-accent/40"
+                    >
+                      <span className="line-clamp-1">{k.sourceLabel || "National Centre for Polar and Ocean Research (NCPOR)"}</span>
+                      <ExternalLink className="w-3 h-3 shrink-0" />
+                    </a>
+                  </div>
+                )}
               </div>
 
               {/* Linked expedition */}

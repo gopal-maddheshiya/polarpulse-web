@@ -314,9 +314,21 @@ export default function PolarMap() {
 
             {station.country === 'India' && (
               <div className="mt-4 p-3 rounded-xl bg-sky-50/60 border border-sky-100 text-xs text-slate-700 space-y-1">
-                <div className="font-bold text-sky-950 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-sky-600" />
-                  {trans('National Sovereign Base', 'राष्ट्रीय संप्रभु अनुसंधान केंद्र')}
+                <div className="font-bold text-sky-950 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-sky-600" />
+                    {trans('National Sovereign Base', 'राष्ट्रीय संप्रभु अनुसंधान केंद्र')}
+                  </span>
+                  {station.officialUrl && (
+                    <a
+                      href={station.officialUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-700 hover:text-sky-900 font-semibold hover:underline inline-flex items-center gap-0.5 text-[11px]"
+                    >
+                      <span>{trans('Verify NCPOR', 'एनसीपीओआर सत्यापन')} ↗</span>
+                    </a>
+                  )}
                 </div>
                 <div className="text-slate-600">
                   {trans(
@@ -324,6 +336,18 @@ export default function PolarMap() {
                     'एनसीपीओआर, पृथ्वी विज्ञान मंत्रालय, भारत सरकार द्वारा वर्ष पर्यन्त संचालित।'
                   )}
                 </div>
+              </div>
+            )}
+            {station.country !== 'India' && station.officialUrl && (
+              <div className="mt-3 pt-2 text-right">
+                <a
+                  href={station.officialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sky-700 hover:text-sky-900 font-medium hover:underline inline-flex items-center gap-1 text-xs"
+                >
+                  <span>{station.officialSource || 'Official Station Portal'} ↗</span>
+                </a>
               </div>
             )}
           </div>

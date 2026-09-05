@@ -6,7 +6,7 @@ import { Container, EmptyState, Section } from '../components/ui/Primitives'
 import {
   ArrowRight, Check, X as XIcon, GraduationCap, Sparkles, BookOpenCheck,
   Award, RefreshCw, Compass, Database, FileText, CheckCircle2, ChevronRight,
-  HelpCircle, Lightbulb
+  HelpCircle, Lightbulb, ExternalLink
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { Reveal } from '../lib/reveal'
@@ -20,6 +20,8 @@ interface TopicEvidence {
   datasetId: string
   datasetTitle: string
   summary: string
+  sourceUrl?: string
+  sourceLabel?: string
 }
 
 const TOPIC_EVIDENCE: Record<string, TopicEvidence> = {
@@ -29,6 +31,8 @@ const TOPIC_EVIDENCE: Record<string, TopicEvidence> = {
     datasetId: 'ds-atm-001',
     datasetTitle: 'Maitri Atmospheric Black Carbon',
     summary: 'Observations of boundary layer physics and continental plateau weather.',
+    sourceUrl: 'https://ncpor.res.in/antarcticas',
+    sourceLabel: 'NCPOR Antarctic Research Portal',
   },
   arctic: {
     base: 'Himadri Station, Ny-Ålesund',
@@ -36,6 +40,8 @@ const TOPIC_EVIDENCE: Record<string, TopicEvidence> = {
     datasetId: 'ds-gla-003',
     datasetTitle: 'Kongsfjorden Fjord Dynamics',
     summary: 'Monitoring Atlantic water intrusion into High Arctic fjords via the IndARC mooring.',
+    sourceUrl: 'https://ncpor.res.in/arctics',
+    sourceLabel: 'NCPOR Arctic Research Programme',
   },
   'sea-ice': {
     base: 'MV Vasiliy Golovnin Cruise Track',
@@ -43,6 +49,8 @@ const TOPIC_EVIDENCE: Record<string, TopicEvidence> = {
     datasetId: 'ds-oce-002',
     datasetTitle: 'Southern Ocean CTD Transect',
     summary: 'In-situ sea-ice thickness profiling across the marginal ice zone.',
+    sourceUrl: 'https://nsidc.org/data/seaice_index',
+    sourceLabel: 'NSIDC Sea Ice Climatology Index',
   },
   glaciers: {
     base: 'Larsemann Hills & Schirmacher Oasis',
@@ -50,6 +58,8 @@ const TOPIC_EVIDENCE: Record<string, TopicEvidence> = {
     datasetId: 'ds-gla-003',
     datasetTitle: 'Larsemann Shallow Firn Cores',
     summary: 'Firn core isotope profiling to reconstruct past accumulation and glacier mass balance.',
+    sourceUrl: 'https://ncpor.res.in/pages/display/268-himalaya',
+    sourceLabel: 'NCPOR Cryosphere & Himalayan Studies',
   },
   'polar-climate': {
     base: 'Maitri Automatic Weather Station',
@@ -57,6 +67,8 @@ const TOPIC_EVIDENCE: Record<string, TopicEvidence> = {
     datasetId: 'ds-atm-001',
     datasetTitle: 'Continuous AWS Meteorology',
     summary: 'Longest continuous meteorological time-series in East Antarctica since 1989.',
+    sourceUrl: 'https://data.ncpor.res.in',
+    sourceLabel: 'National Polar Data Centre (NPDC)',
   },
 }
 
@@ -351,6 +363,19 @@ export default function Education() {
                           {evidence.datasetTitle} →
                         </Link>
                         <div className="text-xs text-slate-600 mt-1">{trans('Mission:', 'अभियान:')} {evidence.expedition}</div>
+                        {evidence.sourceUrl && (
+                          <div className="mt-2 pt-2 border-t border-sky-200/60">
+                            <a
+                              href={evidence.sourceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-800 hover:text-cyan-950 underline underline-offset-4 decoration-cyan-500/40"
+                            >
+                              <span>{evidence.sourceLabel || trans('Verify Official Source', 'आधिकारिक स्रोत पर सत्यापित करें')}</span>
+                              <ExternalLink className="w-3 h-3 shrink-0" />
+                            </a>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

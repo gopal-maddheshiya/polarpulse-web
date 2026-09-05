@@ -15,6 +15,7 @@ export type { ResearchStation, Expedition, Dataset, Publication, KnowledgeItem, 
 /* -------------------------------------------------------------------------- */
 
 function mapExpedition(row: any): Expedition {
+  const fallback = staticExpeditions.find(e => e.id === row.id)
   return {
     id: row.id,
     title: row.title,
@@ -35,10 +36,13 @@ function mapExpedition(row: any): Expedition {
     datasets: Array.isArray(row.datasets) ? row.datasets : [],
     publications: Array.isArray(row.publications) ? row.publications : [],
     highlights: Array.isArray(row.highlights) ? row.highlights : [],
+    sourceUrl: row.source_url || fallback?.sourceUrl,
+    sourceLabel: row.source_label || fallback?.sourceLabel,
   }
 }
 
 function mapDataset(row: any): Dataset {
+  const fallback = staticDatasets.find(d => d.id === row.id)
   return {
     id: row.id,
     title: row.title,
@@ -52,10 +56,13 @@ function mapDataset(row: any): Dataset {
     relatedExpedition: row.related_expedition || '',
     relatedPublication: row.related_publication || undefined,
     previewRows: Array.isArray(row.preview_rows) ? row.preview_rows : [],
+    sourceUrl: row.source_url || fallback?.sourceUrl,
+    sourceLabel: row.source_label || fallback?.sourceLabel,
   }
 }
 
 function mapPublication(row: any): Publication {
+  const fallback = staticPublications.find(p => p.id === row.id)
   return {
     id: row.id,
     title: row.title,
@@ -68,10 +75,13 @@ function mapPublication(row: any): Publication {
     expedition: row.expedition || '',
     dataset: row.dataset || undefined,
     type: (row.type as any) || 'Journal',
+    sourceUrl: row.source_url || fallback?.sourceUrl,
+    sourceLabel: row.source_label || fallback?.sourceLabel,
   }
 }
 
 function mapKnowledge(row: any): KnowledgeItem {
+  const fallback = staticKnowledge.find(k => k.id === row.id)
   return {
     id: row.id,
     type: row.type || 'Article',
@@ -82,7 +92,9 @@ function mapKnowledge(row: any): KnowledgeItem {
     category: row.category || 'General',
     year: Number(row.year ?? 2024),
     author: row.author || 'POLARIS',
-    source: row.source || undefined,
+    source: row.source || fallback?.source,
+    sourceUrl: row.source_url || fallback?.sourceUrl,
+    sourceLabel: row.source_label || fallback?.sourceLabel,
     relatedExpedition: row.related_expedition || undefined,
     relatedDataset: row.related_dataset || undefined,
     relatedPublication: row.related_publication || undefined,

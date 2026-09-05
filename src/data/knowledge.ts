@@ -9,6 +9,8 @@ export interface KnowledgeItem {
   year: number
   author: string
   source?: string
+  sourceUrl?: string
+  sourceLabel?: string
   relatedExpedition?: string
   relatedDataset?: string
   relatedPublication?: string
@@ -25,6 +27,9 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Field Stories',
     year: 2024,
     author: 'Field Team · 43rd ISEA (Demo)',
+    source: 'NCPOR · Bharati Station, Larsemann Hills',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
+    sourceLabel: 'NCPOR Bharati Station',
   },
   {
     id: 'kb-2',
@@ -36,17 +41,23 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Reports',
     year: 2025,
     author: 'NCPOR (Demo)',
+    source: 'National Centre for Polar and Ocean Research',
+    sourceUrl: 'https://ncpor.res.in/antarcticas',
+    sourceLabel: 'NCPOR Indian Antarctic Programme',
   },
   {
     id: 'kb-3',
     type: 'Article',
     title: 'Why the Poles Matter to India',
-    excerpt: 'A short essay on why the Indian polar programme is part of the country\u2019s climate, ocean and strategic interests.',
-    body: 'India sits in the tropics, but its climate, monsoon and oceans are tightly coupled to the polar regions. A warmer Antarctic and a melting Greenland alter the thermohaline circulation and the sea-level budget. The Himalayan cryosphere — itself a polar analogue — supplies the perennial rivers of the Indo-Gangetic plain. Polar science is therefore not a luxury: it is a foundational investment in India\u2019s environmental and economic future.',
+    excerpt: 'A short essay on why the Indian polar programme is part of the country’s climate, ocean and strategic interests.',
+    body: 'India sits in the tropics, but its climate, monsoon and oceans are tightly coupled to the polar regions. A warmer Antarctic and a melting Greenland alter the thermohaline circulation and the sea-level budget. The Himalayan cryosphere — itself a polar analogue — supplies the perennial rivers of the Indo-Gangetic plain. Polar science is therefore not a luxury: it is a foundational investment in India’s environmental and economic future.',
     tags: ['Climate', 'Policy', 'India'],
     category: 'Articles',
     year: 2024,
     author: 'POLARIS Editorial (Demo)',
+    source: 'Ministry of Earth Sciences (MoES), Government of India',
+    sourceUrl: 'https://moes.gov.in/',
+    sourceLabel: 'Ministry of Earth Sciences',
   },
   {
     id: 'kb-4',
@@ -58,6 +69,9 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'News',
     year: 2024,
     author: 'POLARIS (Demo)',
+    source: 'NCPOR Polar Outreach Division',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/373-outreach-program',
+    sourceLabel: 'NCPOR Outreach',
   },
   {
     id: 'kb-5',
@@ -69,6 +83,9 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Educational',
     year: 2024,
     author: 'POLARIS Editorial (Demo)',
+    source: 'National Polar Data Centre (NPDC)',
+    sourceUrl: 'https://data.ncpor.res.in/',
+    sourceLabel: 'NPDC Ocean Data Portal',
   },
   {
     id: 'kb-6',
@@ -80,6 +97,9 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Publications',
     year: 2024,
     author: 'Tiwari et al. (Demo)',
+    source: 'NCPOR Atmospheric Sciences Archive',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/386-science-in-antarctica',
+    sourceLabel: 'NCPOR Antarctic Science',
     relatedPublication: 'pub-2024-03',
     relatedDataset: 'ds-atm-001',
   },
@@ -93,6 +113,9 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Datasets',
     year: 2024,
     author: 'NCPOR (Demo)',
+    source: 'NCPOR Southern Ocean Research',
+    sourceUrl: 'https://ncpor.res.in/pages/display/270-southern-ocean',
+    sourceLabel: 'NCPOR Southern Ocean',
     relatedDataset: 'ds-oce-002',
   },
   {
@@ -105,6 +128,9 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Field Stories',
     year: 2024,
     author: 'Field Team · Arctic 2024 (Demo)',
+    source: 'NCPOR · Himadri Research Station, Ny-Ålesund',
+    sourceUrl: 'https://ncpor.res.in/arctics/display/394-himadri',
+    sourceLabel: 'NCPOR Himadri Station',
   },
   {
     id: 'kb-9',
@@ -116,17 +142,23 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Reports',
     year: 2024,
     author: 'NCPOR (Demo)',
+    source: 'National Polar Data Centre / IMD',
+    sourceUrl: 'https://data.ncpor.res.in/',
+    sourceLabel: 'NPDC Meteorological Archive',
   },
   {
     id: 'kb-10',
     type: 'Article',
-    title: 'A Beginner\u2019s Guide to Sea Ice',
+    title: 'A Beginner’s Guide to Sea Ice',
     excerpt: 'How sea ice forms, why it matters, and what its decline means.',
-    body: 'Sea ice is one of the most visible indicators of a changing climate. It forms when the upper ocean cools below its freezing point; brine is rejected, leaving a porous solid that thickens through the winter. In summer, melt ponds dot its surface. Its high albedo — the fraction of sunlight it reflects — helps regulate Earth\u2019s energy balance. When sea ice shrinks, the darker ocean absorbs more heat, accelerating warming: a feedback loop at the heart of polar climate.',
+    body: 'Sea ice is one of the most visible indicators of a changing climate. It forms when the upper ocean cools below its freezing point; brine is rejected, leaving a porous solid that thickens through the winter. In summer, melt ponds dot its surface. Its high albedo — the fraction of sunlight it reflects — helps regulate Earth’s energy balance. When sea ice shrinks, the darker ocean absorbs more heat, accelerating warming: a feedback loop at the heart of polar climate.',
     tags: ['Sea Ice', 'Climate', 'Beginner'],
     category: 'Articles',
     year: 2024,
     author: 'POLARIS Editorial (Demo)',
+    source: 'National Snow and Ice Data Center (NSIDC)',
+    sourceUrl: 'https://nsidc.org/learn/parts-cryosphere/sea-ice',
+    sourceLabel: 'NSIDC Cryosphere Education',
   },
   {
     id: 'kb-11',
@@ -138,6 +170,9 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'Educational',
     year: 2024,
     author: 'POLARIS Editorial (Demo)',
+    source: 'Scientific Committee on Antarctic Research (SCAR)',
+    sourceUrl: 'https://www.scar.org/',
+    sourceLabel: 'SCAR Antarctic Terminology',
   },
   {
     id: 'kb-12',
@@ -149,5 +184,8 @@ export const knowledgeItems: KnowledgeItem[] = [
     category: 'News',
     year: 2024,
     author: 'POLARIS (Demo)',
+    source: 'NCPOR Polar Outreach Division',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/373-outreach-program',
+    sourceLabel: 'NCPOR Outreach',
   },
 ]

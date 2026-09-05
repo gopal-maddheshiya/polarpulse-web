@@ -11,6 +11,8 @@ export interface Dataset {
   relatedExpedition: string
   relatedPublication?: string
   previewRows: { name: string; value: string }[]
+  sourceUrl?: string
+  sourceLabel?: string
 }
 
 export const datasets: Dataset[] = [
@@ -27,6 +29,8 @@ export const datasets: Dataset[] = [
     coverage: '2020–2024, hourly',
     relatedExpedition: 'isro-44',
     relatedPublication: 'pub-2024-03',
+    sourceUrl: 'https://data.ncpor.res.in',
+    sourceLabel: 'National Polar Data Centre (NCPOR)',
     previewRows: [
       { name: 'Timestamp', value: '2024-02-12T03:00:00Z' },
       { name: 'EBC (ng/m³)', value: '32.4' },
@@ -48,6 +52,8 @@ export const datasets: Dataset[] = [
     coverage: '2024 cruise · 64 stations',
     relatedExpedition: 'isro-44',
     relatedPublication: 'pub-2025-01',
+    sourceUrl: 'https://data.ncpor.res.in/search/',
+    sourceLabel: 'NCPOR Physical Oceanography Portal',
     previewRows: [
       { name: 'Station', value: 'SO-12' },
       { name: 'Latitude', value: '-52.40°S' },
@@ -68,6 +74,8 @@ export const datasets: Dataset[] = [
     size: '3.2 MB',
     coverage: '3 cores · 0–12 m',
     relatedExpedition: 'isro-44',
+    sourceUrl: 'https://data.ncpor.res.in',
+    sourceLabel: 'National Polar Data Centre (NCPOR)',
     previewRows: [
       { name: 'Core ID', value: 'LH-03' },
       { name: 'Depth (m)', value: '4.2' },
@@ -87,6 +95,8 @@ export const datasets: Dataset[] = [
     size: '212 MB',
     coverage: '48 samples',
     relatedExpedition: 'isro-43',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/372-biological-sciences',
+    sourceLabel: 'NCPOR Polar Biology Repository',
     previewRows: [
       { name: 'Sample', value: 'LH-S-12' },
       { name: 'Latitude', value: '-69.40°S' },
@@ -105,6 +115,8 @@ export const datasets: Dataset[] = [
     size: '8.7 MB',
     coverage: '1:25,000',
     relatedExpedition: 'isro-43',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/370-geoscience',
+    sourceLabel: 'NCPOR Geoscience Repository',
     previewRows: [{ name: 'Feature', value: 'Orthogneiss unit' }],
   },
   {
@@ -119,6 +131,8 @@ export const datasets: Dataset[] = [
     size: '1.8 MB',
     coverage: '2015–2024, monthly',
     relatedExpedition: 'arctic-2024',
+    sourceUrl: 'https://ncpor.res.in/arctics/display/399-cryosphere',
+    sourceLabel: 'NCPOR Arctic Cryosphere Observatory',
     previewRows: [
       { name: 'Stake', value: 'AL-04' },
       { name: 'Net mass (mm w.e.)', value: '-628' },
@@ -136,6 +150,8 @@ export const datasets: Dataset[] = [
     size: '22.0 MB',
     coverage: '12 stations',
     relatedExpedition: 'arctic-2024',
+    sourceUrl: 'https://ncpor.res.in/arctics/display/398-indarc',
+    sourceLabel: 'NCPOR IndARC Observatory',
     previewRows: [{ name: 'Station', value: 'KF-06' }],
   },
   {
@@ -150,6 +166,8 @@ export const datasets: Dataset[] = [
     size: '5.1 MB',
     coverage: '2023 cruise',
     relatedExpedition: 'so-cruise-2023',
+    sourceUrl: 'https://ncpor.res.in/pages/display/270-southern-ocean',
+    sourceLabel: 'NCPOR Southern Ocean Programme',
     previewRows: [{ name: 'pCO₂ (µatm)', value: '398.4' }],
   },
   {
@@ -164,6 +182,8 @@ export const datasets: Dataset[] = [
     size: '0.6 MB',
     coverage: '1987–2022',
     relatedExpedition: 'himalaya-glacier-2022',
+    sourceUrl: 'https://ncpor.res.in/pages/display/268-himalaya',
+    sourceLabel: 'NCPOR Himalayan Cryosphere (HiCOM)',
     previewRows: [{ name: 'Net mass (m w.e.)', value: '-0.42' }],
   },
   {
@@ -178,6 +198,8 @@ export const datasets: Dataset[] = [
     size: '1.1 MB',
     coverage: '5 pits',
     relatedExpedition: 'isro-42',
+    sourceUrl: 'https://data.ncpor.res.in',
+    sourceLabel: 'National Polar Data Centre (NCPOR)',
     previewRows: [{ name: 'Pit ID', value: 'DML-P2' }],
   },
 ]

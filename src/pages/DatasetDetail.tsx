@@ -114,6 +114,15 @@ export default function DatasetDetail() {
               <button onClick={handlePreview} className="btn-outline">
                 <Eye className="w-4 h-4" /> {trans('Copy Preview JSON', 'प्रिव्यू JSON कॉपी करें')}
               </button>
+              <a
+                href={d.sourceUrl || "https://data.ncpor.res.in"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline inline-flex items-center gap-2 text-xs font-mono text-polar-700 hover:text-polar-950"
+              >
+                <span>{trans('Verify at NPDC', 'NPDC पर सत्यापित करें')}</span>
+                <ExternalLink className="w-3.5 h-3.5 text-cyan-accent" />
+              </a>
             </div>
           </Reveal>
         </Container>
@@ -188,6 +197,25 @@ export default function DatasetDetail() {
                   <div className="flex justify-between"><span className="text-polar-500">{trans('Region', 'ध्रुवीय क्षेत्र')}</span><span className="text-polar-900">{d.region}</span></div>
                   <div className="flex justify-between"><span className="text-polar-500">{trans('Access', 'पहुंच स्तर')}</span><span className="text-emerald-600 font-medium text-xs">{trans('Open / Public Domain', 'खुला / सार्वजनिक अधिकार')}</span></div>
                 </div>
+              </div>
+
+              {/* Official Repository Verification */}
+              <div className="rounded-2xl border border-polar-100 p-5 bg-white space-y-3 text-sm">
+                <div className="text-xs font-mono uppercase tracking-wider text-polar-400">
+                  {trans('Official Repository', 'आधिकारिक डेटा संग्रह')}
+                </div>
+                <p className="text-xs text-polar-600 leading-relaxed">
+                  {trans('National Polar Data Centre (NPDC) · Ministry of Earth Sciences, Govt. of India', 'राष्ट्रीय ध्रुवीय डेटा केंद्र (NPDC) · पृथ्वी विज्ञान मंत्रालय, भारत सरकार')}
+                </p>
+                <a
+                  href={d.sourceUrl || "https://data.ncpor.res.in"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-accent hover:text-cyan-700 underline underline-offset-4 decoration-cyan-accent/40"
+                >
+                  <span>{d.sourceLabel || "National Polar Data Centre (NPDC) Portal"}</span>
+                  <ExternalLink className="w-3 h-3 shrink-0" />
+                </a>
               </div>
 
               {/* Linked Expedition */}

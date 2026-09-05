@@ -28,6 +28,8 @@ interface StationDossier {
   description: string
   researchFocus: string[]
   achievements: string[]
+  officialUrl?: string
+  officialSource?: string
 }
 
 const INDIAN_STATIONS: StationDossier[] = [
@@ -53,6 +55,8 @@ const INDIAN_STATIONS: StationDossier[] = [
       'First permanent inland biological observatory in East Antarctica',
       'Global Atmosphere Watch (WMO-GAW) contributing station',
     ],
+    officialUrl: 'https://ncpor.res.in/antarcticas/display/376-maitri-',
+    officialSource: 'NCPOR · Maitri Base',
   },
   {
     id: 'bharati',
@@ -76,6 +80,8 @@ const INDIAN_STATIONS: StationDossier[] = [
       'Deep CTD hydrographic ocean transects across polar fronts',
       'Certified zero-liquid discharge environmental design compliance',
     ],
+    officialUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
+    officialSource: 'NCPOR · Bharati Base',
   },
   {
     id: 'himadri',
@@ -99,6 +105,8 @@ const INDIAN_STATIONS: StationDossier[] = [
       'Over 200 Indian scientists hosted for High-Arctic fieldwork',
       'Active scientific contributor to the International Arctic Science Committee (IASC)',
     ],
+    officialUrl: 'https://ncpor.res.in/arctics/display/394-himadri',
+    officialSource: 'NCPOR · Himadri Station',
   },
 ]
 
@@ -125,6 +133,8 @@ const INDIAN_STATIONS_HI: StationDossier[] = [
       'पूर्वी अंटार्कटिका में पहली स्थायी अंतर्देशीय वेधशाला',
       'ग्लोबल एटमॉस्फियर वॉच (WMO-GAW) योगदानकर्ता स्टेशन',
     ],
+    officialUrl: 'https://ncpor.res.in/antarcticas/display/376-maitri-',
+    officialSource: 'एनसीपीओआर · मैत्री बेस',
   },
   {
     id: 'bharati',
@@ -148,6 +158,8 @@ const INDIAN_STATIONS_HI: StationDossier[] = [
       'ध्रुवीय मोर्चों पर गहरे सीटीडी हाइड्रोग्राफिक महासागरीय अवलोकन',
       'शून्य-तरल निर्वहन पर्यावरण प्रमाणन अनुपालन',
     ],
+    officialUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
+    officialSource: 'एनसीपीओआर · भारती बेस',
   },
   {
     id: 'himadri',
@@ -171,6 +183,8 @@ const INDIAN_STATIONS_HI: StationDossier[] = [
       'उच्च-आर्कटिक अनुसंधान के लिए 200 से अधिक भारतीय वैज्ञानिकों की मेज़बानी',
       'अंतर्राष्ट्रीय आर्कटिक विज्ञान समिति (IASC) में सक्रिय योगदानकर्ता',
     ],
+    officialUrl: 'https://ncpor.res.in/arctics/display/394-himadri',
+    officialSource: 'एनसीपीओआर · हिमाद्री स्टेशन',
   },
 ]
 
@@ -430,14 +444,27 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono text-slate-500">
+                  <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-500">
                     <span>{trans('Ministry of Earth Sciences · NCPOR', 'पृथ्वी विज्ञान मंत्रालय · एनसीपीओआर')}</span>
-                    <Link
-                      to="/expeditions"
-                      className="text-sky-700 font-semibold hover:underline flex items-center gap-1"
-                    >
-                      {trans('Expedition Archive', 'अभियान पुरालेख')} <ArrowUpRight className="w-3.5 h-3.5" />
-                    </Link>
+                    <div className="flex items-center gap-4">
+                      {currentStation.officialUrl && (
+                        <a
+                          href={currentStation.officialUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sky-700 font-semibold hover:underline inline-flex items-center gap-1"
+                        >
+                          <span>{trans('Official NCPOR Dossier', 'आधिकारिक एनसीपीओआर डॉसियर')}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                      <Link
+                        to="/expeditions"
+                        className="text-slate-600 hover:text-slate-900 hover:underline flex items-center gap-1"
+                      >
+                        {trans('Expedition Archive', 'अभियान पुरालेख')} <ArrowUpRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -550,8 +577,17 @@ export default function Home() {
                       '"दक्षिणी महासागर के समुद्री सतह तापमान में विविधता अंतर-उष्णकटिबंधीय अभिसरण क्षेत्र (ITCZ) की स्थिति को बदलती है। अंटार्कटिक समुद्री बर्फ में परिवर्तन मस्करेन हाई के माध्यम से उत्तर की ओर बढ़ता है, जिससे भारत के दक्षिण-पश्चिम मानसून की नमी और तीव्रता प्रभावित होती है।"'
                     )}
                   </p>
-                  <div className="mt-3 text-xs font-mono text-slate-500">
-                    {trans('— NCPOR Polar Climate Dynamics Group', '— एनसीपीओआर ध्रुवीय जलवायु गतिशीलता समूह')}
+                  <div className="mt-3 text-xs font-mono text-slate-500 flex flex-wrap items-center justify-between gap-2">
+                    <span>{trans('— NCPOR Polar Climate Dynamics Group', '— एनसीपीओआर ध्रुवीय जलवायु गतिशीलता समूह')}</span>
+                    <a
+                      href="https://nsidc.org/data/seaice_index"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-700 hover:text-sky-900 hover:underline inline-flex items-center gap-1 font-semibold"
+                    >
+                      <span>{trans('NSIDC Sea Ice Index', 'एनएसआईडीसी इंडेक्स')}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
                   </div>
                 </div>
 

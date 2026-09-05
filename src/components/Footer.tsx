@@ -6,6 +6,7 @@ interface FooterLink {
   to: string
   en: string
   hi: string
+  external?: boolean
 }
 
 interface FooterColumn {
@@ -36,12 +37,13 @@ const SITEMAP: FooterColumn[] = [
     ],
   },
   {
-    titleEn: 'Institutional',
-    titleHi: 'संस्थागत विवरण',
+    titleEn: 'Institutional & Verification',
+    titleHi: 'संस्थागत एवं सत्यापन',
     links: [
       { to: '/about', en: 'About POLARIS', hi: 'पोलारिस के बारे में' },
-      { to: '/about#mission', en: 'National Polar Policy', hi: 'राष्ट्रीय ध्रुवीय नीति' },
-      { to: '/about#contact', en: 'NCPOR Directorate', hi: 'एनसीपीओआर निदेशालय' },
+      { to: 'https://ncpor.res.in', en: 'NCPOR Portal', hi: 'एनसीपीओआर पोर्टल', external: true },
+      { to: 'https://moes.gov.in', en: 'Ministry of Earth Sciences', hi: 'पृथ्वी विज्ञान मंत्रालय', external: true },
+      { to: 'https://data.ncpor.res.in', en: 'National Polar Data Centre', hi: 'राष्ट्रीय ध्रुवीय डेटा केंद्र', external: true },
     ],
   },
 ]
@@ -101,13 +103,25 @@ export default function Footer() {
               <ul className="space-y-1.5 text-xs text-slate-400">
                 {col.links.map(l => (
                   <li key={l.to + l.en}>
-                    <Link
-                      to={l.to}
-                      className="hover:text-white transition-colors inline-flex items-center gap-1 group"
-                    >
-                      <span>{isHindi ? l.hi : l.en}</span>
-                      <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-sky-400" />
-                    </Link>
+                    {l.external ? (
+                      <a
+                        href={l.to}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-white transition-colors inline-flex items-center gap-1 group"
+                      >
+                        <span>{isHindi ? l.hi : l.en}</span>
+                        <ArrowUpRight className="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity text-sky-400" />
+                      </a>
+                    ) : (
+                      <Link
+                        to={l.to}
+                        className="hover:text-white transition-colors inline-flex items-center gap-1 group"
+                      >
+                        <span>{isHindi ? l.hi : l.en}</span>
+                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-sky-400" />
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

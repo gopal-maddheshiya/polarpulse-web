@@ -13,6 +13,8 @@ export interface ChatMessage {
   content: string
   source?: string
   sourceUrl?: string
+  officialSourceUrl?: string
+  officialSourceLabel?: string
   timestamp: number
 }
 
@@ -23,6 +25,8 @@ export interface PageContext {
   context: string
   sourceName: string
   sourceUrl?: string
+  officialSourceUrl?: string
+  officialSourceLabel?: string
 }
 
 /**
@@ -40,6 +44,8 @@ export function extractPageContext(pathname: string): PageContext {
         type: 'Expedition Mission Dossier',
         sourceName: `POLARIS · ${exp.shortTitle} (${exp.year})`,
         sourceUrl: `/expeditions/${id}`,
+        officialSourceUrl: exp.sourceUrl || 'https://ncpor.res.in/antarcticas',
+        officialSourceLabel: exp.sourceLabel || 'NCPOR Expedition Portal',
         context: `Mission: ${exp.title} (${exp.year}, ${exp.season}). Vessel: ${exp.vessel || 'N/A'}. Lead: ${exp.lead}. Stations: ${exp.stations.join(', ')}. Overview: ${exp.overview}. Key Objectives: ${exp.highlights.map(h => `${h.title}: ${h.description}`).join('; ')}. Research Areas: ${exp.researchAreas.join(', ')}.`,
       }
     }
@@ -53,6 +59,8 @@ export function extractPageContext(pathname: string): PageContext {
       type: 'Registry Overview',
       sourceName: 'POLARIS · Expedition Registry',
       sourceUrl: '/expeditions',
+      officialSourceUrl: 'https://ncpor.res.in/antarcticas',
+      officialSourceLabel: 'NCPOR Antarctic Programme',
       context: `India has completed 44 annual scientific expeditions to Antarctica (1981–2025), alongside regular Arctic campaigns from Ny-Ålesund and Southern Ocean cruises. Flagship current mission: 44th ISEA on MV Vasiliy Golovnin resupplying Maitri and Bharati bases.`,
     }
   }
@@ -68,6 +76,8 @@ export function extractPageContext(pathname: string): PageContext {
         type: 'Open Scientific Dataset',
         sourceName: `POLARIS Dataset · ${ds.id}`,
         sourceUrl: `/datasets/${id}`,
+        officialSourceUrl: ds.sourceUrl || 'https://data.ncpor.res.in',
+        officialSourceLabel: ds.sourceLabel || 'National Polar Data Centre (NPDC)',
         context: `Dataset: ${ds.title}. Discipline: ${ds.area}. Region: ${ds.region}. Temporal Coverage: ${ds.coverage}. File Format: ${ds.format} (${ds.size}). Summary: ${ds.description}. Parameters collected include in-situ cryospheric, atmospheric, and oceanographic measurements verified by NCPOR.`,
       }
     }
@@ -81,6 +91,8 @@ export function extractPageContext(pathname: string): PageContext {
       type: 'Open Data Repository',
       sourceName: 'POLARIS · Polar Datasets Registry',
       sourceUrl: '/datasets',
+      officialSourceUrl: 'https://data.ncpor.res.in',
+      officialSourceLabel: 'National Polar Data Centre (NPDC)',
       context: `India's open repository of polar data. Contains in-situ atmospheric black carbon time series from Maitri, Kongsfjorden fjord CTD profiles from IndARC, Southern Ocean sea-ice concentration arrays, and Larsemann Hills shallow firn core isotope stratigraphy. Standard NetCDF-4 and CSV formats.`,
     }
   }
@@ -295,6 +307,8 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
       type: 'Sovereign Research Station',
       sourceName: 'POLARIS Station · Maitri Base',
       sourceUrl: '/about',
+      officialSourceUrl: 'https://ncpor.res.in/antarcticas/display/376-maitri-',
+      officialSourceLabel: 'Official NCPOR Maitri Station',
       context: `${liveStation}. Active research at Maitri: Atmospheric black carbon aerosol measurements (ds-atm-001), total column ozone monitoring, geological mapping of Schirmacher Oasis. ${liveDataset}`,
     }
   }
@@ -307,6 +321,8 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
       type: 'Sovereign Research Station',
       sourceName: 'POLARIS Station · Bharati Base',
       sourceUrl: '/about',
+      officialSourceUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
+      officialSourceLabel: 'Official NCPOR Bharati Station',
       context: live || baseCtx.context,
     }
   }
@@ -319,6 +335,8 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
       type: 'Sovereign Research Station',
       sourceName: 'POLARIS Station · Himadri Station',
       sourceUrl: '/about',
+      officialSourceUrl: 'https://ncpor.res.in/arctics/display/394-himadri',
+      officialSourceLabel: 'Official NCPOR Himadri Station',
       context: live || baseCtx.context,
     }
   }
@@ -331,6 +349,8 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
       type: 'Historical Research Station',
       sourceName: 'POLARIS Station · Dakshin Gangotri',
       sourceUrl: '/about',
+      officialSourceUrl: 'https://ncpor.res.in/antarcticas/display/166-india-in-antarctica',
+      officialSourceLabel: 'Official NCPOR Indian Antarctic History',
       context: live || baseCtx.context,
     }
   }
@@ -682,7 +702,7 @@ export async function askPolarisAI({
   pageContext: PageContext
   audience: Audience
   onChunk: (delta: string, accumulated: string) => void
-  onDone: (fullText: string, source: string, sourceUrl?: string) => void
+  onDone: (fullText: string, source: string, sourceUrl?: string, officialSourceUrl?: string, officialSourceLabel?: string) => void
   onError: (err: string) => void
 }): Promise<void> {
   const lastUserMsg = messages.filter(m => m.role === 'user').slice(-1)[0]?.content || ''
@@ -745,7 +765,7 @@ export async function askPolarisAI({
       }
 
       if (accumulated.trim().length > 0) {
-        onDone(accumulated, activeContext.sourceName, activeContext.sourceUrl)
+        onDone(accumulated, activeContext.sourceName, activeContext.sourceUrl, activeContext.officialSourceUrl, activeContext.officialSourceLabel)
         return
       }
     }
@@ -777,7 +797,7 @@ async function streamGroundedFallback(
   pageContext: PageContext,
   audience: Audience,
   onChunk: (delta: string, accumulated: string) => void,
-  onDone: (fullText: string, source: string, sourceUrl?: string) => void
+  onDone: (fullText: string, source: string, sourceUrl?: string, officialSourceUrl?: string, officialSourceLabel?: string) => void
 ): Promise<void> {
   const result = generateGroundedFallback(query, pageContext, audience)
   const words = result.text.split(/(\s+)/)
@@ -790,5 +810,5 @@ async function streamGroundedFallback(
     await new Promise(r => setTimeout(r, 16))
   }
 
-  onDone(accumulated, result.source, result.sourceUrl)
+  onDone(accumulated, result.source, result.sourceUrl, pageContext.officialSourceUrl, pageContext.officialSourceLabel)
 }

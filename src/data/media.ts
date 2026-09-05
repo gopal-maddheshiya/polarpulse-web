@@ -10,6 +10,8 @@ export interface MediaItem {
   credit: string
   region?: string
   expedition?: string
+  sourceUrl?: string
+  sourceLabel?: string
 }
 
 export const media: MediaItem[] = [
@@ -22,6 +24,8 @@ export const media: MediaItem[] = [
     credit: 'Scientific Expedition Archive',
     region: 'Southern Ocean',
     expedition: 'isro-44',
+    sourceUrl: 'https://ncpor.res.in/pages/display/270-southern-ocean',
+    sourceLabel: 'NCPOR Southern Ocean',
   },
   {
     id: 'm-2',
@@ -32,6 +36,8 @@ export const media: MediaItem[] = [
     credit: 'NCPOR / MoES',
     region: 'Antarctic',
     expedition: 'isro-44',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
+    sourceLabel: 'NCPOR Bharati Station',
   },
   {
     id: 'm-3',
@@ -42,6 +48,8 @@ export const media: MediaItem[] = [
     credit: 'NCPOR / MoES',
     region: 'Antarctic',
     expedition: 'isro-43',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/376-maitri-',
+    sourceLabel: 'NCPOR Maitri Station',
   },
   {
     id: 'm-4',
@@ -52,6 +60,8 @@ export const media: MediaItem[] = [
     credit: 'Polar Glaciology Laboratory',
     region: 'Antarctic',
     expedition: 'isro-44',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/371-cryosphere-sciences',
+    sourceLabel: 'NCPOR Cryosphere Science',
   },
   {
     id: 'm-5',
@@ -62,6 +72,8 @@ export const media: MediaItem[] = [
     credit: 'NCPOR / MoES',
     region: 'Arctic',
     expedition: 'arctic-2024',
+    sourceUrl: 'https://ncpor.res.in/arctics/display/394-himadri',
+    sourceLabel: 'NCPOR Himadri Station',
   },
   {
     id: 'm-6',
@@ -72,6 +84,8 @@ export const media: MediaItem[] = [
     credit: 'Arctic Glaciology Survey',
     region: 'Arctic',
     expedition: 'arctic-2024',
+    sourceUrl: 'https://ncpor.res.in/arctics/display/398-indarc',
+    sourceLabel: 'NCPOR IndARC Mooring',
   },
   {
     id: 'm-7',
@@ -81,6 +95,8 @@ export const media: MediaItem[] = [
     src: GALLERY[6],
     credit: 'NCPOR Historical Archive',
     region: 'Antarctic',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/166-india-in-antarctica',
+    sourceLabel: 'NCPOR India in Antarctica',
   },
   {
     id: 'm-8',
@@ -90,6 +106,8 @@ export const media: MediaItem[] = [
     src: GALLERY[7],
     credit: 'Southern Ocean Observation',
     region: 'Southern Ocean',
+    sourceUrl: 'https://ncpor.res.in/pages/display/270-southern-ocean',
+    sourceLabel: 'NCPOR Southern Ocean',
   },
   {
     id: 'm-9',
@@ -100,6 +118,8 @@ export const media: MediaItem[] = [
     credit: 'Polar Field Operations',
     region: 'Antarctic',
     expedition: 'isro-44',
+    sourceUrl: 'https://data.ncpor.res.in',
+    sourceLabel: 'National Polar Data Centre',
   },
   {
     id: 'm-10',
@@ -109,6 +129,8 @@ export const media: MediaItem[] = [
     src: GALLERY[9],
     credit: 'Polar Ecology Survey',
     region: 'Antarctic',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/372-biological-sciences',
+    sourceLabel: 'NCPOR Biological Sciences',
   },
   {
     id: 'm-11',
@@ -118,6 +140,8 @@ export const media: MediaItem[] = [
     src: GALLERY[10],
     credit: 'Upper Atmospheric Physics',
     region: 'Antarctic',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/386-science-in-antarctica',
+    sourceLabel: 'NCPOR Upper Atmosphere',
   },
   {
     id: 'm-12',
@@ -127,6 +151,8 @@ export const media: MediaItem[] = [
     src: GALLERY[11],
     credit: 'Cryospheric Science Survey',
     region: 'Antarctic',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/371-cryosphere-sciences',
+    sourceLabel: 'NCPOR Cryosphere Science',
   },
   {
     id: 'm-v1',
@@ -138,6 +164,8 @@ export const media: MediaItem[] = [
     credit: 'NCPOR / MoES',
     region: 'Antarctic',
     expedition: 'isro-44',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/377-bharati',
+    sourceLabel: 'NCPOR Bharati Station',
   },
   {
     id: 'm-v2',
@@ -148,6 +176,8 @@ export const media: MediaItem[] = [
     poster: GALLERY[7],
     credit: 'Climate Research Lab',
     region: 'Southern Ocean',
+    sourceUrl: 'https://nsidc.org/learn/parts-cryosphere/sea-ice',
+    sourceLabel: 'NSIDC Sea Ice Dynamics',
   },
   {
     id: 'm-i1',
@@ -157,6 +187,8 @@ export const media: MediaItem[] = [
     src: GALLERY[6],
     credit: 'POLARIS / NCPOR',
     region: 'Antarctic',
+    sourceUrl: 'https://ncpor.res.in/antarcticas/display/385-timeline',
+    sourceLabel: 'NCPOR Antarctic Timeline',
   },
   {
     id: 'm-i2',
@@ -166,5 +198,7 @@ export const media: MediaItem[] = [
     src: GALLERY[5],
     credit: 'POLARIS / NCPOR',
     region: 'Arctic',
+    sourceUrl: 'https://ncpor.res.in/pages/display/268-himalaya',
+    sourceLabel: 'NCPOR Cryospheric Science',
   },
 ]
