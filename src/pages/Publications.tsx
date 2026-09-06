@@ -97,7 +97,7 @@ export default function Publications() {
         <Container>
           <Reveal>
             {/* Search and Filters Bar */}
-            <div className="p-6 mb-8 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
+            <div className="p-6 mb-8 bg-white/95 border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {/* Search Input */}
                 <div className="flex-1 flex items-center gap-2 rounded-xl border border-sky-200/80 bg-sky-50/30 px-3.5 py-2.5 min-w-[240px] focus-within:border-sky-400 transition-colors">
@@ -225,7 +225,7 @@ export default function Publications() {
                 <div className="space-y-4">
                   {filtered.map((pub, idx) => (
                     <Reveal key={pub.id} delay={idx * 30}>
-                      <div className="group bg-white/95 backdrop-blur-md rounded-2xl border border-sky-200/90 p-5 sm:p-6 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-5">
+                      <div className="group bg-white/95 rounded-2xl border border-sky-200/90 p-5 sm:p-6 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-5">
                         <div className="space-y-2 flex-1">
                           {/* Badges */}
                           <div className="flex flex-wrap items-center gap-2">

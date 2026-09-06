@@ -14,28 +14,41 @@ export type { ResearchStation, Expedition, Dataset, Publication, KnowledgeItem, 
 /*                                DATA MAPPERS                                */
 /* -------------------------------------------------------------------------- */
 
+function cleanText(str: any): string {
+  if (typeof str !== 'string') return ''
+  return str.replace(/\s*\(Demo\)/gi, '').replace(/\s*\(Prototype\)/gi, '').trim()
+}
+
 function mapExpedition(row: any): Expedition {
   const fallback = staticExpeditions.find(e => e.id === row.id)
+  const reports = Array.isArray(row.reports) && row.reports.length > 0 && row.reports.some((r: any) => r.url)
+    ? row.reports.map((r: any) => ({
+        ...r,
+        title: cleanText(r.title),
+        url: r.url || fallback?.reports.find(fr => fr.title.includes(cleanText(r.title)) || cleanText(r.title).includes(fr.title))?.url,
+      }))
+    : (fallback?.reports || [])
+
   return {
     id: row.id,
-    title: row.title,
-    shortTitle: row.short_title || row.title,
-    region: row.region || 'Antarctic',
-    year: Number(row.year ?? 2024),
-    season: row.season || 'Summer',
-    vessel: row.vessel || undefined,
-    stations: Array.isArray(row.stations) ? row.stations : [],
-    researchAreas: Array.isArray(row.research_areas) ? row.research_areas : [],
-    lead: row.lead || 'NCPOR · Ministry of Earth Sciences',
-    image: row.image_url || '',
-    overview: row.overview || '',
-    timeline: Array.isArray(row.timeline) ? row.timeline : [],
-    scientists: Array.isArray(row.scientists) ? row.scientists : [],
-    research: Array.isArray(row.objectives) ? row.objectives : [],
-    reports: Array.isArray(row.reports) ? row.reports : [],
-    datasets: Array.isArray(row.datasets) ? row.datasets : [],
-    publications: Array.isArray(row.publications) ? row.publications : [],
-    highlights: Array.isArray(row.highlights) ? row.highlights : [],
+    title: cleanText(row.title) || fallback?.title || '',
+    shortTitle: cleanText(row.short_title || row.title) || fallback?.shortTitle || '',
+    region: row.region || fallback?.region || 'Antarctic',
+    year: Number(row.year ?? fallback?.year ?? 2024),
+    season: row.season || fallback?.season || 'Summer',
+    vessel: cleanText(row.vessel) || fallback?.vessel,
+    stations: Array.isArray(row.stations) && row.stations.length > 0 ? row.stations : (fallback?.stations || []),
+    researchAreas: Array.isArray(row.research_areas) && row.research_areas.length > 0 ? row.research_areas : (fallback?.researchAreas || []),
+    lead: cleanText(row.lead) || fallback?.lead || 'NCPOR · Ministry of Earth Sciences, Govt. of India',
+    image: row.image_url || fallback?.image || '',
+    overview: fallback && fallback.overview.length > (row.overview?.length || 0) ? fallback.overview : cleanText(row.overview),
+    timeline: fallback?.timeline || (Array.isArray(row.timeline) ? row.timeline : []),
+    scientists: fallback?.scientists || (Array.isArray(row.scientists) ? row.scientists : []),
+    research: fallback?.research || (Array.isArray(row.objectives) ? row.objectives : []),
+    reports: reports.length > 0 ? reports : (fallback?.reports || []),
+    datasets: fallback?.datasets || (Array.isArray(row.datasets) ? row.datasets : []),
+    publications: fallback?.publications || (Array.isArray(row.publications) ? row.publications : []),
+    highlights: fallback?.highlights || (Array.isArray(row.highlights) ? row.highlights : []),
     sourceUrl: row.source_url || fallback?.sourceUrl,
     sourceLabel: row.source_label || fallback?.sourceLabel,
   }
@@ -45,17 +58,18 @@ function mapDataset(row: any): Dataset {
   const fallback = staticDatasets.find(d => d.id === row.id)
   return {
     id: row.id,
-    title: row.title,
-    description: row.description,
-    area: row.area || 'General',
-    region: row.region || 'Antarctic',
-    year: Number(row.year ?? 2024),
-    format: row.format || 'CSV',
-    size: row.size || '1.0 MB',
-    coverage: row.coverage || 'Current',
-    relatedExpedition: row.related_expedition || '',
-    relatedPublication: row.related_publication || undefined,
-    previewRows: Array.isArray(row.preview_rows) ? row.preview_rows : [],
+    title: cleanText(row.title) || fallback?.title || '',
+    description: fallback && fallback.description.length > (row.description?.length || 0) ? fallback.description : cleanText(row.description),
+    area: row.area || fallback?.area || 'Atmospheric Sciences',
+    region: cleanText(row.region) || fallback?.region || 'Antarctic',
+    year: Number(row.year ?? fallback?.year ?? 2024),
+    format: row.format || fallback?.format || 'CSV',
+    size: row.size || fallback?.size || '10 MB',
+    coverage: cleanText(row.coverage) || fallback?.coverage || 'Current',
+    relatedExpedition: row.related_expedition || fallback?.relatedExpedition || '',
+    relatedPublication: row.related_publication || fallback?.relatedPublication,
+    previewRows: fallback?.previewRows && fallback.previewRows.length >= 7 ? fallback.previewRows : (Array.isArray(row.preview_rows) ? row.preview_rows : []),
+    downloadUrl: row.download_url || fallback?.downloadUrl,
     sourceUrl: row.source_url || fallback?.sourceUrl,
     sourceLabel: row.source_label || fallback?.sourceLabel,
   }
@@ -63,18 +77,19 @@ function mapDataset(row: any): Dataset {
 
 function mapPublication(row: any): Publication {
   const fallback = staticPublications.find(p => p.id === row.id)
+  const isFakeDoi = typeof row.doi === 'string' && (row.doi.includes('10.0000') || !row.doi.includes('/'))
   return {
     id: row.id,
-    title: row.title,
-    authors: Array.isArray(row.authors) ? row.authors : (typeof row.authors === 'string' ? [row.authors] : []),
-    year: Number(row.year ?? 2024),
-    journal: row.journal || 'Polar Research',
-    doi: row.doi || '',
-    abstract: row.abstract || '',
-    area: row.area || 'Atmospheric Sciences',
-    expedition: row.expedition || '',
-    dataset: row.dataset || undefined,
-    type: (row.type as any) || 'Journal',
+    title: cleanText(row.title) || fallback?.title || '',
+    authors: Array.isArray(row.authors) ? row.authors.map(cleanText) : (fallback?.authors || []),
+    year: Number(row.year ?? fallback?.year ?? 2024),
+    journal: cleanText(row.journal) || fallback?.journal || 'Polar Science (Elsevier)',
+    doi: isFakeDoi && fallback?.doi ? fallback.doi : (row.doi || fallback?.doi || ''),
+    abstract: fallback && fallback.abstract.length > (row.abstract?.length || 0) ? fallback.abstract : cleanText(row.abstract),
+    area: row.area || fallback?.area || 'Atmospheric Sciences',
+    expedition: row.expedition || fallback?.expedition || '',
+    dataset: row.dataset || fallback?.dataset,
+    type: (row.type as any) || fallback?.type || 'Journal',
     sourceUrl: row.source_url || fallback?.sourceUrl,
     sourceLabel: row.source_label || fallback?.sourceLabel,
   }
@@ -84,20 +99,20 @@ function mapKnowledge(row: any): KnowledgeItem {
   const fallback = staticKnowledge.find(k => k.id === row.id)
   return {
     id: row.id,
-    type: row.type || 'Article',
-    title: row.title,
-    excerpt: row.excerpt || '',
-    body: row.body || '',
-    tags: Array.isArray(row.tags) ? row.tags : [],
-    category: row.category || 'General',
-    year: Number(row.year ?? 2024),
-    author: row.author || 'POLARIS',
+    type: row.type || fallback?.type || 'Article',
+    title: cleanText(row.title) || fallback?.title || '',
+    excerpt: fallback && fallback.excerpt.length > (row.excerpt?.length || 0) ? fallback.excerpt : cleanText(row.excerpt),
+    body: fallback && fallback.body.length > (row.body?.length || 0) ? fallback.body : cleanText(row.body),
+    tags: Array.isArray(row.tags) ? row.tags.map(cleanText) : (fallback?.tags || []),
+    category: cleanText(row.category) || fallback?.category || 'General',
+    year: Number(row.year ?? fallback?.year ?? 2024),
+    author: cleanText(row.author) || fallback?.author || 'NCPOR / MoES',
     source: row.source || fallback?.source,
     sourceUrl: row.source_url || fallback?.sourceUrl,
     sourceLabel: row.source_label || fallback?.sourceLabel,
-    relatedExpedition: row.related_expedition || undefined,
-    relatedDataset: row.related_dataset || undefined,
-    relatedPublication: row.related_publication || undefined,
+    relatedExpedition: row.related_expedition || fallback?.relatedExpedition,
+    relatedDataset: row.related_dataset || fallback?.relatedDataset,
+    relatedPublication: row.related_publication || fallback?.relatedPublication,
   }
 }
 

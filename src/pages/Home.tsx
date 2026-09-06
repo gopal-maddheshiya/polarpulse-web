@@ -495,6 +495,8 @@ export default function Home() {
                       <img
                         src={st.photo}
                         alt={st.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
@@ -623,6 +625,8 @@ export default function Home() {
                     <img
                       src={IMG.bharati}
                       alt="Antarctica Bharati Station"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
@@ -681,6 +685,8 @@ export default function Home() {
                     <img
                       src={IMG.himadri}
                       alt="Himadri Arctic Station"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
@@ -739,6 +745,8 @@ export default function Home() {
                     <img
                       src={IMG.glacier}
                       alt="Himansh Himalayan Cryosphere"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />

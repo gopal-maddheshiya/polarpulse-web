@@ -31,4 +31,6 @@ dist-ssr
 # Temporary test & QA artifacts
 qa_screenshots/
 scratch_qa.cjs
+scratch/
+walkthrough.md
 

@@ -79,7 +79,7 @@ export default function Expeditions() {
         <Container>
           <Reveal>
             {/* Filter controls */}
-            <div className="rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md p-6 mb-8 shadow-xs space-y-4">
+            <div className="rounded-3xl border border-sky-200/90 bg-white/95 p-6 mb-8 shadow-xs space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
                   <Filter className="w-4 h-4 text-cyan-700" />
@@ -204,7 +204,7 @@ export default function Expeditions() {
                     <Reveal key={exp.id} delay={idx * 50}>
                       <Link
                         to={`/expeditions/${exp.id}`}
-                        className="group flex flex-col h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 overflow-hidden"
+                        className="group flex flex-col h-full bg-white/95 rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 overflow-hidden"
                       >
                         {/* Image banner */}
                         <div className="aspect-[16/10] relative overflow-hidden bg-slate-900">
@@ -213,6 +213,7 @@ export default function Expeditions() {
                             alt={exp.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                             loading="lazy"
+                            decoding="async"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
                           <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5">

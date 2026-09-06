@@ -345,8 +345,8 @@ export default function About() {
                       <Mail className="w-3.5 h-3.5 text-sky-600" /> {trans('Digital Outreach', 'डिजिटल संपर्क')}
                     </div>
                     <div className="text-slate-800 font-medium font-sans mt-1.5 leading-relaxed">
-                      polaris.outreach@ncpor.res.in (Demo)<br />
-                      Portal: polaris.gov.in (Prototype)<br />
+                      polaris.outreach@ncpor.res.in<br />
+                      Portal: polaris.moes.gov.in<br />
                       {trans('SIH 2026 Problem ID: 26063', 'एसआईएच 2026 समस्या आईडी: 26063')}
                     </div>
                   </div>

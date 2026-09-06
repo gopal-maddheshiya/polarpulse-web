@@ -5,7 +5,7 @@ import { getExpeditionById, getDatasets, getPublications, type Expedition, type 
 import { GALLERY } from '../data/images'
 import { Container, EmptyState, Section, SectionHeader } from '../components/ui/Primitives'
 import { Reveal } from '../lib/reveal'
-import { downloadTextFile } from '../lib/actions'
+import { downloadRealFile } from '../lib/actions'
 import { useLanguage } from '../context/LanguageContext'
 
 export default function ExpeditionDetail() {
@@ -84,11 +84,12 @@ export default function ExpeditionDetail() {
   const linkedDatasets = datasetsList.filter(d => exp.datasets.includes(d.id))
   const linkedPubs = pubsList.filter(p => exp.publications.includes(p.id))
 
-  const handleDownload = (report: { title: string; type: string; year: number }) => {
-    const text = `POLARIS · DEMO REPORT\n\nTitle: ${report.title}\nYear: ${report.year}\nType: ${report.type}\nExpedition: ${exp.title}\n\n---\n\nThis is a placeholder text. In a real deployment this would be the full PDF report. The current prototype demonstrates the download flow only.\n`
-    downloadTextFile(`${report.title.replace(/\s+/g, '_')}.txt`, text)
-    setToast(trans('Report downloaded', 'रिपोर्ट डाउनलोड हो गई'))
-    setTimeout(() => setToast(null), 1800)
+  const handleDownload = async (report: { title: string; type: string; year: number; url?: string }) => {
+    const targetUrl = report.url || '/reports/44th_ISEA_Annual_Expedition_Report.pdf'
+    const safeFilename = `${report.title.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_')}.pdf`
+    const success = await downloadRealFile(targetUrl, safeFilename)
+    setToast(success ? trans('Official PDF report downloaded securely', 'आधिकारिक पीडीएफ रिपोर्ट सुरक्षित रूप से डाउनलोड हो गई') : trans('Opening report in viewer', 'रिपोर्ट दर्शक में खोली जा रही है'))
+    setTimeout(() => setToast(null), 2200)
   }
 
   return (
@@ -242,7 +243,7 @@ export default function ExpeditionDetail() {
                   <span>{trans(`Linked Publications (${linkedPubs.length})`, `संबद्ध प्रकाशन (${linkedPubs.length})`)}</span>
                 </div>
                 {linkedPubs.length === 0 ? (
-                  <div className="text-xs text-slate-400">{trans('No linked publications in demo.', 'कोई संबद्ध प्रकाशन नहीं मिला।')}</div>
+                  <div className="text-xs text-slate-400">{trans('No linked publications found.', 'कोई संबद्ध प्रकाशन नहीं मिला।')}</div>
                 ) : (
                   <div className="space-y-2">
                     {linkedPubs.map(p => (

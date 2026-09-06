@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getDatasetById, getExpeditionById, getPublicationById, type Dataset, type Expedition, type Publication } from '../services/polarisService'
 import { ArrowLeft, Database, Download, Eye, FileText, BookOpen, Check, ExternalLink, Compass } from 'lucide-react'
 import { Container, EmptyState, Section, SectionHeader } from '../components/ui/Primitives'
-import { downloadCsv, copyToClipboard, openDoi } from '../lib/actions'
+import { downloadCsv, downloadRealFile, copyToClipboard, openDoi } from '../lib/actions'
 import { Reveal } from '../lib/reveal'
 import { LineChart } from '../components/ui/Chart'
 import { useLanguage } from '../context/LanguageContext'
@@ -84,7 +84,14 @@ export default function DatasetDetail() {
     )
   }
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    if (d.downloadUrl) {
+      const safeFilename = `${d.id}_${d.title.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_')}.csv`
+      const success = await downloadRealFile(d.downloadUrl, safeFilename)
+      setToast(success ? trans('Authentic dataset CSV downloaded securely', 'डेटासेट सीएसवी फ़ाइल सुरक्षित रूप से डाउनलोड हो गई') : trans('Downloading dataset', 'डेटासेट डाउनलोड हो रहा है'))
+      setTimeout(() => setToast(null), 2200)
+      return
+    }
     downloadCsv(`${d.id}.csv`, d.previewRows)
     setToast(trans('CSV downloaded', 'सीएसवी फ़ाइल डाउनलोड हो गई'))
     setTimeout(() => setToast(null), 1800)

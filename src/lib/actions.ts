@@ -1,5 +1,30 @@
-// Lightweight client-side actions for demo CTAs.
-// No backend, no real files — just enough to make buttons feel real.
+/**
+ * Securely downloads real assets (PDFs, CSVs, NetCDF) via in-memory Blobs
+ * to prevent browser "File can't be downloaded securely" warnings on HTTP dev servers.
+ */
+export async function downloadRealFile(fileUrl: string, targetFilename: string): Promise<boolean> {
+  try {
+    const res = await fetch(fileUrl)
+    if (!res.ok) throw new Error(`File fetch failed: ${res.status}`)
+    const blob = await res.blob()
+    const blobUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.style.display = 'none'
+    a.href = blobUrl
+    a.download = targetFilename
+    document.body.appendChild(a)
+    a.click()
+    setTimeout(() => {
+      document.body.removeChild(a)
+      URL.revokeObjectURL(blobUrl)
+    }, 1500)
+    return true
+  } catch (err) {
+    console.warn('Fallback direct download:', err)
+    window.open(fileUrl, '_blank')
+    return false
+  }
+}
 
 export function downloadTextFile(filename: string, content: string, mime = 'text/plain;charset=utf-8') {
   const blob = new Blob([content], { type: mime })

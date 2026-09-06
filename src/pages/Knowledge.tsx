@@ -117,7 +117,7 @@ export default function Knowledge() {
         <Container>
           <Reveal>
             {/* Search and Filters Bar */}
-            <div className="p-6 mb-8 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
+            <div className="p-6 mb-8 bg-white/95 border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {/* Search Bar */}
                 <div className="flex-1 flex items-center gap-2 rounded-xl border border-sky-200/80 bg-sky-50/30 px-3.5 py-2.5 min-w-[240px] focus-within:border-sky-400 transition-colors">
@@ -239,7 +239,7 @@ export default function Knowledge() {
                       <Reveal key={item.id} delay={idx * 30}>
                         <Link
                           to={`/knowledge/${item.id}`}
-                          className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-2xl border border-sky-200/90 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 p-6 hover:-translate-y-0.5"
+                          className="group flex flex-col justify-between h-full bg-white/95 rounded-2xl border border-sky-200/90 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 p-6 hover:-translate-y-0.5"
                         >
                           <div className="space-y-3">
                             {/* Card Top */}

@@ -92,7 +92,7 @@ export default function Media() {
         <Container>
           <Reveal>
             {/* Filter Tabs */}
-            <div className="p-2 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl inline-flex flex-wrap items-center gap-1.5 mb-8 shadow-soft">
+            <div className="p-2 bg-white/95 border border-sky-200/90 rounded-2xl inline-flex flex-wrap items-center gap-1.5 mb-8 shadow-soft">
               {TABS.map(t => (
                 <button
                   key={t.id}
@@ -137,7 +137,7 @@ export default function Media() {
                     <Reveal key={item.id} delay={idx * 30}>
                       <div
                         onClick={() => setLightbox(mediaList.indexOf(item))}
-                        className="group cursor-pointer rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft hover:shadow-xl hover:border-sky-300 transition-all duration-300 flex flex-col h-full hover:-translate-y-1"
+                        className="group cursor-pointer rounded-2xl overflow-hidden bg-white/95 border border-sky-200/90 shadow-soft hover:shadow-xl hover:border-sky-300 transition-all duration-300 flex flex-col h-full hover:-translate-y-1"
                       >
                         <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
                           <img
@@ -145,6 +145,7 @@ export default function Media() {
                             alt={item.title}
                             className="w-full h-full object-cover group-hover:scale-108 transition duration-700 ease-out"
                             loading="lazy"
+                            decoding="async"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
                           

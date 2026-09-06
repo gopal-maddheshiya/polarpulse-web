@@ -232,8 +232,47 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 3. Query mentions IndARC / Arctic Expedition
-  if (q.includes('indarc') || q.includes('kongsfjorden')) {
+  // 3. Query mentions 1st Expedition / Operation Gangotri (Dr. S.Z. Qasim 1981)
+  if (q.includes('1st isea') || q.includes('operation gangotri') || q.includes('qasim') || q.includes('polar circle') || (q.includes('1st') && q.includes('expedition')) || (q.includes('pehla') && q.includes('abhiyan'))) {
+    const live = await getEntityContextForAI('expedition', '1st-isea')
+    return {
+      page: 'expedition-detail',
+      title: '1st Indian Scientific Expedition to Antarctica (Operation Gangotri 1981–1982)',
+      type: 'Historic Mission Dossier',
+      sourceName: 'POLARIS Expedition · 1st ISEA',
+      sourceUrl: '/expeditions/1st-isea',
+      context: live || `First Indian Antarctic Expedition led by Dr. S.Z. Qasim. Sailed from Goa on chartered vessel MV Polar Circle on 6 Dec 1981, landing on 9 Jan 1982 at Queen Maud Land. Setup India's first unmanned weather station and established India as an Antarctic Treaty consultative party.`,
+    }
+  }
+
+  // 4. Query mentions 3rd Expedition / Dakshin Gangotri Construction (1983–84)
+  if (q.includes('3rd isea') || q.includes('h.k. gupta') || (q.includes('3rd') && q.includes('expedition')) || (q.includes('dakshin gangotri') && (q.includes('construct') || q.includes('nirman') || q.includes('1983')))) {
+    const live = await getEntityContextForAI('expedition', '3rd-isea')
+    return {
+      page: 'expedition-detail',
+      title: '3rd Indian Scientific Expedition to Antarctica (Dakshin Gangotri Construction)',
+      type: 'Historic Mission Dossier',
+      sourceName: 'POLARIS Expedition · 3rd ISEA',
+      sourceUrl: '/expeditions/3rd-isea',
+      context: live || `3rd ISEA (1983-1984) led by Dr. H.K. Gupta aboard MV Finnpolaris. Indian Army engineers constructed India's first permanent manned wintering station Dakshin Gangotri in a record 60 days on the ice shelf.`,
+    }
+  }
+
+  // 5. Query mentions 1st Indian Arctic Expedition (2007–08)
+  if (q.includes('1st arctic') || q.includes('first arctic') || q.includes('rasik ravindra') || (q.includes('arctic') && (q.includes('2007') || q.includes('shuruat') || q.includes('pehla')))) {
+    const live = await getEntityContextForAI('expedition', '1st-arctic')
+    return {
+      page: 'expedition-detail',
+      title: '1st Indian Scientific Expedition to the Arctic (2007–2008)',
+      type: 'Historic Arctic Mission',
+      sourceName: 'POLARIS Expedition · 1st Arctic',
+      sourceUrl: '/expeditions/1st-arctic',
+      context: live || `First Indian Arctic Expedition launched in Aug 2007 led by Dr. Rasik Ravindra to Ny-Ålesund, Svalbard (78°55'N). Laid the foundation for establishing Himadri Arctic Station in July 2008.`,
+    }
+  }
+
+  // 6. Query mentions IndARC / Arctic Expedition
+  if (q.includes('indarc') || q.includes('kongsfjorden') || q.includes('mooring')) {
     const live = await getEntityContextForAI('expedition', 'indarc-2024')
     return {
       page: 'expedition-detail',
@@ -245,7 +284,7 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 4. Query mentions 43rd Expedition
+  // 7. Query mentions 43rd Expedition
   if (q.includes('43rd') || q.includes('43 rd')) {
     const live = await getEntityContextForAI('expedition', '43rd-isea')
     return {
@@ -258,7 +297,33 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 5. Query mentions Black Carbon (dataset ds-atm-001 from Supabase)
+  // 8. Query mentions Total Column Ozone Dataset (ds-ozo-009)
+  if (q.includes('ozone') || q.includes('total column ozone') || q.includes('dobson') || q.includes('brewer') || q.includes('ds-ozo-009') || q.includes('ozone hole')) {
+    const live = await getEntityContextForAI('dataset', 'ds-ozo-009')
+    return {
+      page: 'dataset-detail',
+      title: 'Maitri Total Column Ozone & Brewer Spectrophotometer Time-Series',
+      type: 'Open Scientific Dataset',
+      sourceName: 'POLARIS Dataset · ds-ozo-009',
+      sourceUrl: '/datasets/ds-ozo-009',
+      context: live || `Dataset ds-ozo-009: In-situ Dobson and Brewer spectrophotometer observations of total column ozone (in Dobson Units DU) recorded at Maitri Station (70°45'S, 11°44'E). Tracks springtime polar vortex stratospheric ozone depletion and recovery under Montreal Protocol compliance.`,
+    }
+  }
+
+  // 9. Query mentions Southern Ocean Biogeochemistry Dataset (ds-bgc-010)
+  if (q.includes('biogeochemistry') || q.includes('marine nutrient') || q.includes('carbon export') || q.includes('sagar nidhi') || q.includes('ds-bgc-010') || q.includes('nitrate') || q.includes('phosphate')) {
+    const live = await getEntityContextForAI('dataset', 'ds-bgc-010')
+    return {
+      page: 'dataset-detail',
+      title: 'Southern Ocean Marine Biogeochemistry & Carbon Export Array',
+      type: 'Open Scientific Dataset',
+      sourceName: 'POLARIS Dataset · ds-bgc-010',
+      sourceUrl: '/datasets/ds-bgc-010',
+      context: live || `Dataset ds-bgc-010: CTD Rosette water-column profiles across the Polar Front and Sub-Antarctic Zone aboard ORV Sagar Nidhi. Includes dissolved nitrate, phosphate, silicate, chlorophyll-a, and particulate organic carbon (POC) fluxes measuring the biological carbon pump.`,
+    }
+  }
+
+  // 10. Query mentions Black Carbon (dataset ds-atm-001 from Supabase)
   if (q.includes('black carbon') || q.includes('aethalometer') || (q.includes('carbon') && (q.includes('maitri') || q.includes('air')))) {
     const live = await getEntityContextForAI('dataset', 'ds-atm-001')
     return {
@@ -271,7 +336,7 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 6. Query mentions Sea Ice dataset (ds-cry-003 from Supabase)
+  // 11. Query mentions Sea Ice dataset (ds-cry-003 from Supabase)
   if (q.includes('sea ice') || q.includes('sea-ice')) {
     const live = await getEntityContextForAI('dataset', 'ds-cry-003')
     return {
@@ -284,7 +349,7 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 7. Query mentions Firn / Ice core dataset (ds-cry-004 from Supabase)
+  // 12. Query mentions Firn / Ice core dataset (ds-cry-004 from Supabase)
   if (q.includes('firn') || q.includes('ice core') || q.includes('snow pit')) {
     const live = await getEntityContextForAI('dataset', 'ds-cry-004')
     return {
@@ -297,8 +362,22 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 8. Research stations: Maitri, Bharati, Himadri, Dakshin Gangotri
-  if (q.includes('maitri')) {
+  // 13. Research stations: Himansh (Third Pole), Maitri, Bharati, Himadri, Dakshin Gangotri
+  if (q.includes('himansh') || q.includes('हिमांशु') || q.includes('हिमाश') || q.includes('third pole') || q.includes('तीसरा ध्रुव') || q.includes('spiti') || q.includes('स्पीति') || q.includes('chhota shigri') || q.includes('छोटा शिगरी') || ((q.includes('himalaya') || q.includes('हिमालय')) && (q.includes('station') || q.includes('स्टेशन') || q.includes('base') || q.includes('बेस')))) {
+    const liveStation = await getEntityContextForAI('station', 'himansh')
+    return {
+      page: 'station-detail',
+      title: 'Himansh High-Altitude Glaciological Research Base (4,050m)',
+      type: 'Third Pole Research Station',
+      sourceName: 'POLARIS Station · Himansh (Third Pole)',
+      sourceUrl: '/explore',
+      officialSourceUrl: 'https://ncpor.res.in/cryosphere',
+      officialSourceLabel: 'NCPOR Cryosphere & Third Pole Programme',
+      context: liveStation || `Himansh is India's dedicated high-altitude glaciological station established in 2016 at 4,050m a.s.l. in Sutri Dhaka, Spiti Valley, Himachal Pradesh. Investigates benchmark glaciers (Chhota Shigri, Batal, Samudra Tapu) and climate-induced mass balance changes affecting freshwater supply to 1.3 billion downstream inhabitants.`,
+    }
+  }
+
+  if (q.includes('maitri') || q.includes('मैत्री')) {
     const liveStation = await getEntityContextForAI('station', 'maitri')
     const liveDataset = await getEntityContextForAI('dataset', 'ds-atm-001')
     return {
@@ -309,11 +388,11 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
       sourceUrl: '/about',
       officialSourceUrl: 'https://ncpor.res.in/antarcticas/display/376-maitri-',
       officialSourceLabel: 'Official NCPOR Maitri Station',
-      context: `${liveStation}. Active research at Maitri: Atmospheric black carbon aerosol measurements (ds-atm-001), total column ozone monitoring, geological mapping of Schirmacher Oasis. ${liveDataset}`,
+      context: `${liveStation}. Active research at Maitri: Atmospheric black carbon aerosol measurements (ds-atm-001), total column ozone monitoring (ds-ozo-009), geological mapping of Schirmacher Oasis. ${liveDataset}`,
     }
   }
 
-  if (q.includes('bharati')) {
+  if (q.includes('bharati') || q.includes('भारती')) {
     const live = await getEntityContextForAI('station', 'bharati')
     return {
       page: 'station-detail',
@@ -327,7 +406,7 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  if (q.includes('himadri')) {
+  if (q.includes('himadri') || q.includes('हिमाद्री')) {
     const live = await getEntityContextForAI('station', 'himadri')
     return {
       page: 'station-detail',
@@ -341,7 +420,7 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  if (q.includes('dakshin gangotri')) {
+  if (q.includes('dakshin gangotri') || q.includes('दक्षिण गंगोत्री') || q.includes('gangotri') || q.includes('गंगोत्री')) {
     const live = await getEntityContextForAI('station', 'dakshin-gangotri')
     return {
       page: 'station-detail',
@@ -355,7 +434,7 @@ export async function resolveDynamicContext(query: string, pathname: string): Pr
     }
   }
 
-  // 9. Monsoon / Teleconnections
+  // 14. Monsoon / Teleconnections
   if (q.includes('monsoon') || q.includes('teleconnection') || q.includes('mascarene') || q.includes('rainfall')) {
     const live = await getEntityContextForAI('knowledge', 'kb-01')
     return {
@@ -523,34 +602,150 @@ You can inspect the verified atmospheric time-series in the POLARIS Datasets sec
     }
   }
 
-  // 2. Stations queries: Maitri, Bharati, Himadri
+  // 2. Himansh & The Third Pole queries
+  if (q.includes('himansh') || q.includes('हिमांशु') || q.includes('हिमाश') || q.includes('third pole') || q.includes('तीसरा ध्रुव') || q.includes('spiti') || q.includes('स्पीति') || q.includes('chhota shigri') || q.includes('छोटा शिगरी') || (q.includes('himalaya') || q.includes('हिमालय')) && (q.includes('station') || q.includes('स्टेशन') || q.includes('glacier') || q.includes('ग्लेशियर') || q.includes('cryosphere') || q.includes('बर्फ'))) {
+    if (isHindi) {
+      return {
+        text: `**सरल व्याख्या (Simple Explanation)**
+**हिमांशु (Himansh)** भारत का समर्पित उच्च-तुंगता हिमनद अनुसंधान केंद्र है, जो 2016 में हिमाचल प्रदेश की स्पीति घाटी (सुत्री ढाका) में **4,050 मीटर की ऊंचाई** पर स्थापित किया गया।
+
+**हिमालय को 'तीसरा ध्रुव' (The Third Pole) क्यों कहते हैं?**
+ध्रुवों (अंटार्कटिका व आर्कटिक) के बाद पृथ्वी पर सबसे अधिक बर्फ और हिमनद हिमालय-तिब्बत क्षेत्र में हैं। यह विशाल जल बैंक सिंधु, गंगा और ब्रह्मपुत्र जैसी 10 प्रमुख नदी प्रणालियों को जल प्रदान करता है, जिस पर 1.3 अरब से अधिक लोगों का जीवन निर्भर है।
+
+**हिमांशु बेस पर क्या शोध होता है?**
+• **बेंचमार्क ग्लेशियर्स**: छोटा शिगरी (Chhota Shigri), समूद्र टापू और बाटल ग्लेशियर के पिघलने (Mass Balance) की स्वचालित मौसम स्टेशनों (AWS) और जीपीआर (GPR) द्वारा 24x7 निगरानी।
+• **जलवायु प्रभाव**: तापमान वृद्धि और ब्लैक कार्बन का ग्लेशियर पिघलने पर असर नापना।`,
+        source: 'POLARIS Station · Himansh (4,050m a.s.l.)',
+        sourceUrl: '/explore',
+      }
+    }
+
+    return {
+      text: `**Simple explanation**
+**Himansh Base** is India's dedicated high-altitude glaciological research station established in 2016 at **4,050 meters above sea level** at Sutri Dhaka in the Spiti Valley, Himachal Pradesh.
+
+**Why the Himalayas are called Earth's "Third Pole"**
+Outside the polar ice sheets (Antarctica and Greenland), the Himalaya-Karakoram-Tibetan Plateau holds the planet's largest concentration of snow and glacial ice. These glaciers feed 10 major Asian river systems that sustain freshwater security for over 1.3 billion people downstream.
+
+**Active research at Himansh Base**
+• **Benchmark Glacial Monitoring**: Continuous mass balance, ice thickness, and velocity tracking on Chhota Shigri, Batal, and Samudra Tapu glaciers using terrestrial radar and high-altitude automatic weather stations (AWS).
+• **Hydrological Discharge**: Real-time river runoff gauging to forecast seasonal meltwater availability and glacial lake outburst flood (GLOF) hazards.`,
+      source: 'POLARIS Station · Himansh (4,050m a.s.l.)',
+      sourceUrl: '/explore',
+    }
+  }
+
+  // 3. Total Column Ozone & Ozone Hole queries
+  if (q.includes('ozone') || q.includes('total column ozone') || q.includes('dobson') || q.includes('brewer') || q.includes('ds-ozo-009') || q.includes('ozone hole')) {
+    if (isHindi) {
+      return {
+        text: `**सरल व्याख्या (Simple Explanation)**
+ओजोन परत समताप मंडल (Stratosphere) में स्थित गैस की एक सुरक्षात्मक ढाल है, जो सूर्य की हानिकारक पराबैंगनी (UV-B) किरणों को सोख लेती है। वसंत ऋतु (सितंबर-अक्टूबर) में अंटार्कटिक भंवर (Polar Vortex) के अंदर अत्यधिक ठंड के कारण ओजोन परत गंभीर रूप से पतली हो जाती है, जिसे **ओजोन छिद्र (Ozone Hole)** कहा जाता है।
+
+**मैत्री स्टेशन पर ओजोन शोध (POLARIS ds-ozo-009)**
+• भारत के **मैत्री स्टेशन** पर 1989 से लगातार डबसन (Dobson) और ब्रेवर (Brewer) स्पेक्ट्रोफोटोमीटर द्वारा कुल ओजोन कॉलम (Total Column Ozone in DU) मापा जाता है।
+• **मॉन्ट्रियल प्रोटोकॉल की सफलता**: डेटा दर्शाता है कि सीएफसी पर वैश्विक प्रतिबंध के बाद वसंतकालीन न्यूनतम ओजोन धीरे-धीरे बढ़कर रिकवरी दर्ज कर रही है।`,
+        source: 'POLARIS Dataset · ds-ozo-009',
+        sourceUrl: '/datasets/ds-ozo-009',
+      }
+    }
+
+    return {
+      text: `**Simple explanation**
+The stratospheric ozone layer shields life on Earth by absorbing hazardous solar UV-B radiation. During the austral spring (September–October), extreme polar vortex cold enables polar stratospheric clouds (PSCs) to release chlorine radicals, destroying ozone and creating the **Antarctic Ozone Hole**.
+
+**Maitri Station Ozone Monitoring (POLARIS ds-ozo-009)**
+• Continuous in-situ total column ozone (in Dobson Units DU) measured since 1989 using calibrated **Dobson and Brewer Spectrophotometers** as part of the WMO Global Atmosphere Watch (GAW) network.
+• **Montreal Protocol Validation**: Long-term Maitri records document the steady closing of the Antarctic ozone hole following the global phaseout of chlorofluorocarbons (CFCs).`,
+      source: 'POLARIS Dataset · ds-ozo-009',
+      sourceUrl: '/datasets/ds-ozo-009',
+    }
+  }
+
+  // 4. Operation Gangotri / 1st Expedition queries
+  if (q.includes('1st isea') || q.includes('operation gangotri') || q.includes('qasim') || q.includes('polar circle') || (q.includes('1st') && q.includes('expedition')) || (q.includes('pehla') && q.includes('abhiyan'))) {
+    if (isHindi) {
+      return {
+        text: `**सरल व्याख्या (Operation Gangotri 1981–1982)**
+**ऑपरेशन गंगोत्री** भारत का पहला ऐतिहासिक अंटार्कटिक वैज्ञानिक अभियान था:
+• **नेतृत्व**: प्रख्यात समुद्र विज्ञानी **डॉ. एस.जेड. कासिम (Dr. S.Z. Qasim)**
+• **पोत**: एमवी पोलर सर्कल (MV Polar Circle), जो 6 दिसंबर 1981 को गोवा से रवाना हुआ।
+• **ऐतिहासिक क्षण**: **9 जनवरी 1982** को भारतीय वैज्ञानिकों के दल ने पहली बार अंटार्कटिका की क्वीन मॉड लैंड पर तिरंगा फहराया।
+• **महत्व**: इस अभियान ने भारत का पहला मानवरहित स्वचालित मौसम केंद्र स्थापित किया और भारत को 1983 में अंटार्कटिक संधि (Antarctic Treaty) का परामर्शदाता सदस्य (Consultative Member) बनाया।`,
+        source: 'POLARIS Expedition · 1st ISEA',
+        sourceUrl: '/expeditions/1st-isea',
+      }
+    }
+
+    return {
+      text: `**Simple explanation (Operation Gangotri 1981–1982)**
+The **1st Indian Scientific Expedition to Antarctica (Operation Gangotri)** laid the foundation of India's sovereign polar programme:
+• **Leadership**: Led by veteran oceanographer **Dr. S.Z. Qasim** (Secretary, Department of Ocean Development).
+• **Expedition Vessel**: Chartered ice-strengthened vessel *MV Polar Circle*, departing from Mormugao Port, Goa, on December 6, 1981.
+• **Historic Landing**: On **January 9, 1982**, the 21-member Indian team set foot on Queen Maud Land, Antarctica, raising the Indian National Flag.
+• **Significance**: Deployed India's first solar-powered automated weather station and directly secured India's Consultative Status under the Antarctic Treaty System in 1983.`,
+      source: 'POLARIS Expedition · 1st ISEA',
+      sourceUrl: '/expeditions/1st-isea',
+    }
+  }
+
+  // 5. Southern Ocean Marine Biogeochemistry queries
+  if (q.includes('biogeochemistry') || q.includes('marine nutrient') || q.includes('carbon export') || q.includes('sagar nidhi') || q.includes('ds-bgc-010') || q.includes('nitrate') || q.includes('phosphate')) {
+    if (isHindi) {
+      return {
+        text: `**सरल व्याख्या (Southern Ocean Biogeochemistry)**
+दक्षिणी महासागर (Southern Ocean) पृथ्वी का सबसे शक्तिशाली कार्बन सिंक है, जो मानवीय गतिविधियों से निकलने वाले कार्बन डाइऑक्साइड का 40% से अधिक हिस्सा सोख लेता है।
+
+**ओआरवी सागर निधि अभियान (POLARIS ds-bgc-010)**
+• भारतीय अनुसंधान पोत **ORV Sagar Nidhi** द्वारा पोलर फ्रंट (50°S–66°S) के पार 0 से 1,000 मीटर गहराई तक सीटीडी रोसेट (CTD Rosette) प्रोफाइल्स लिए जाते हैं।
+• **जैविक कार्बन पंप**: यह डेटासेट नाइट्रेट (NO₃⁻), फॉस्फेट (PO₄³⁻), सिलिकेट और क्लोरोफिल-ए की सघनता नापता है ताकि यह समझा जा सके कि समुद्री फाइटोप्लांकटन सतह के कार्बन को गहरे समुद्र में कैसे दफन करते हैं।`,
+        source: 'POLARIS Dataset · ds-bgc-010',
+        sourceUrl: '/datasets/ds-bgc-010',
+      }
+    }
+
+    return {
+      text: `**Simple explanation**
+The Southern Ocean acts as Earth's premier planetary carbon sink, absorbing over 40% of all oceanic anthropogenic carbon dioxide emissions.
+
+**ORV Sagar Nidhi Research (POLARIS ds-bgc-010)**
+• Conducted across transects from 40°S to 66°S traversing the Sub-Tropical Front, Sub-Antarctic Front, and Polar Front.
+• **Biological Carbon Pump**: Samples dissolved nitrate, phosphate, reactive silicate, chlorophyll-a, and particulate organic carbon (POC) fluxes down to 1,000m to quantify marine nutrient drawdown and deep-sea carbon sequestration.`,
+      source: 'POLARIS Dataset · ds-bgc-010',
+      sourceUrl: '/datasets/ds-bgc-010',
+    }
+  }
+
+  // 6. Stations queries: Maitri, Bharati, Himadri, Himansh, Dakshin Gangotri
   if (q.includes('bharati') || q.includes('maitri') || q.includes('himadri') || q.includes('station') || q.includes('base') || q.includes('dakshin gangotri')) {
     if (isHindi) {
       if (audience === 'Student') {
         return {
           text: `**सरल व्याख्या**
-भारत के पास ध्रुवों पर 3 मुख्य वैज्ञानिक अनुसंधान केंद्र हैं:
+भारत के पास तीनों ध्रुवीय व हिमनद क्षेत्रों में सक्रिय संप्रभु वैज्ञानिक अनुसंधान केंद्र हैं:
 
-1. **मैत्री (Maitri Base)** — अंटार्कटिका के शिर्माकर ओएसिस में 1989 से स्थित है। यह बर्फीली जमीन पर नहीं, बल्कि सूखी चट्टान पर बना है। यहाँ वायुमंडल, मौसम और ओजोन परत का निरंतर अध्ययन होता है।
-2. **भारती (Bharati Station)** — लार्समैन हिल्स, अंटार्कटिका में 2012 में खुला एक बहुत ही आधुनिक स्टेशन है। यह खंभों (stilts) पर 134 कंटेनरों से बना है ताकि 200 किमी/घंटा की बर्फीली हवाएं इसके नीचे से निकल जाएं!
-3. **हिमाद्री (Himadri Station)** — 2008 से नॉर्वे के स्वालबार्ड (आर्कटिक) में स्थित भारत का उत्तरी ध्रुव अनुसंधान केंद्र है।
+1. **मैत्री (Maitri Base)** — अंटार्कटिका के शिर्माकर ओएसिस में 1989 से स्थित। यह बर्फीली जमीन पर नहीं, बल्कि सूखी चट्टान पर बना है। यहाँ वायुमंडल, मौसम और ओजोन परत (Dobson/Brewer) का निरंतर अध्ययन होता है।
+2. **भारती (Bharati Station)** — लार्समैन हिल्स, अंटार्कटिका में 2012 में खुला अत्याधुनिक स्टेशन। यह खंभों (stilts) पर 134 कंटेनरों से बना है और इसरो उपग्रह ग्राउंड स्टेशन से सुसज्जित है।
+3. **हिमाद्री (Himadri Station)** — 2008 से नॉर्वे के स्वालबार्ड (आर्कटिक, 79°N) में स्थित भारत का उत्तरी ध्रुव अनुसंधान केंद्र है।
+4. **हिमांशु (Himansh Base)** — 2016 से हिमाचल प्रदेश की स्पीति घाटी में 4,050 मीटर की ऊंचाई पर स्थित 'तीसरा ध्रुव' हिमनद अनुसंधान केंद्र है।
 
-**रोचक तथ्य:**
-भारत का पहला ऐतिहासिक बेस **दक्षिण गंगोत्री** 1983 में बना था, जो अब बर्फ की परतों के नीचे संरक्षित है।`,
+**ऐतिहासिक आधार:**
+भारत का पहला ऐतिहासिक बेस **दक्षिण गंगोत्री** (1983) 3रे अंटार्कटिक अभियान में मात्र 60 दिनों में बनाया गया था, जो अब बर्फ की परतों के नीचे संरक्षित है।`,
           source: 'POLARIS Sovereign Stations Dossier',
           sourceUrl: '/about',
         }
       }
       return {
         text: `**सरल व्याख्या**
-भारत तीन सक्रिय वैज्ञानिक अनुसंधान केंद्रों का संचालन करता है:
+भारत तीन ध्रुवीय व हिमनद क्षेत्रों में संप्रभु अनुसंधान केंद्रों का संचालन करता है:
 
-• **मैत्री (Maitri)**: 1989 में अंटार्कटिका के शिर्माकर ओएसिस में स्थापित। 36+ वर्षों से निरंतर मौसम विज्ञान, ओजोन परत और वायुमंडलीय एरोसोल का अध्ययन कर रहा है।
-• **भारती (Bharati)**: 2012 में लार्समैन हिल्स में कमीशन। 134 प्रीफैब्रिकेटेड कंटेनरों से निर्मित, शून्य-अपशिष्ट डिस्चार्ज प्रणाली और इसरो/एनआरएससी उपग्रह ग्राउंड स्टेशन से सुसज्जित।
-• **हिमाद्री (Himadri)**: 2008 में स्वालबार्ड के न्य-ऑलेसुंड (78°55′N) में स्थापित। यह आर्कटिक गर्म होने और भारतीय मानसून के आपसी संबंधों (teleconnections) का अध्ययन करता है।
+• **मैत्री (Maitri Base)**: 1989 में अंटार्कटिका के शिर्माकर ओएसिस में स्थापित। 36+ वर्षों से निरंतर मौसम विज्ञान, ओजोन परत (ds-ozo-009) और ब्लैक कार्बन एरोसोल का अध्ययन कर रहा है।
+• **भारती (Bharati Station)**: 2012 में लार्समैन हिल्स में कमीशन। 134 प्रीफैब्रिकेटेड कंटेनरों से निर्मित, शून्य-अपशिष्ट डिस्चार्ज प्रणाली और इसरो/एनआरएससी उपग्रह ग्राउंड स्टेशन से सुसज्जित।
+• **हिमाद्री (Himadri Station)**: 2008 में स्वालबार्ड के न्य-ऑलेसुंड (78°55′N) में स्थापित। यह आर्कटिक गर्म होने और भारतीय मानसून के आपसी संबंधों (teleconnections) का अध्ययन करता है।
+• **हिमांशु (Himansh Base)**: 2016 में पश्चिमी हिमालय (स्पीति, 4,050m) में स्थापित। यह छोटा शिगरी और बाटल हिमनदों के पिघलने का अध्ययन करता है।
 
 **यह भारत के लिए क्यों महत्वपूर्ण है?**
-ये स्टेशन भारत की संप्रभु वैज्ञानिक उपस्थिति को दर्शाते हैं और भारतीय मौसम पूर्वानुमान मॉडल को सटीक इन-सीटू डेटा प्रदान करते हैं।`,
+ये स्टेशन भारत की संप्रभु वैज्ञानिक उपस्थिति को दर्शाते हैं और भारतीय मौसम व मानसून पूर्वानुमान मॉडलों को सटीक इन-सीटू डेटा प्रदान करते हैं।`,
         source: 'POLARIS Sovereign Stations Dossier',
         sourceUrl: '/about',
       }
@@ -558,14 +753,15 @@ You can inspect the verified atmospheric time-series in the POLARIS Datasets sec
 
     return {
       text: `**Simple explanation**
-India maintains three sovereign, permanent scientific research stations across the polar regions:
+India maintains sovereign scientific research stations across Antarctica, the Arctic, and the Himalayas (The Third Pole):
 
-1. **Maitri Research Base (East Antarctica)**: Commissioned in 1989 on the ice-free rocky Schirmacher Oasis. A year-round facility monitoring total column ozone, atmospheric aerosols (like black carbon), and geology.
-2. **Bharati Polar Station (East Antarctica)**: Commissioned in 2012 in the Larsemann Hills. A modern base elevated on stilts using 134 prefabricated shipping containers, with an integrated ISRO satellite data receiving terminal.
-3. **Himadri Arctic Station (Svalbard, High Arctic)**: Established in 2008 at 79°N in Ny-Ålesund, Norway. It studies Arctic amplification and marine microbiology.
+1. **Maitri Research Base (East Antarctica)**: Commissioned in 1989 on the ice-free rocky Schirmacher Oasis. A year-round facility monitoring total column ozone (ds-ozo-009), atmospheric aerosols (like black carbon ds-atm-001), and geology.
+2. **Bharati Polar Station (East Antarctica)**: Commissioned in 2012 in the Larsemann Hills. A modern base elevated on aerodynamic stilts using 134 prefabricated shipping containers, with an integrated ISRO satellite data receiving terminal.
+3. **Himadri Arctic Station (Svalbard, High Arctic)**: Established in 2008 at 79°N in Ny-Ålesund, Norway. It studies Arctic amplification and fjord dynamics.
+4. **Himansh Glaciological Base (Western Himalaya)**: Established in 2016 at 4,050m a.s.l. in Spiti, Himachal Pradesh, studying benchmark Third Pole glacier mass balance.
 
 **Historical context**
-India's very first station, **Dakshin Gangotri** (built in 1983), was decommissioned in 1990 and is preserved beneath continental snow.`,
+India's very first station, **Dakshin Gangotri** (constructed in 1983 during 3rd ISEA), was decommissioned in 1990 and is preserved beneath continental ice.`,
       source: 'POLARIS Sovereign Stations Dossier',
       sourceUrl: '/about',
     }
@@ -637,7 +833,9 @@ The **44th Indian Scientific Expedition to Antarctica (44th ISEA)** is India's a
   }
 
   // 5. Unrelated queries
-  const isPolar = /\b(polar|antarctica|antarctic|arctic|ncpor|moes|ice|snow|glacier|climate|station|expedition|monsoon|sea|ocean|firn)\b/i.test(q)
+  const isPolar = 
+    /\b(polar|antarctica|antarctic|arctic|ncpor|moes|ice|snow|glacier|climate|station|expedition|monsoon|sea|ocean|firn|ozone|himansh|maitri|bharati|himadri|gangotri)\b/i.test(q) ||
+    (/[\u0900-\u097F]/.test(q) && /(ध्रुव|अंटार्कटिका|आर्कटिक|हिमांशु|मैत्री|भारती|हिमाद्री|गंगोत्री|ओजोन|बर्फ|ग्लेशियर|अभियान|मानसून|डेटा|समुद्र|मौसम|स्टेशन)/.test(q))
   if (!isPolar) {
     if (isHindi) {
       return {

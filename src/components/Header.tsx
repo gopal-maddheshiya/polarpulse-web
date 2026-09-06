@@ -37,8 +37,14 @@ export default function Header() {
   }, [location.pathname])
 
   useEffect(() => {
+    let wasScrolled = window.scrollY > 15
+    setScrolled(wasScrolled)
     const onScroll = () => {
-      setScrolled(window.scrollY > 15)
+      const isScrolled = window.scrollY > 15
+      if (isScrolled !== wasScrolled) {
+        wasScrolled = isScrolled
+        setScrolled(isScrolled)
+      }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
