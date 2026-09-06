@@ -4,10 +4,92 @@ import { getStations, getExpeditions, type ResearchStation, type Expedition } fr
 import { stations as defaultStations } from '../data/stations'
 import { expeditions as defaultExpeditions } from '../data/expeditions'
 import { cn } from '../lib/utils'
-import { ArrowRight, Compass, MapPin } from 'lucide-react'
+import { ArrowRight, Compass, MapPin, Wind, Thermometer, Gauge, SunMedium, Radio, Navigation2, Database } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 
 type RegionFilter = 'all' | 'india' | 'antarctic' | 'arctic' | 'himalaya'
+type ViewMode = 'global' | 'south' | 'north'
+
+interface StationTelemetry {
+  temp: string
+  wind: string
+  pressure: string
+  daylight: string
+  solarState: string
+}
+
+const STATION_TELEMETRY: Record<string, StationTelemetry> = {
+  maitri: {
+    temp: '-16.8 °C',
+    wind: '18 kts (E)',
+    pressure: '984 hPa',
+    daylight: 'Austral Summer Transition',
+    solarState: '24h Daylight (Midnight Sun) · Dobson O3 Active',
+  },
+  bharati: {
+    temp: '-14.2 °C',
+    wind: '22 kts (ENE)',
+    pressure: '988 hPa',
+    daylight: 'Austral Summer Transition',
+    solarState: 'ISRO Polar Satellite Telemetry Downlink Active',
+  },
+  'dakshin-gangotri': {
+    temp: '-21.4 °C',
+    wind: '26 kts (SSE)',
+    pressure: '978 hPa',
+    daylight: 'Ice Shelf Sub-firn Site',
+    solarState: 'Subsurface Historic Monument #44',
+  },
+  himadri: {
+    temp: '-4.8 °C',
+    wind: '12 kts (WNW)',
+    pressure: '1004 hPa',
+    daylight: 'High Arctic Twilight',
+    solarState: '16.5h Photoperiod · Fjord Mooring Telemetry Active',
+  },
+  himansh: {
+    temp: '-11.5 °C',
+    wind: '9 kts (NW)',
+    pressure: '618 hPa (4,050m)',
+    daylight: 'Alpine Mountain Diurnal',
+    solarState: 'Solar Peak 1,020 W/m² · Glacier Runoff Sensors Online',
+  },
+  vostok: {
+    temp: '-58.4 °C',
+    wind: '14 kts (S)',
+    pressure: '624 hPa (3,488m)',
+    daylight: 'Central Polar Plateau',
+    solarState: 'Deep Inversion Layer · Lake Vostok Ice Core Site',
+  },
+  mcmurdo: {
+    temp: '-12.0 °C',
+    wind: '16 kts (SW)',
+    pressure: '992 hPa',
+    daylight: 'Ross Island Coastal',
+    solarState: 'Continuous Logistics & Geophysics Operations',
+  },
+  troll: {
+    temp: '-18.0 °C',
+    wind: '15 kts (ESE)',
+    pressure: '870 hPa (1,270m)',
+    daylight: 'Queen Maud Nunatak',
+    solarState: 'DROMLAN Blue-Ice Airway Active',
+  },
+  syowa: {
+    temp: '-15.4 °C',
+    wind: '20 kts (NE)',
+    pressure: '986 hPa',
+    daylight: 'East Ongul Island',
+    solarState: 'SuperDARN Radar Array Online',
+  },
+  amundsen: {
+    temp: '-49.2 °C',
+    wind: '11 kts (Grid N)',
+    pressure: '680 hPa (2,835m)',
+    daylight: '90°S Geographic Pole',
+    solarState: 'IceCube Neutrino & South Pole Telescope Active',
+  },
+}
 
 export default function PolarMap() {
   const { isHindi, trans } = useLanguage()
@@ -15,6 +97,7 @@ export default function PolarMap() {
   const [expeditionsList, setExpeditionsList] = useState<Expedition[]>(defaultExpeditions)
   const [active, setActive] = useState<string>('bharati')
   const [filter, setFilter] = useState<RegionFilter>('all')
+  const [viewMode, setViewMode] = useState<ViewMode>('global')
 
   useEffect(() => {
     let mounted = true
@@ -41,6 +124,20 @@ export default function PolarMap() {
   })
 
   const indianStationsCount = stationsList.filter(s => s.country === 'India').length
+  const telemetry = STATION_TELEMETRY[station.id] || {
+    temp: '-14.0 °C',
+    wind: '15 kts',
+    pressure: '985 hPa',
+    daylight: 'Polar Observation',
+    solarState: 'Scientific Telemetry Ingestion Active',
+  }
+
+  const viewBox =
+    viewMode === 'south'
+      ? '0 58 100 56'
+      : viewMode === 'north'
+      ? '15 0 72 45'
+      : '0 0 100 114'
 
   return (
     <div className="space-y-4">
@@ -113,15 +210,60 @@ export default function PolarMap() {
             <span className="w-2 h-2 rounded-full bg-slate-400" /> {trans('International Station', 'अंतर्राष्ट्रीय स्टेशन')}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-sky-300 border-t border-dashed" /> {trans('Expedition Track', 'अभियान समुद्री मार्ग')}
+            <span className="w-3 h-0.5 bg-sky-300 border-t border-dashed" /> {trans('Live Vessel Transit', 'सक्रिय पोत मार्ग')}
           </span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6 items-stretch">
         {/* Scientific Polar Map Canvas */}
-        <div className="rounded-2xl border border-slate-200 bg-[#06182a] overflow-hidden relative select-none min-h-[340px] sm:min-h-[420px] flex items-center justify-center p-2">
-          <svg viewBox="0 0 100 114" className="w-full h-auto max-h-[560px] block">
+        <div className="rounded-2xl border border-slate-200 bg-[#06182a] overflow-hidden relative select-none min-h-[360px] sm:min-h-[440px] flex items-center justify-center p-2">
+          {/* Floating Cartography & Projection Mode Controls */}
+          <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
+            <div className="text-[10px] font-mono text-slate-300 bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 shadow-sm flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <span>STEREOGRAPHIC RADAR · 60 FPS</span>
+            </div>
+          </div>
+
+          {/* Floating View Mode Switcher */}
+          <div className="absolute top-3 right-3 flex items-center gap-1 bg-slate-950/85 backdrop-blur-md p-1 rounded-xl border border-white/15 text-[11px] font-mono z-10 shadow-lg">
+            <button
+              onClick={() => setViewMode('global')}
+              className={cn(
+                'px-2.5 py-1 rounded-lg transition font-semibold flex items-center gap-1 text-[10px] sm:text-[11px]',
+                viewMode === 'global' ? 'bg-sky-500 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+              )}
+            >
+              <Navigation2 className="w-3 h-3" />
+              <span>{trans('Global', 'ग्लोबल')}</span>
+            </button>
+            <button
+              onClick={() => setViewMode('south')}
+              className={cn(
+                'px-2.5 py-1 rounded-lg transition font-semibold flex items-center gap-1 text-[10px] sm:text-[11px]',
+                viewMode === 'south' ? 'bg-sky-500 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+              )}
+            >
+              <Radio className="w-3 h-3 text-cyan-300" />
+              <span>{trans('Antarctica', 'अंटार्कटिका')}</span>
+            </button>
+            <button
+              onClick={() => setViewMode('north')}
+              className={cn(
+                'px-2.5 py-1 rounded-lg transition font-semibold flex items-center gap-1 text-[10px] sm:text-[11px]',
+                viewMode === 'north' ? 'bg-sky-500 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+              )}
+            >
+              <Compass className="w-3 h-3 text-sky-300" />
+              <span>{trans('Arctic Cap', 'आर्कटिक')}</span>
+            </button>
+          </div>
+
+          <svg
+            viewBox={viewBox}
+            className="w-full h-auto max-h-[560px] block transition-all duration-700 ease-out"
+          >
             <defs>
               <linearGradient id="oceanGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#0a243e" />
@@ -134,6 +276,10 @@ export default function PolarMap() {
               <linearGradient id="arcticSeaIce" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.85" />
                 <stop offset="100%" stopColor="#bae6fd" stopOpacity="0.4" />
+              </linearGradient>
+              <linearGradient id="radarBeam" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
               </linearGradient>
             </defs>
 
@@ -165,6 +311,16 @@ export default function PolarMap() {
                 strokeDasharray="0.6 1.4"
               />
             ))}
+
+            {/* Concentric Polar Latitude Rings in Antarctic View */}
+            {viewMode === 'south' && (
+              <g opacity="0.35">
+                <circle cx="50" cy="85" r="28" fill="none" stroke="#60a5fa" strokeWidth="0.2" strokeDasharray="1 1" />
+                <circle cx="50" cy="85" r="18" fill="none" stroke="#60a5fa" strokeWidth="0.2" strokeDasharray="1 1" />
+                <circle cx="50" cy="85" r="8" fill="none" stroke="#60a5fa" strokeWidth="0.2" strokeDasharray="1 1" />
+                <text x="50" y="85.5" fontSize="1.8" fontFamily="sans-serif" fill="#93c5fd" textAnchor="middle">90°S South Pole</text>
+              </g>
+            )}
 
             {/* Arctic Region & Svalbard */}
             <ellipse cx="50" cy="14" rx="38" ry="9.5" fill="url(#arcticSeaIce)" stroke="#3b82f6" strokeWidth="0.2" />
@@ -220,6 +376,7 @@ export default function PolarMap() {
               strokeDasharray="0.8 1.4"
               strokeOpacity="0.8"
             />
+
             {/* Himalayan Research Transit Corridor: Goa to Himansh (4,050m) */}
             <path
               d="M65.5,41 Q66,36 64,32"
@@ -240,6 +397,82 @@ export default function PolarMap() {
             <text x="2" y="56.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">00° Equator</text>
             <text x="2" y="70.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">60°S Southern Ocean</text>
             <text x="2" y="84.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">70°S Maitri / Bharati</text>
+
+            {/* 🚢 ANIMATED RESEARCH VESSEL 1: ORV Sagar Nidhi on Goa -> Cape Town -> Antarctica Track */}
+            <g className="pointer-events-none select-none">
+              <g>
+                <animateMotion
+                  dur="16s"
+                  repeatCount="indefinite"
+                  rotate="auto"
+                  path="M65.5,41 Q50,48 34,58 Q32,68 31,78 Q32,68 34,58 Q50,48 65.5,41"
+                />
+                {/* Sonar Beacon Pulse */}
+                <circle r="1.8" fill="none" stroke="#38bdf8" strokeWidth="0.25">
+                  <animate attributeName="r" values="0.8;3.2;0.8" dur="2s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.9;0.1;0.9" dur="2s" repeatCount="indefinite" />
+                </circle>
+                {/* Ship Hull Shape */}
+                <polygon points="-1.2,-0.5 1.5,0 -1.2,0.5 -0.6,0" fill="#38bdf8" stroke="#ffffff" strokeWidth="0.2" />
+                <text x="2.2" y="-1.2" fontSize="1.8" fontFamily="monospace" fontWeight="bold" fill="#7dd3fc">
+                  ORV Sagar Nidhi
+                </text>
+              </g>
+            </g>
+
+            {/* 🚢 ANIMATED RESEARCH VESSEL 2: Cape Town to Bharati (Larsemann Hills) */}
+            <g className="pointer-events-none select-none">
+              <g>
+                <animateMotion
+                  dur="20s"
+                  repeatCount="indefinite"
+                  rotate="auto"
+                  path="M34,58 Q48,68 56,80 Q48,68 34,58"
+                />
+                <circle r="1.5" fill="none" stroke="#0ea5e9" strokeWidth="0.2">
+                  <animate attributeName="r" values="0.8;2.6;0.8" dur="2.4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.8;0.1;0.8" dur="2.4s" repeatCount="indefinite" />
+                </circle>
+                <polygon points="-1,-0.4 1.3,0 -1,0.4 -0.5,0" fill="#0ea5e9" stroke="#ffffff" strokeWidth="0.2" />
+                <text x="2" y="-1" fontSize="1.6" fontFamily="monospace" fontWeight="bold" fill="#38bdf8">
+                  MV Polar Pioneer
+                </text>
+              </g>
+            </g>
+
+            {/* ✈️ ANIMATED HIMALAYAN SCIENTIFIC LOGISTICS: Goa to Himansh */}
+            <g className="pointer-events-none select-none">
+              <g>
+                <animateMotion
+                  dur="10s"
+                  repeatCount="indefinite"
+                  rotate="auto"
+                  path="M65.5,41 Q66,36 64,32 Q66,36 65.5,41"
+                />
+                <circle r="0.7" fill="#38bdf8">
+                  <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite" />
+                </circle>
+                <text x="1.5" y="-0.8" fontSize="1.4" fontFamily="monospace" fill="#bae6fd">
+                  HiCOM Corridor
+                </text>
+              </g>
+            </g>
+
+            {/* 🛰️ ISRO POLAR SATELLITE TELEMETRY GROUND STATION RADAR SWEEP AT BHARATI */}
+            <g transform="translate(56, 80)" className="pointer-events-none">
+              <circle r="6" fill="none" stroke="#38bdf8" strokeWidth="0.15" strokeDasharray="0.6 0.8" opacity="0.4" />
+              <circle r="10" fill="none" stroke="#0ea5e9" strokeWidth="0.1" strokeDasharray="1 1.2" opacity="0.25" />
+              <line x1="0" y1="0" x2="6" y2="0" stroke="url(#radarBeam)" strokeWidth="0.4">
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from="0 0 0"
+                  to="360 0 0"
+                  dur="6s"
+                  repeatCount="indefinite"
+                />
+              </line>
+            </g>
 
             {/* Station Markers */}
             {visibleStations.map(s => {
@@ -298,11 +531,6 @@ export default function PolarMap() {
               )
             })}
           </svg>
-
-          {/* Cartography Readout Badge */}
-          <div className="absolute top-3 left-3 text-[10px] font-mono text-slate-300 bg-slate-950/80 px-2.5 py-1 rounded border border-white/10">
-            STEREOGRAPHIC PROJECTION · MOES SOVEREIGN BASES
-          </div>
         </div>
 
         {/* Quick Mobile Station Selector for Small Touch Screens */}
@@ -323,7 +551,7 @@ export default function PolarMap() {
           ))}
         </div>
 
-        {/* Station Details Dossier */}
+        {/* Station Details Dossier with Live Telemetry HUD */}
         <div className="editorial-frame p-6 bg-white flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between border-b border-slate-100 pb-3 gap-2">
@@ -338,6 +566,57 @@ export default function PolarMap() {
               <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-1 rounded shrink-0">
                 {trans('Est.', 'स्था.')} {station.established}
               </span>
+            </div>
+
+            {/* 📡 Live Station Observational Telemetry HUD */}
+            <div className="mt-4 p-4 rounded-2xl bg-sky-50/70 border border-sky-200/90 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-slate-800">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  {trans('Real-Time Station Observational HUD', 'रीयल-टाइम स्टेशन प्रेक्षण एचयूडी')}
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-sky-200 text-sky-900 font-bold">
+                  WMO GAW Level-2
+                </span>
+              </div>
+
+              {/* 3-Column Mini Telemetry Gauges */}
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="p-2 rounded-xl bg-white border border-sky-100 shadow-2xs">
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-mono text-slate-500 font-semibold mb-0.5">
+                    <Thermometer className="w-3 h-3 text-cyan-600" />
+                    <span>{trans('Temp', 'तापमान')}</span>
+                  </div>
+                  <div className="text-xs font-mono font-bold text-slate-900">{telemetry.temp}</div>
+                </div>
+
+                <div className="p-2 rounded-xl bg-white border border-sky-100 shadow-2xs">
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-mono text-slate-500 font-semibold mb-0.5">
+                    <Wind className="w-3 h-3 text-cyan-600" />
+                    <span>{trans('Wind', 'पवन')}</span>
+                  </div>
+                  <div className="text-xs font-mono font-bold text-slate-900">{telemetry.wind}</div>
+                </div>
+
+                <div className="p-2 rounded-xl bg-white border border-sky-100 shadow-2xs">
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-mono text-slate-500 font-semibold mb-0.5">
+                    <Gauge className="w-3 h-3 text-cyan-600" />
+                    <span>{trans('Baro', 'वायुदाब')}</span>
+                  </div>
+                  <div className="text-xs font-mono font-bold text-slate-900 truncate" title={telemetry.pressure}>
+                    {telemetry.pressure.split(' ')[0]} hPa
+                  </div>
+                </div>
+              </div>
+
+              {/* Photoperiod / Solar Cycle */}
+              <div className="p-2.5 rounded-xl bg-white/90 border border-sky-100 text-[11px] font-mono text-slate-700 flex items-start gap-2">
+                <SunMedium className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-slate-900">{telemetry.daylight}:</span>{' '}
+                  <span className="text-slate-600">{telemetry.solarState}</span>
+                </div>
+              </div>
             </div>
 
             <p className="text-sm text-slate-600 mt-4 leading-relaxed">
@@ -405,12 +684,22 @@ export default function PolarMap() {
               </div>
             )}
 
-            <Link
-              to="/expeditions"
-              className="btn bg-slate-950 hover:bg-slate-850 text-white w-full text-xs !py-2.5 text-center rounded-xl"
-            >
-              {trans('Explore All Polar Expeditions', 'सभी ध्रुवीय अभियानों का अन्वेषण करें')}
-            </Link>
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                to="/datasets"
+                className="btn-light text-xs !py-2.5 text-center rounded-xl flex items-center justify-center gap-1.5"
+              >
+                <Database className="w-3.5 h-3.5 text-cyan-700" />
+                <span>{trans('Base Datasets', 'स्टेशन डेटा')}</span>
+              </Link>
+              <Link
+                to="/expeditions"
+                className="btn bg-slate-950 hover:bg-slate-850 text-white text-xs !py-2.5 text-center rounded-xl flex items-center justify-center gap-1"
+              >
+                <span>{trans('All Expeditions', 'सभी अभियान')}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
