@@ -36,6 +36,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem('polaris-lang', normalized)
       document.documentElement.lang = normalized === 'HI' ? 'hi' : 'en'
+      document.documentElement.setAttribute('lang', normalized === 'HI' ? 'hi' : 'en')
     } catch {
       // Ignore
     }
@@ -46,7 +47,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [lang, setLang])
 
   useEffect(() => {
-    document.documentElement.lang = lang === 'HI' ? 'hi' : 'en'
+    const code = lang === 'HI' ? 'hi' : 'en'
+    document.documentElement.lang = code
+    document.documentElement.setAttribute('lang', code)
   }, [lang])
 
   const t = useCallback(

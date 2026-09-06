@@ -18,12 +18,17 @@ html, body, #root { height: 100%; }
 body {
   background-color: #d6ecf9;
   color: #081a2c;
-  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "cv11", "ss01";
   text-rendering: optimizeLegibility;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Devanagari Crisp Rendering Enhancement */
+html[lang="hi"] body, [lang="hi"] {
+  font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 html.dark body {

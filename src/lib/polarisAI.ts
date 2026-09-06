@@ -523,9 +523,9 @@ export function getPageSuggestions(ctx: PageContext, isHindi = false): string[] 
 /**
  * Deterministic, grounded offline response generator for fallback or no-key scenarios.
  */
-function generateGroundedFallback(query: string, ctx: PageContext, audience: Audience): { text: string; source: string; sourceUrl?: string } {
+function generateGroundedFallback(query: string, ctx: PageContext, audience: Audience, forceHindi = false): { text: string; source: string; sourceUrl?: string } {
   const q = query.toLowerCase().trim()
-  const isHindi = /[\u0900-\u097F]/.test(query) || /\b(kya|hai|kaise|kyun|batao|kripya|kahan|samjhao|antar|kis|ka|ke|ki|yeh|ye|isko)\b/i.test(query)
+  const isHindi = forceHindi || /[\u0900-\u097F]/.test(query) || /\b(kya|hai|kaise|kyun|batao|kripya|kahan|samjhao|antar|kis|ka|ke|ki|yeh|ye|isko)\b/i.test(query)
 
   // 0. Platform Overview / Exploration ("yaha ham kya kya dekh sakte hai", "POLARIS kya hai", etc.)
   if (
@@ -892,6 +892,7 @@ export async function askPolarisAI({
   messages,
   pageContext,
   audience = 'General Public',
+  isHindi = false,
   onChunk,
   onDone,
   onError,
@@ -899,6 +900,7 @@ export async function askPolarisAI({
   messages: ChatMessage[]
   pageContext: PageContext
   audience: Audience
+  isHindi?: boolean
   onChunk: (delta: string, accumulated: string) => void
   onDone: (fullText: string, source: string, sourceUrl?: string, officialSourceUrl?: string, officialSourceLabel?: string) => void
   onError: (err: string) => void
@@ -925,6 +927,7 @@ export async function askPolarisAI({
         })),
         pageContext: activeContext,
         audience,
+        isHindi,
       }),
     })
 
@@ -973,16 +976,16 @@ export async function askPolarisAI({
       const data = await response.json()
       if (data.fallback) {
         // Fall back to grounded engine with progressive typing
-        await streamGroundedFallback(lastUserMsg, activeContext, audience, onChunk, onDone)
+        await streamGroundedFallback(lastUserMsg, activeContext, audience, isHindi, onChunk, onDone)
         return
       }
     }
 
     // If server failed or non-stream, use grounded fallback
-    await streamGroundedFallback(lastUserMsg, activeContext, audience, onChunk, onDone)
+    await streamGroundedFallback(lastUserMsg, activeContext, audience, isHindi, onChunk, onDone)
   } catch (err: any) {
     console.warn('Live API unavailable, falling back to grounded POLARIS engine:', err.message)
-    await streamGroundedFallback(lastUserMsg, activeContext, audience, onChunk, onDone)
+    await streamGroundedFallback(lastUserMsg, activeContext, audience, isHindi, onChunk, onDone)
   }
 }
 
@@ -994,10 +997,11 @@ async function streamGroundedFallback(
   query: string,
   pageContext: PageContext,
   audience: Audience,
+  forceHindi: boolean,
   onChunk: (delta: string, accumulated: string) => void,
   onDone: (fullText: string, source: string, sourceUrl?: string, officialSourceUrl?: string, officialSourceLabel?: string) => void
 ): Promise<void> {
-  const result = generateGroundedFallback(query, pageContext, audience)
+  const result = generateGroundedFallback(query, pageContext, audience, forceHindi)
   const words = result.text.split(/(\s+)/)
   let accumulated = ''
 

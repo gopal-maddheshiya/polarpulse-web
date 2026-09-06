@@ -13,7 +13,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/', en: 'Home', hi: 'गृह' },
+  { to: '/', en: 'Home', hi: 'मुख्य पृष्ठ' },
   { to: '/explore', en: 'Explore', hi: 'अन्वेषण' },
   { to: '/expeditions', en: 'Expeditions', hi: 'अभियान' },
   { to: '/knowledge', en: 'Knowledge', hi: 'ज्ञान केंद्र' },

@@ -244,6 +244,7 @@ export default function PolarisAI() {
       messages: updatedMessages,
       pageContext,
       audience,
+      isHindi,
       onChunk: (_delta, accumulated) => {
         targetBufferRef.current = accumulated
       },

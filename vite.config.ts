@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
 
             req.on('end', async () => {
               try {
-                const { messages, pageContext, audience = 'General Public' } = JSON.parse(body || '{}')
+                const { messages, pageContext, audience = 'General Public', isHindi = false } = JSON.parse(body || '{}')
                 const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY
 
                 if (!apiKey || apiKey.trim() === '' || apiKey === 'your_gemini_api_key_here') {
@@ -62,6 +62,7 @@ Automatically detect and respond in the user's language:
 - If user asks in English -> respond in English.
 - If user asks in Hindi (Devanagari) -> respond in clear, polite Hindi.
 - If user asks in Hinglish (Roman Hindi, e.g., "yaha ham ky ky dekh skte hai?", "Bharati station kya hai?", "Black carbon ko simple language me samjhao") -> Respond naturally in friendly Hinglish (Roman Hindi) with clear Hindi terms! NEVER answer a Hindi/Hinglish question in pure English!
+${isHindi ? '\nUSER CURRENTLY HAS THE HINDI INTERFACE ACTIVE. Unless the user explicitly asks to speak in English, reply in authentic, clear Hindi (Devanagari).\n' : ''}
 
 RESPONSE FORMAT:
 Keep responses concise, readable, and structured:

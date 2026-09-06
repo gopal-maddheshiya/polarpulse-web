@@ -103,12 +103,12 @@ export default function Datasets() {
                   )}
                 </div>
 
-                {/* Area Dropdown */}
-                <div className="flex items-center gap-2">
+                {/* Area, Year, and Format Dropdowns - Responsive Grid on Mobile */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full sm:w-auto">
                   <select
                     value={area}
                     onChange={e => setArea(e.target.value)}
-                    className="rounded-xl border border-sky-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs"
+                    className="rounded-xl border border-sky-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs w-full"
                   >
                     {AREAS.map(a => (
                       <option key={a} value={a}>
@@ -121,7 +121,7 @@ export default function Datasets() {
                   <select
                     value={year}
                     onChange={e => setYear(e.target.value)}
-                    className="rounded-xl border border-sky-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs"
+                    className="rounded-xl border border-sky-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs w-full"
                   >
                     {years.map(y => (
                       <option key={y} value={y}>
@@ -134,7 +134,7 @@ export default function Datasets() {
                   <select
                     value={format}
                     onChange={e => setFormat(e.target.value)}
-                    className="rounded-xl border border-sky-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs"
+                    className="rounded-xl border border-sky-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 shadow-2xs w-full"
                   >
                     {FORMATS.map(f => (
                       <option key={f} value={f}>

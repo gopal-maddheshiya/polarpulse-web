@@ -236,17 +236,17 @@ export default function Home() {
                 <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 font-mono">
                   <div className="flex items-center gap-1.5">
                     <CheckCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                    <span className="text-slate-900 dark:text-slate-100 font-semibold">44 Missions</span>
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">{trans('44 Missions', '44 अभियान')}</span>
                     <span>(1981–2025)</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <CheckCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                    <span className="text-slate-900 dark:text-slate-100 font-semibold">3 Bases</span>
-                    <span>(Year-round)</span>
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">{trans('3 Bases', '3 स्थायी केंद्र')}</span>
+                    <span>{trans('(Year-round)', '(वर्ष पर्यन्त)')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <CheckCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                    <span className="text-slate-900 dark:text-slate-100 font-semibold">100% Open Data</span>
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">{trans('100% Open Data', '100% खुला डेटा')}</span>
                     <span>(NPDC)</span>
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export default function Home() {
                             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         )}
                       >
-                        Bharati
+                        {isHindi ? 'भारती' : 'Bharati'}
                       </button>
                       <button
                         onClick={() => setHeroStation('maitri')}
@@ -279,7 +279,7 @@ export default function Home() {
                             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         )}
                       >
-                        Maitri
+                        {isHindi ? 'मैत्री' : 'Maitri'}
                       </button>
                       <button
                         onClick={() => setHeroStation('himadri')}
@@ -290,7 +290,7 @@ export default function Home() {
                             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         )}
                       >
-                        Himadri
+                        {isHindi ? 'हिमाद्रि' : 'Himadri'}
                       </button>
                     </div>
 
@@ -307,7 +307,7 @@ export default function Home() {
                         title="360° Live Polar Radar Scanner"
                       >
                         <Radio className="w-3 h-3 text-cyan-400 dark:text-slate-950 animate-pulse" />
-                        <span>Radar</span>
+                        <span>{trans('Radar', 'रडार')}</span>
                       </button>
                       <button
                         onClick={() => setHeroViewMode('camera')}
@@ -320,7 +320,7 @@ export default function Home() {
                         title="Outpost Camera View"
                       >
                         <Eye className="w-3 h-3 text-sky-400 dark:text-slate-950" />
-                        <span>Cam</span>
+                        <span>{trans('Cam', 'कैमरा')}</span>
                       </button>
                     </div>
                   </div>
@@ -527,7 +527,7 @@ export default function Home() {
                       {/* Sensor 1: Temperature */}
                       <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
                         <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
-                          <span>Temperature</span>
+                          <span>{trans('Temperature', 'सतही तापमान')}</span>
                           <ThermometerSnowflake className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                         </div>
                         <div className="font-display text-2xl font-bold text-slate-950 dark:text-white mt-1">
@@ -538,7 +538,7 @@ export default function Home() {
                       {/* Sensor 2: Wind Speed */}
                       <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
                         <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
-                          <span>Surface Wind</span>
+                          <span>{trans('Surface Wind', 'सतही पवन')}</span>
                           <Wind className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                         </div>
                         <div className="font-display text-2xl font-bold text-slate-950 dark:text-white mt-1">
@@ -549,36 +549,38 @@ export default function Home() {
                       {/* Sensor 3: Specific Telemetry */}
                       <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
                         <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
-                          <span className="truncate">{st.telemetryLabel}</span>
+                          <span className="truncate">{trans(st.telemetryLabel, st.id === 'bharati' ? 'उपग्रह लिंक' : st.id === 'maitri' ? 'ओजोन स्तंभ' : 'डीप मूरिंग')}</span>
                           <Activity className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                         </div>
                         <div className="font-sans text-xs font-bold text-slate-950 dark:text-white mt-1.5 truncate">
-                          {st.telemetryMetric}
+                          {trans(st.telemetryMetric, st.id === 'bharati' ? 'इसरो टेलीमेट्री सक्रिय' : st.id === 'maitri' ? '284 DU (सामान्य)' : '192 मी सेंसर ऐरे')}
                         </div>
                       </div>
 
                       {/* Sensor 4: Solar/Sun Elevation */}
                       <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
                         <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
-                          <span>Solar Condition</span>
+                          <span>{trans('Solar Condition', 'सौर स्थिति')}</span>
                           <Sun className="w-3.5 h-3.5 text-amber-500" />
                         </div>
                         <div className="font-sans text-xs font-bold text-slate-950 dark:text-white mt-1.5 truncate">
-                          {st.sunStatus}
+                          {trans(st.sunStatus, st.id === 'bharati' ? 'ध्रुवीय ग्रीष्म काल' : st.id === 'maitri' ? 'निम्न क्षितिज कोण' : 'आर्कटिक गोधूलि')}
                         </div>
                       </div>
                     </div>
 
                     {/* Card Footer Link */}
                     <div className="pt-2 flex items-center justify-between text-xs border-t border-slate-100 dark:border-slate-800">
-                      <span className="font-mono text-slate-400 dark:text-slate-500">Est. {st.established} · Sovereign Outpost</span>
+                      <span className="font-mono text-slate-400 dark:text-slate-500">
+                        {trans('Est.', 'स्था.')} {st.established} · {trans('Sovereign Outpost', 'संप्रभु अनुसंधान चौकी')}
+                      </span>
                       <a
                         href={st.id === 'himadri' ? 'https://ncpor.res.in/arctics/display/394-himadri' : `https://ncpor.res.in/antarcticas/display/${st.id === 'maitri' ? '376-maitri-' : '377-bharati'}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-cyan-700 dark:text-cyan-400 hover:text-cyan-900 dark:hover:text-cyan-300 font-semibold inline-flex items-center gap-1 hover:underline"
                       >
-                        <span>Official NCPOR Dossier</span>
+                        <span>{trans('Official NCPOR Dossier', 'एनसीपीओआर आधिकारिक दस्तावेज़')}</span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
@@ -652,11 +654,11 @@ export default function Home() {
                     <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                        <span>Year-round wintering crew of 49 scientists</span>
+                        <span>{trans('Year-round wintering crew of 49 scientists', '49 वैज्ञानिकों का वर्ष पर्यन्त शीतकालीन दल')}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                        <span>ISRO Earth Observation satellite downlink</span>
+                        <span>{trans('ISRO Earth Observation satellite downlink', 'इसरो भू-अवलोकन उपग्रह डाउनलिंक')}</span>
                       </div>
                     </div>
                   </div>
@@ -669,11 +671,11 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="hover:underline inline-flex items-center gap-1"
                   >
-                    <span>NCPOR Antarctic Portal</span>
+                    <span>{trans('NCPOR Antarctic Portal', 'एनसीपीओआर अंटार्कटिक पोर्टल')}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                   <Link to="/expeditions" className="text-slate-800 dark:text-slate-200 hover:text-cyan-700 dark:hover:text-cyan-400 inline-flex items-center gap-1">
-                    <span>Missions →</span>
+                    <span>{trans('Missions →', 'वैज्ञानिक अभियान →')}</span>
                   </Link>
                 </div>
               </div>
@@ -712,11 +714,11 @@ export default function Home() {
                     <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                        <span>IndARC multi-sensor underwater mooring (192m)</span>
+                        <span>{trans('IndARC multi-sensor underwater mooring (192m)', 'IndARC बहु-सेंसर जलमग्न वेधशाला (192 मी)')}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                        <span>Arctic-Indian Monsoon teleconnection research</span>
+                        <span>{trans('Arctic-Indian Monsoon teleconnection research', 'आर्कटिक-भारतीय मानसून अंतर्संबंध अनुसंधान')}</span>
                       </div>
                     </div>
                   </div>
@@ -729,11 +731,11 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="hover:underline inline-flex items-center gap-1"
                   >
-                    <span>NCPOR Arctic Portal</span>
+                    <span>{trans('NCPOR Arctic Portal', 'एनसीपीओआर आर्कटिक पोर्टल')}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                   <Link to="/expeditions" className="text-slate-800 dark:text-slate-200 hover:text-cyan-700 dark:hover:text-cyan-400 inline-flex items-center gap-1">
-                    <span>Missions →</span>
+                    <span>{trans('Missions →', 'वैज्ञानिक अभियान →')}</span>
                   </Link>
                 </div>
               </div>
@@ -772,11 +774,11 @@ export default function Home() {
                     <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                        <span>Benchmark monitoring of Sutri Dhaka & Batal glaciers</span>
+                        <span>{trans('Benchmark monitoring of Sutri Dhaka & Batal glaciers', 'सुत्री ढाका एवं बाटल हिमनदों की बेंचमार्क निगरानी')}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                        <span>Critical water security data for 1.4 billion people</span>
+                        <span>{trans('Critical water security data for 1.4 billion people', '1.4 अरब लोगों की जल सुरक्षा हेतु महत्वपूर्ण डेटा')}</span>
                       </div>
                     </div>
                   </div>
@@ -789,11 +791,11 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="hover:underline inline-flex items-center gap-1"
                   >
-                    <span>NCPOR Cryosphere Portal</span>
+                    <span>{trans('NCPOR Cryosphere Portal', 'एनसीपीओआर क्रायोस्फेयर पोर्टल')}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                   <Link to="/datasets" className="text-slate-800 dark:text-slate-200 hover:text-cyan-700 dark:hover:text-cyan-400 inline-flex items-center gap-1">
-                    <span>Datasets →</span>
+                    <span>{trans('Datasets →', 'अनुसंधान डेटासेट →')}</span>
                   </Link>
                 </div>
               </div>
@@ -833,7 +835,7 @@ export default function Home() {
                 </div>
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
                   <Link to="/datasets" className="text-xs font-semibold text-cyan-700 dark:text-cyan-400 hover:underline inline-flex items-center gap-1">
-                    <span>Explore Teleconnection Data →</span>
+                    <span>{trans('Explore Teleconnection Data →', 'जलवायु डेटा देखें →')}</span>
                   </Link>
                 </div>
               </div>
@@ -858,7 +860,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="text-xs font-semibold text-cyan-700 dark:text-cyan-400 hover:underline inline-flex items-center gap-1"
                   >
-                    <span>Station Architectural Dossier ↗</span>
+                    <span>{trans('Station Architectural Dossier ↗', 'स्टेशन वास्तुकला विवरण ↗')}</span>
                   </a>
                 </div>
               </div>
@@ -883,7 +885,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="text-xs font-semibold text-cyan-700 dark:text-cyan-400 hover:underline inline-flex items-center gap-1"
                   >
-                    <span>IndARC Observatory Portal ↗</span>
+                    <span>{trans('IndARC Observatory Portal ↗', 'IndARC वेधशाला पोर्टल ↗')}</span>
                   </a>
                 </div>
               </div>
@@ -955,13 +957,13 @@ export default function Home() {
 
               <div className="flex items-baseline gap-5 bg-white/95 dark:bg-slate-900 backdrop-blur-md p-4 rounded-2xl border border-sky-200/90 dark:border-slate-800 shadow-2xs shrink-0">
                 <div>
-                  <div className="text-[10px] font-mono uppercase text-slate-400">Seasonal Min</div>
+                  <div className="text-[10px] font-mono uppercase text-slate-400">{trans('Seasonal Min', 'मौसमी न्यूनतम')}</div>
                   <div className="font-display text-3xl font-extrabold text-slate-950 dark:text-white">
                     13.8 <span className="text-sm font-sans font-normal text-slate-500 dark:text-slate-400">M km²</span>
                   </div>
                 </div>
                 <div className="border-l border-slate-200 dark:border-slate-800 pl-4">
-                  <div className="text-[10px] font-mono uppercase text-cyan-800 dark:text-cyan-400 font-semibold">Baseline Anomaly</div>
+                  <div className="text-[10px] font-mono uppercase text-cyan-800 dark:text-cyan-400 font-semibold">{trans('Baseline Anomaly', 'आधार रेखा विचलन')}</div>
                   <div className="font-display text-xl font-bold text-cyan-600 dark:text-cyan-400">
                     -0.8 <span className="text-xs font-sans font-normal text-slate-500 dark:text-slate-400">M km²</span>
                   </div>
@@ -1003,14 +1005,14 @@ export default function Home() {
                     )}
                   </p>
                   <div className="mt-4 text-xs font-mono text-slate-500 dark:text-slate-400 flex items-center justify-between">
-                    <span>— NCPOR Polar Climate Group</span>
+                    <span>— {trans('NCPOR Polar Climate Group', 'एनसीपीओआर ध्रुवीय जलवायु अनुसंधान समूह')}</span>
                     <a
                       href="https://nsidc.org/data/seaice_index"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-cyan-700 dark:text-cyan-400 hover:text-cyan-900 dark:hover:text-cyan-300 font-semibold inline-flex items-center gap-1"
                     >
-                      <span>NSIDC Index ↗</span>
+                      <span>{trans('NSIDC Index ↗', 'एनएसआईडीसी सूचकांक ↗')}</span>
                     </a>
                   </div>
                 </div>
