@@ -7,7 +7,7 @@ import { cn } from '../lib/utils'
 import { ArrowRight, Compass, MapPin } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 
-type RegionFilter = 'all' | 'india' | 'antarctic' | 'arctic'
+type RegionFilter = 'all' | 'india' | 'antarctic' | 'arctic' | 'himalaya'
 
 export default function PolarMap() {
   const { isHindi, trans } = useLanguage()
@@ -36,8 +36,11 @@ export default function PolarMap() {
     if (filter === 'india') return s.country === 'India'
     if (filter === 'antarctic') return s.region === 'Antarctic'
     if (filter === 'arctic') return s.region === 'Arctic'
+    if (filter === 'himalaya') return s.region === 'Himalaya' || s.id === 'himansh'
     return true
   })
+
+  const indianStationsCount = stationsList.filter(s => s.country === 'India').length
 
   return (
     <div className="space-y-4">
@@ -65,7 +68,7 @@ export default function PolarMap() {
             )}
           >
             <span className="w-2 h-2 rounded-full bg-sky-500" />
-            {trans('Indian Bases', 'भारतीय केंद्र')} (3)
+            {trans('Indian Bases', 'भारतीय केंद्र')} ({indianStationsCount})
           </button>
           <button
             onClick={() => setFilter('antarctic')}
@@ -88,6 +91,17 @@ export default function PolarMap() {
             )}
           >
             {trans('Arctic Svalbard', 'आर्कटिक स्वालबार्ड')}
+          </button>
+          <button
+            onClick={() => setFilter('himalaya')}
+            className={cn(
+              'px-3 py-1.5 rounded-lg font-medium transition shrink-0',
+              filter === 'himalaya'
+                ? 'bg-white text-slate-950 shadow-2xs font-semibold'
+                : 'text-slate-600 hover:text-slate-900'
+            )}
+          >
+            {trans('Third Pole (Himalaya)', 'थर्ड पोल (हिमालय)')}
           </button>
         </div>
 
@@ -206,12 +220,22 @@ export default function PolarMap() {
               strokeDasharray="0.8 1.4"
               strokeOpacity="0.8"
             />
+            {/* Himalayan Research Transit Corridor: Goa to Himansh (4,050m) */}
+            <path
+              d="M65.5,41 Q66,36 64,32"
+              fill="none"
+              stroke="#38bdf8"
+              strokeWidth="0.35"
+              strokeDasharray="0.6 1.0"
+              strokeOpacity="0.8"
+            />
             <text x="36" y="58" fontSize="1.8" fontFamily="sans-serif" fill="#7dd3fc">
               Cape Town Port
             </text>
 
             {/* Latitude Labels */}
             <text x="2" y="14.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">80°N Arctic</text>
+            <text x="2" y="32.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">32°N Himalaya</text>
             <text x="2" y="42.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">15°N Goa</text>
             <text x="2" y="56.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">00° Equator</text>
             <text x="2" y="70.5" fontSize="1.8" fontFamily="monospace" fill="#64748b">60°S Southern Ocean</text>
@@ -221,6 +245,13 @@ export default function PolarMap() {
             {visibleStations.map(s => {
               const isIndian = s.country === 'India'
               const isSelected = active === s.id
+              const labelText = s.id === 'himansh'
+                ? 'Himansh (3rd Pole)'
+                : s.id === 'dakshin-gangotri'
+                ? 'Dakshin Gangotri'
+                : s.name.split(' (')[0]
+              const isLeftAlign = s.id === 'himansh' || s.x > 75
+
               return (
                 <g
                   key={s.id}
@@ -252,14 +283,15 @@ export default function PolarMap() {
                   {/* Clean text label */}
                   {(isIndian || isSelected) && (
                     <text
-                      x="2.4"
+                      x={isLeftAlign ? -2.4 : 2.4}
                       y="0.6"
+                      textAnchor={isLeftAlign ? 'end' : 'start'}
                       fontSize="2.1"
                       fontFamily="sans-serif"
                       fontWeight={isIndian ? '700' : '400'}
                       fill={isIndian ? '#ffffff' : '#cbd5e1'}
                     >
-                      {s.name}
+                      {labelText}
                     </text>
                   )}
                 </g>

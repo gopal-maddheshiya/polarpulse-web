@@ -2,7 +2,7 @@ export interface ResearchStation {
   id: string
   name: string
   country: string
-  region: 'Arctic' | 'Antarctic'
+  region: 'Arctic' | 'Antarctic' | 'Himalaya'
   x: number // percent 0-100 in svg
   y: number
   established: number
@@ -149,9 +149,9 @@ export const stations: ResearchStation[] = [
     id: 'himansh',
     name: 'Himansh Cryospheric Observatory',
     country: 'India',
-    region: 'Arctic', // Grouped with high-latitude/cryosphere monitoring
-    x: 52,
-    y: 22,
+    region: 'Himalaya',
+    x: 64,
+    y: 32,
     established: 2016,
     blurb: 'India’s high-altitude Third Pole research station perched at 4,050 meters a.s.l. in the Chandra Basin, Lahaul-Spiti, Western Himalaya. Equipped with automatic weather stations, GPR soundings, and hydrological runoff loggers monitoring long-term benchmark mass balance of Himalayan glaciers.',
     relatedExpeditions: ['himalaya-glacier-2022'],

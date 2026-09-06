@@ -6,6 +6,7 @@ import { Container, EmptyState, Section, SectionHeader } from '../components/ui/
 import { downloadCsv, downloadRealFile, copyToClipboard, openDoi } from '../lib/actions'
 import { Reveal } from '../lib/reveal'
 import { LineChart } from '../components/ui/Chart'
+import { getDatasetVisualization } from '../lib/datasetVisualizations'
 import { useLanguage } from '../context/LanguageContext'
 
 export default function DatasetDetail() {
@@ -139,32 +140,42 @@ export default function DatasetDetail() {
         <Container>
           <div className="grid lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-10">
-              {/* Sample visualisation */}
-              <Reveal>
-                <div className="p-7 rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-xs">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <div className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">{trans('Preview Visualisation', 'पूर्वावलोकन विज़ुअलाइज़ेशन')}</div>
-                      <div className="font-display text-lg font-bold text-slate-950">{trans('Downcast Profile Sample', 'डाउनकास्ट प्रोफाइल नमूना')}</div>
+              {/* Dynamic Scientific Visualisation */}
+              {d && (() => {
+                const viz = getDatasetVisualization(d.id)
+                return (
+                  <Reveal>
+                    <div className="p-7 rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                        <div>
+                          <div className="text-xs font-mono uppercase tracking-wider text-cyan-800 font-bold flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                            {trans('In-Situ Scientific Telemetry', 'इन-सिटू वैज्ञानिक टेलीमेट्री')}
+                          </div>
+                          <div className="font-display text-lg font-bold text-slate-950 mt-0.5">
+                            {trans(viz.titleEn, viz.titleHi)}
+                          </div>
+                        </div>
+                        <span className="self-start sm:self-auto inline-flex items-center gap-1.5 text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          {trans(viz.badgeEn, viz.badgeHi)}
+                        </span>
+                      </div>
+                      <LineChart
+                        title={trans(viz.titleEn, viz.titleHi)}
+                        subtitle={trans(viz.subtitleEn, viz.subtitleHi)}
+                        data={viz.data}
+                        baseline={viz.baseline}
+                        baselineLabel={viz.baselineLabel}
+                        unit={viz.unit}
+                        yLabel={viz.yLabel}
+                        accent={viz.accent}
+                        height={240}
+                      />
                     </div>
-                    <span className="text-[10px] font-mono px-2.5 py-1 rounded-md bg-sky-100 text-sky-900 font-bold">{trans('Simulated', 'सिम्युलेटेड')}</span>
-                  </div>
-                  <LineChart
-                    title={trans('Downcast Profile Sample', 'डाउनकास्ट प्रोफाइल नमूना')}
-                    subtitle={trans('Simulated depth vs salinity/temperature profile', 'गहराई बनाम लवणता/तापमान प्रोफ़ाइल')}
-                    data={[
-                      { label: '0m', value: 12 },
-                      { label: '50m', value: 24 },
-                      { label: '100m', value: 48 },
-                      { label: '200m', value: 35 },
-                      { label: '500m', value: 18 },
-                      { label: '1000m', value: 8 },
-                    ]}
-                    accent="#0284c7"
-                    height={200}
-                  />
-                </div>
-              </Reveal>
+                  </Reveal>
+                )
+              })()}
 
               {/* Data Preview Table */}
               <Reveal>

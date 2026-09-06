@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { getDatasets, type Dataset } from '../services/polarisService'
 import { PageHeader } from '../components/ui/Page'
 import { Container, EmptyState, Section } from '../components/ui/Primitives'
-import { Database, ArrowRight, Search, X, Filter, Download, FileSpreadsheet, HardDrive, Layers, Compass } from 'lucide-react'
+import { Database, ArrowRight, Search, X, Filter, Download, FileSpreadsheet, HardDrive, Layers, Compass, Eye, Copy, Check } from 'lucide-react'
+import { copyToClipboard, downloadCsv, downloadRealFile } from '../lib/actions'
 import { Reveal } from '../lib/reveal'
 import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
@@ -21,6 +22,11 @@ export default function Datasets() {
   const [area, setArea] = useState('All')
   const [year, setYear] = useState('All')
   const [format, setFormat] = useState('All')
+
+  // Live Tabular Data Inspector Modal State
+  const [inspectDataset, setInspectDataset] = useState<Dataset | null>(null)
+  const [paramSearch, setParamSearch] = useState('')
+  const [copiedToast, setCopiedToast] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -208,11 +214,8 @@ export default function Datasets() {
                 <div className="grid md:grid-cols-2 gap-6">
                   {filtered.map((d, idx) => (
                     <Reveal key={d.id} delay={idx * 40}>
-                      <Link
-                        to={`/datasets/${d.id}`}
-                        className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 p-7"
-                      >
-                        <div className="space-y-3">
+                      <div className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 p-7">
+                        <Link to={`/datasets/${d.id}`} className="space-y-3 block">
                           {/* Top Badges */}
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <span className="editorial-badge-light bg-sky-50/80 border-sky-200 text-cyan-900 font-bold !text-[10px]">
@@ -234,20 +237,34 @@ export default function Datasets() {
                           <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
                             {d.description}
                           </p>
-                        </div>
+                        </Link>
 
-                        {/* Metadata Footer */}
-                        <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                          <div className="flex items-center gap-3">
+                        {/* Metadata Footer & Quick Actions */}
+                        <div className="pt-4 mt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                          <div className="flex items-center gap-2.5">
                             <span className="font-mono text-[11px] text-slate-700 font-semibold">{d.region}</span>
-                            <span className="font-mono text-[11px]">{trans('Yr:', 'वर्ष:')} {d.year}</span>
+                            <span className="font-mono text-[11px]">·</span>
+                            <span className="font-mono text-[11px]">{d.year}</span>
                           </div>
 
-                          <span className="text-xs font-bold text-cyan-700 group-hover:translate-x-0.5 transition inline-flex items-center gap-1">
-                            {trans('Explore Data', 'डेटा देखें')} <ArrowRight className="w-3.5 h-3.5" />
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => { setInspectDataset(d); setParamSearch('') }}
+                              className="px-2.5 py-1 rounded-lg bg-sky-50 text-cyan-800 hover:bg-cyan-100/90 transition text-xs font-semibold flex items-center gap-1.5 border border-sky-200 shadow-2xs"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-cyan-600" />
+                              {trans('Inspect Table', 'तालिका देखें')}
+                            </button>
+                            <Link
+                              to={`/datasets/${d.id}`}
+                              className="text-xs font-bold text-cyan-700 hover:text-cyan-900 hover:translate-x-0.5 transition inline-flex items-center gap-1"
+                            >
+                              {trans('Details', 'विवरण')} <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
                         </div>
-                      </Link>
+                      </div>
                     </Reveal>
                   ))}
                 </div>
@@ -256,6 +273,137 @@ export default function Datasets() {
           )}
         </Container>
       </Section>
+
+      {/* Live Tabular Data Inspector Modal */}
+      {inspectDataset && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-up"
+          onClick={() => { setInspectDataset(null); setParamSearch('') }}
+        >
+          <div
+            className="max-w-3xl w-full bg-white/98 backdrop-blur-md border border-sky-200 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col max-h-[88vh] relative overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between gap-4 pb-4 border-b border-sky-100 shrink-0">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="editorial-badge-light bg-sky-50 text-cyan-900 border-sky-200 font-bold !text-[10px]">
+                    {inspectDataset.area}
+                  </span>
+                  <span className="font-mono text-[11px] text-slate-500">
+                    ID: <strong className="text-slate-800 font-bold">{inspectDataset.id.toUpperCase()}</strong>
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    NPDC Level-2
+                  </span>
+                </div>
+                <h3 className="font-display text-xl font-bold text-slate-950 leading-snug">
+                  {inspectDataset.title}
+                </h3>
+                <p className="text-xs text-slate-500 font-mono">
+                  {inspectDataset.region} · {inspectDataset.coverage}
+                </p>
+              </div>
+              <button
+                onClick={() => { setInspectDataset(null); setParamSearch('') }}
+                className="p-2 text-slate-400 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* In-Modal Parameter Search & Summary */}
+            <div className="py-3 flex items-center justify-between gap-3 shrink-0">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={paramSearch}
+                  onChange={e => setParamSearch(e.target.value)}
+                  placeholder={trans('Filter parameters or values...', 'मापदंड या मान फ़िल्टर करें...')}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-mono"
+                />
+              </div>
+              <span className="text-[11px] font-mono text-slate-500">
+                {inspectDataset.previewRows.length} {trans('Variables recorded', 'चर दर्ज')}
+              </span>
+            </div>
+
+            {/* Scrollable Data Table */}
+            <div className="overflow-y-auto rounded-2xl border border-sky-200/80 bg-white shadow-2xs flex-1 my-2">
+              <table className="w-full text-sm text-left">
+                <thead className="text-[11px] font-mono uppercase tracking-wider text-slate-700 bg-sky-50/80 border-b border-sky-200/80 sticky top-0 font-bold z-10">
+                  <tr>
+                    <th className="py-3 px-4">{trans('Parameter / Variable', 'मापदंड / चर')}</th>
+                    <th className="py-3 px-4">{trans('In-Situ Observation Reading', 'इन-सिटू प्रेक्षण पाठ्यांक')}</th>
+                    <th className="py-3 px-4 hidden sm:table-cell">{trans('Status', 'स्थिति')}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-sky-100 text-slate-700">
+                  {inspectDataset.previewRows
+                    .filter(r => !paramSearch.trim() || r.name.toLowerCase().includes(paramSearch.toLowerCase()) || r.value.toLowerCase().includes(paramSearch.toLowerCase()))
+                    .map((r, i) => (
+                      <tr key={i} className="hover:bg-sky-50/60 transition">
+                        <td className="py-2.5 px-4 font-mono text-xs text-slate-900 font-semibold">{r.name}</td>
+                        <td className="py-2.5 px-4 font-mono text-xs text-cyan-700 font-bold">{r.value}</td>
+                        <td className="py-2.5 px-4 hidden sm:table-cell">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            {trans('Validated', 'प्रमाणित')}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className="pt-4 border-t border-sky-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const ok = await copyToClipboard(JSON.stringify(inspectDataset.previewRows, null, 2))
+                    if (ok) {
+                      setCopiedToast(true)
+                      setTimeout(() => setCopiedToast(false), 2000)
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-xl border border-sky-200 bg-white text-slate-700 hover:bg-sky-50 transition text-xs font-semibold flex items-center gap-1.5 shadow-2xs"
+                >
+                  {copiedToast ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                  {copiedToast ? trans('Copied JSON!', 'कॉपी हो गया!') : trans('Copy JSON', 'JSON कॉपी करें')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (inspectDataset.downloadUrl) {
+                      downloadRealFile(inspectDataset.downloadUrl, `${inspectDataset.id}.csv`)
+                    } else {
+                      downloadCsv(`${inspectDataset.id}.csv`, inspectDataset.previewRows)
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-xl border border-sky-200 bg-white text-slate-700 hover:bg-sky-50 transition text-xs font-semibold flex items-center gap-1.5 shadow-2xs"
+                >
+                  <Download className="w-3.5 h-3.5 text-cyan-600" />
+                  {trans('Download CSV', 'CSV डाउनलोड')}
+                </button>
+              </div>
+
+              <Link
+                to={`/datasets/${inspectDataset.id}`}
+                className="btn-primary !py-2 !px-4 text-xs font-semibold rounded-xl inline-flex items-center gap-1.5"
+              >
+                <span>{trans('Open Full Analytics & Visualisations', 'पूर्ण विश्लेषण एवं चार्ट खोलें')}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

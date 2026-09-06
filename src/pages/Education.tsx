@@ -6,7 +6,7 @@ import { Container, EmptyState, Section } from '../components/ui/Primitives'
 import {
   ArrowRight, Check, X as XIcon, GraduationCap, Sparkles, BookOpenCheck,
   Award, RefreshCw, Compass, Database, FileText, CheckCircle2, ChevronRight,
-  HelpCircle, Lightbulb, ExternalLink
+  HelpCircle, Lightbulb, ExternalLink, Download
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { Reveal } from '../lib/reveal'
@@ -85,6 +85,127 @@ export default function Education() {
   const [picked, setPicked] = useState<number | null>(null)
   const [answers, setAnswers] = useState<Record<string, number[]>>({})
   const [showCert, setShowCert] = useState(false)
+  const [cadetName, setCadetName] = useState('Polar Science Cadet')
+
+  const handleDownloadCertificate = () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1200
+    canvas.height = 850
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // Background Parchment & Ocean Gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, 1200, 850)
+    bgGrad.addColorStop(0, '#f8fafc')
+    bgGrad.addColorStop(1, '#f0f9ff')
+    ctx.fillStyle = bgGrad
+    ctx.fillRect(0, 0, 1200, 850)
+
+    // Outer Border
+    ctx.strokeStyle = '#0284c7'
+    ctx.lineWidth = 12
+    ctx.strokeRect(24, 24, 1152, 802)
+
+    // Inner Delicate Border
+    ctx.strokeStyle = '#0369a1'
+    ctx.lineWidth = 2
+    ctx.strokeRect(36, 36, 1128, 778)
+
+    // Corner Decorative Accents
+    ctx.fillStyle = '#0284c7'
+    ctx.fillRect(32, 32, 20, 20)
+    ctx.fillRect(1148, 32, 20, 20)
+    ctx.fillRect(32, 798, 20, 20)
+    ctx.fillRect(1148, 798, 20, 20)
+
+    // Header Badge
+    ctx.textAlign = 'center'
+    ctx.fillStyle = '#0369a1'
+    ctx.font = 'bold 15px sans-serif'
+    ctx.fillText('GOVERNMENT OF INDIA · MINISTRY OF EARTH SCIENCES', 600, 95)
+    ctx.fillText('NATIONAL CENTRE FOR POLAR AND OCEAN RESEARCH (NCPOR)', 600, 120)
+
+    // Subtitle Divider Line
+    ctx.strokeStyle = '#bae6fd'
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.moveTo(320, 142)
+    ctx.lineTo(880, 142)
+    ctx.stroke()
+
+    // Certificate Title
+    ctx.fillStyle = '#0f172a'
+    ctx.font = 'bold 36px Georgia, serif'
+    ctx.fillText('POLARIS CADET CERTIFICATE', 600, 210)
+
+    ctx.fillStyle = '#64748b'
+    ctx.font = 'italic 16px sans-serif'
+    ctx.fillText('National Polar Science & Cryospheric Outreach Certification', 600, 255)
+
+    // Candidate Name
+    ctx.fillStyle = '#0284c7'
+    ctx.font = 'bold 42px Georgia, serif'
+    ctx.fillText(cadetName || 'Polar Science Cadet', 600, 340)
+
+    // Underline candidate name
+    ctx.strokeStyle = '#0284c7'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(380, 362)
+    ctx.lineTo(820, 362)
+    ctx.stroke()
+
+    // Description text
+    ctx.fillStyle = '#334155'
+    ctx.font = '16px sans-serif'
+    ctx.fillText('has successfully demonstrated proficiency across National Polar Science modules encompassing', 600, 420)
+    ctx.fillText('Antarctic Cryosphere dynamics, High Arctic oceanography, and Himalayan benchmark glacier monitoring.', 600, 448)
+
+    // Score Verified Box
+    ctx.fillStyle = '#ffffff'
+    ctx.strokeStyle = '#bae6fd'
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.roundRect(400, 490, 400, 85, 12)
+    ctx.fill()
+    ctx.stroke()
+
+    ctx.fillStyle = '#0369a1'
+    ctx.font = 'bold 13px monospace'
+    ctx.fillText('VERIFIED ASSESSMENT PERFORMANCE', 600, 520)
+    ctx.fillStyle = '#0f172a'
+    ctx.font = 'bold 22px sans-serif'
+    ctx.fillText(`${correctCount} / ${answeredCount || 1} Questions Verified (${Math.round((correctCount / Math.max(answeredCount, 1)) * 100)}%)`, 600, 552)
+
+    // Verification Hash ID & Date
+    const certCode = `POL-2026-${Math.abs(((cadetName || '') + correctCount).split('').reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0)).toString(16).toUpperCase().padStart(6, '0')}`
+    const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+
+    ctx.textAlign = 'left'
+    ctx.fillStyle = '#64748b'
+    ctx.font = '12px monospace'
+    ctx.fillText(`VERIFICATION CODE: ${certCode}`, 80, 715)
+    ctx.fillText(`DATE OF ISSUANCE: ${today}`, 80, 740)
+    ctx.fillText('SMART INDIA HACKATHON 2026 · SMART EDUCATION', 80, 765)
+
+    // Signatures
+    ctx.textAlign = 'center'
+    ctx.fillStyle = '#0f172a'
+    ctx.font = 'bold 14px sans-serif'
+    ctx.fillText('Director, NCPOR', 980, 720)
+    ctx.fillStyle = '#64748b'
+    ctx.font = '12px sans-serif'
+    ctx.fillText('Ministry of Earth Sciences, Govt. of India', 980, 742)
+
+    // Trigger download
+    const url = canvas.toDataURL('image/png')
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `POLARIS_Cadet_Certificate_${(cadetName || 'Cadet').replace(/\s+/g, '_')}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
 
   useEffect(() => {
     let mounted = true
@@ -530,18 +651,42 @@ export default function Education() {
               )}
             </p>
 
-            <div className="my-6 p-4 rounded-xl bg-sky-50/60 border border-sky-200/80 font-mono text-xs text-slate-700 space-y-1.5 text-left">
-              <div className="flex justify-between"><span>{trans('Score Verified:', 'प्रमाणित स्कोर:')}</span> <strong className="text-slate-900">{correctCount} / {answeredCount} {trans('Questions', 'प्रश्न')}</strong></div>
+            <div className="mt-4 mb-3 text-left">
+              <label className="block text-[11px] font-mono uppercase text-slate-500 font-bold mb-1">
+                {trans('Candidate Name for Certificate', 'प्रमाणपत्र हेतु अभ्यर्थी का नाम')}:
+              </label>
+              <input
+                type="text"
+                value={cadetName}
+                onChange={e => setCadetName(e.target.value)}
+                placeholder={trans('Enter your full name...', 'अपना पूरा नाम दर्ज करें...')}
+                className="w-full px-3.5 py-2 text-xs bg-sky-50/80 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 font-semibold text-slate-900"
+              />
+            </div>
+
+            <div className="my-4 p-4 rounded-xl bg-sky-50/60 border border-sky-200/80 font-mono text-xs text-slate-700 space-y-1.5 text-left">
+              <div className="flex justify-between"><span>{trans('Score Verified:', 'प्रमाणित स्कोर:')}</span> <strong className="text-slate-900">{correctCount} / {answeredCount || 1} {trans('Questions', 'प्रश्न')}</strong></div>
               <div className="flex justify-between"><span>{trans('Curriculum Level:', 'पाठ्यक्रम स्तर:')}</span> <strong className="text-slate-900">{trans('National Polar Sciences (Secondary/UG)', 'राष्ट्रीय ध्रुवीय विज्ञान (माध्यमिक/स्नातक)')}</strong></div>
               <div className="flex justify-between"><span>{trans('Issuer:', 'जारीकर्ता:')}</span> <strong className="text-slate-900">{trans('NCPOR · Ministry of Earth Sciences', 'एनसीपीओआर · पृथ्वी विज्ञान मंत्रालय')}</strong></div>
             </div>
 
-            <button
-              onClick={() => setShowCert(false)}
-              className="btn-primary w-full text-xs !py-3 font-semibold rounded-xl"
-            >
-              {trans('Close & Continue Learning', 'बंद करें और अध्ययन जारी रखें')}
-            </button>
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={handleDownloadCertificate}
+                className="btn-primary w-full text-xs !py-3 font-semibold rounded-xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition"
+              >
+                <Download className="w-4 h-4" />
+                {trans('Download Official Certificate (PNG)', 'आधिकारिक प्रमाणपत्र डाउनलोड करें (PNG)')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowCert(false)}
+                className="w-full py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition"
+              >
+                {trans('Close & Continue Learning', 'बंद करें और अध्ययन जारी रखें')}
+              </button>
+            </div>
           </div>
         </div>
       )}
