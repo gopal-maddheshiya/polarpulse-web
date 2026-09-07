@@ -211,10 +211,13 @@ export default function Datasets() {
                   }
                 />
               ) : (
-                <div className="grid md:grid-cols-2 gap-6">
+                <div data-tour="datasets-registry" className="grid md:grid-cols-2 gap-6">
                   {filtered.map((d, idx) => (
                     <Reveal key={d.id} delay={idx * 40}>
-                      <div className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 p-7">
+                      <div
+                        data-tour={idx === 0 ? "dataset-card-featured" : undefined}
+                        className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 p-7"
+                      >
                         <Link to={`/datasets/${d.id}`} className="space-y-3 block">
                           {/* Top Badges */}
                           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -250,6 +253,7 @@ export default function Datasets() {
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
+                              data-tour="dataset-inspect-btn"
                               onClick={() => { setInspectDataset(d); setParamSearch('') }}
                               className="px-2.5 py-1 rounded-lg bg-sky-50 text-cyan-800 hover:bg-cyan-100/90 transition text-xs font-semibold flex items-center gap-1.5 border border-sky-200 shadow-2xs"
                             >
@@ -281,6 +285,7 @@ export default function Datasets() {
           onClick={() => { setInspectDataset(null); setParamSearch('') }}
         >
           <div
+            data-tour="dataset-inspect-modal"
             className="max-w-3xl w-full bg-white/98 backdrop-blur-md border border-sky-200 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col max-h-[88vh] relative overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
@@ -308,6 +313,7 @@ export default function Datasets() {
               </div>
               <button
                 onClick={() => { setInspectDataset(null); setParamSearch('') }}
+                data-tour="dataset-inspect-close"
                 className="p-2 text-slate-400 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition shrink-0"
               >
                 <X className="w-5 h-5" />

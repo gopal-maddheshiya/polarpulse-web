@@ -93,6 +93,25 @@ export default function Home() {
   const [eduMode, setEduMode] = useState<'simple' | 'scientific'>('simple')
   const [copiedAbstract, setCopiedAbstract] = useState(false)
 
+  // Listen for automated demo tour events to cycle stations & views in real-time
+  useEffect(() => {
+    const handleTourStep = (e: any) => {
+      const stepId = e.detail?.stepId
+      if (stepId === 'live-telemetry') {
+        setHeroStation('bharati')
+        setHeroViewMode('radar')
+        setTimeout(() => setHeroStation('maitri'), 2200)
+        setTimeout(() => setHeroViewMode('camera'), 4400)
+      } else if (stepId === 'hero-identity') {
+        setHeroStation('bharati')
+        setHeroViewMode('radar')
+      }
+    }
+
+    window.addEventListener('polaris:tour-step', handleTourStep as EventListener)
+    return () => window.removeEventListener('polaris:tour-step', handleTourStep as EventListener)
+  }, [])
+
   const featuredExpedition = expeditions[0]
   const st = LIVE_STATIONS[heroStation]
 
@@ -166,50 +185,52 @@ export default function Home() {
             <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
               {/* LEFT COLUMN: Editorial Typography & Intentional Action */}
               <div className="lg:col-span-7 space-y-6">
-                {/* Refined Pill Badge with Rotating Polar Compass */}
-                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-sky-200 dark:border-slate-700 shadow-[0_2px_10px_-2px_rgba(15,23,42,0.06)] text-[11px] font-mono tracking-wide text-slate-700 dark:text-slate-300">
-                  <span className="flex h-4 w-4 relative items-center justify-center">
-                    <Compass className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 animate-spin-slow" />
-                  </span>
-                  <span className="font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
-                    {trans('National Polar Science Gateway', 'राष्ट्रीय ध्रुवीय विज्ञान द्वार')}
-                  </span>
-                  <span className="text-slate-300 dark:text-slate-600">|</span>
-                  <span className="text-cyan-700 dark:text-cyan-400 font-medium">{trans('MoES · NCPOR', 'पृथ्वी विज्ञान मंत्रालय')}</span>
+                <div data-tour="hero-identity" className="space-y-5">
+                  {/* Refined Pill Badge with Rotating Polar Compass */}
+                  <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-sky-200 dark:border-slate-700 shadow-[0_2px_10px_-2px_rgba(15,23,42,0.06)] text-[11px] font-mono tracking-wide text-slate-700 dark:text-slate-300">
+                    <span className="flex h-4 w-4 relative items-center justify-center">
+                      <Compass className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 animate-spin-slow" />
+                    </span>
+                    <span className="font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
+                      {trans('National Polar Science Gateway', 'राष्ट्रीय ध्रुवीय विज्ञान द्वार')}
+                    </span>
+                    <span className="text-slate-300 dark:text-slate-600">|</span>
+                    <span className="text-cyan-700 dark:text-cyan-400 font-medium">{trans('MoES · NCPOR', 'पृथ्वी विज्ञान मंत्रालय')}</span>
+                  </div>
+
+                  {/* Commanding Headline */}
+                  <h1 className="font-display text-4xl sm:text-5xl lg:text-[62px] font-bold tracking-tight text-slate-950 dark:text-white leading-[1.08]">
+                    {isHindi ? (
+                      <>
+                        ध्रुवों के रहस्यमयी विज्ञान का <br />
+                        <span className="bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-700 dark:from-cyan-400 dark:via-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
+                          संप्रभु राष्ट्रीय मंच।
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        Deciphering Earth’s <br />
+                        <span className="bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-700 dark:from-cyan-400 dark:via-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
+                          Frozen Frontiers.
+                        </span>
+                      </>
+                    )}
+                  </h1>
+
+                  {/* Subtitle with High Typography Hierarchy */}
+                  <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
+                    {trans(
+                      "India's sovereign polar archive connecting 44 years of Antarctic, Arctic, and Southern Ocean expeditions, open cryospheric data, and AI-assisted scientific dissemination.",
+                      "अंटार्कटिका, आर्कटिक और दक्षिणी महासागर में भारत के 44 वर्षों के वैज्ञानिक अभियानों, खुले क्रायोस्फेरिक डेटासेट और एआई-संचालित विज्ञान प्रसार का एकीकृत डिजिटल मंच।"
+                    )}
+                  </p>
                 </div>
-
-                {/* Commanding Headline */}
-                <h1 className="font-display text-4xl sm:text-5xl lg:text-[62px] font-bold tracking-tight text-slate-950 dark:text-white leading-[1.08]">
-                  {isHindi ? (
-                    <>
-                      ध्रुवों के रहस्यमयी विज्ञान का <br />
-                      <span className="bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-700 dark:from-cyan-400 dark:via-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
-                        संप्रभु राष्ट्रीय मंच।
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      Deciphering Earth’s <br />
-                      <span className="bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-700 dark:from-cyan-400 dark:via-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
-                        Frozen Frontiers.
-                      </span>
-                    </>
-                  )}
-                </h1>
-
-                {/* Subtitle with High Typography Hierarchy */}
-                <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
-                  {trans(
-                    "India's sovereign polar archive connecting 44 years of Antarctic, Arctic, and Southern Ocean expeditions, open cryospheric data, and AI-assisted scientific dissemination.",
-                    "अंटार्कटिका, आर्कटिक और दक्षिणी महासागर में भारत के 44 वर्षों के वैज्ञानिक अभियानों, खुले क्रायोस्फेरिक डेटासेट और एआई-संचालित विज्ञान प्रसार का एकीकृत डिजिटल मंच।"
-                  )}
-                </p>
 
                 {/* Action Buttons: Apple/Linear Luxury Buttons */}
                 <div className="pt-2 flex flex-wrap items-center gap-3.5">
                   <a
                     href="#polar-map"
-                    className="group px-6 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-900 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm shadow-[0_4px_14px_0_rgba(15,23,42,0.18)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.25)] transition-all duration-200 inline-flex items-center gap-2"
+                    className="group px-5 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-900 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm shadow-[0_4px_14px_0_rgba(15,23,42,0.18)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.25)] transition-all duration-200 inline-flex items-center gap-2"
                   >
                     <Globe2 className="w-4 h-4 text-cyan-400 dark:text-slate-950 group-hover:rotate-45 transition-transform duration-500" />
                     <span>{trans('Explore 3D Polar Map', '3D ध्रुवीय मानचित्र')}</span>
@@ -233,7 +254,7 @@ export default function Home() {
                 </div>
 
                 {/* Micro Stat Badges */}
-                <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                <div data-tour="hero-identity" className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 font-mono">
                   <div className="flex items-center gap-1.5">
                     <CheckCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                     <span className="text-slate-900 dark:text-slate-100 font-semibold">{trans('44 Missions', '44 अभियान')}</span>
@@ -253,7 +274,7 @@ export default function Home() {
               </div>
 
               {/* RIGHT COLUMN: Interactive Live Polar Telemetry & 360° Radar Card */}
-              <div className="lg:col-span-5">
+              <div data-tour="hero-telemetry-card" className="lg:col-span-5">
                 <div className="rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-sky-200 dark:border-slate-800 shadow-[0_12px_36px_-6px_rgba(15,23,42,0.1),0_2px_8px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_36px_-6px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-300">
                   {/* Station Selector Bar & View Mode Toggle */}
                   <div className="p-3 bg-sky-50/70 dark:bg-slate-950 border-b border-sky-200/70 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
@@ -261,6 +282,7 @@ export default function Home() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => setHeroStation('bharati')}
+                        data-tour="hero-station-bharati"
                         className={cn(
                           'px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
                           heroStation === 'bharati'
@@ -272,6 +294,7 @@ export default function Home() {
                       </button>
                       <button
                         onClick={() => setHeroStation('maitri')}
+                        data-tour="hero-station-maitri"
                         className={cn(
                           'px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
                           heroStation === 'maitri'
@@ -283,6 +306,7 @@ export default function Home() {
                       </button>
                       <button
                         onClick={() => setHeroStation('himadri')}
+                        data-tour="hero-station-himadri"
                         className={cn(
                           'px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
                           heroStation === 'himadri'
@@ -295,9 +319,10 @@ export default function Home() {
                     </div>
 
                     {/* View Mode Toggle: Radar vs Camera */}
-                    <div className="flex items-center gap-1 bg-white/90 dark:bg-slate-850 p-0.5 rounded-lg border border-sky-200 dark:border-slate-700">
+                    <div className="flex items-center gap-1 bg-white/90 dark:bg-slate-855 p-0.5 rounded-lg border border-sky-200 dark:border-slate-700">
                       <button
                         onClick={() => setHeroViewMode('radar')}
+                        data-tour="hero-view-radar"
                         className={cn(
                           'px-2 py-0.5 rounded text-[11px] font-mono font-medium inline-flex items-center gap-1 transition-all',
                           heroViewMode === 'radar'
@@ -311,6 +336,7 @@ export default function Home() {
                       </button>
                       <button
                         onClick={() => setHeroViewMode('camera')}
+                        data-tour="hero-view-cam"
                         className={cn(
                           'px-2 py-0.5 rounded text-[11px] font-mono font-medium inline-flex items-center gap-1 transition-all',
                           heroViewMode === 'camera'
@@ -926,7 +952,7 @@ export default function Home() {
             </div>
 
             {/* Polar Map container in Apple-like clean viewport */}
-            <div className="rounded-3xl bg-white/90 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] overflow-hidden p-2 sm:p-3">
+            <div data-tour="polar-map-container" className="rounded-3xl bg-white/90 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] overflow-hidden p-2 sm:p-3">
               <PolarMap />
             </div>
           </Reveal>

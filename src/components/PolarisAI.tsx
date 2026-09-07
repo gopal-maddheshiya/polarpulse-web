@@ -182,6 +182,29 @@ export default function PolarisAI() {
     }
   }, [])
 
+  // Listen for automated demo tour events
+  useEffect(() => {
+    const onOpenAI = (e: any) => {
+      setIsOpen(true)
+      const prompt = e.detail?.prompt
+      if (prompt) {
+        setTimeout(() => {
+          handleSend(prompt)
+        }, 400)
+      }
+    }
+    const onCloseAI = () => {
+      setIsOpen(false)
+    }
+
+    window.addEventListener('polaris:open-ai', onOpenAI as EventListener)
+    window.addEventListener('polaris:close-ai', onCloseAI as EventListener)
+    return () => {
+      window.removeEventListener('polaris:open-ai', onOpenAI as EventListener)
+      window.removeEventListener('polaris:close-ai', onCloseAI as EventListener)
+    }
+  }, [])
+
   const handleSend = async (questionText?: string) => {
     const textToSend = (questionText || input).trim()
     if (!textToSend || isStreaming) return
@@ -335,6 +358,7 @@ export default function PolarisAI() {
       {/* 2. CHAT PANEL / BOTTOM SHEET (FROSTED GLASS COMMAND CENTER) */}
       {isOpen && (
         <div
+          data-tour="polaris-ai-drawer"
           role="dialog"
           aria-label="POLARIS AI Chat Panel"
           className={cn(

@@ -87,6 +87,18 @@ export default function Education() {
   const [showCert, setShowCert] = useState(false)
   const [cadetName, setCadetName] = useState('Polar Science Cadet')
 
+  // Listen for automated demo tour events to demonstrate dual-mode simple vs scientific switching
+  useEffect(() => {
+    const handleTourStep = (e: any) => {
+      if (e.detail?.stepId === 'smart-education') {
+        setMode('simple')
+        setTimeout(() => setMode('scientific'), 2400)
+      }
+    }
+    window.addEventListener('polaris:tour-step', handleTourStep as EventListener)
+    return () => window.removeEventListener('polaris:tour-step', handleTourStep as EventListener)
+  }, [])
+
   const handleDownloadCertificate = () => {
     const canvas = document.createElement('canvas')
     canvas.width = 1200
@@ -410,7 +422,7 @@ export default function Education() {
               <div className="space-y-6">
                 {/* Topic Header & Mode Switcher */}
                 <Reveal>
-                  <div className="p-6 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div data-tour="education-curriculum" className="p-6 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <span className="text-4xl p-3 rounded-2xl bg-sky-50 border border-sky-200/80 shadow-xs">{topic.emoji}</span>
                       <div>
@@ -423,8 +435,9 @@ export default function Education() {
                     <div className="inline-flex p-1 bg-sky-50/80 rounded-xl border border-sky-200/80 self-start sm:self-auto shadow-xs">
                       <button
                         onClick={() => setMode('simple')}
+                        data-tour="education-mode-simple"
                         className={cn(
-                          'px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200',
+                          'px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer',
                           mode === 'simple' ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-600 hover:text-slate-950'
                         )}
                       >
@@ -432,8 +445,9 @@ export default function Education() {
                       </button>
                       <button
                         onClick={() => setMode('scientific')}
+                        data-tour="education-mode-scientific"
                         className={cn(
-                          'px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200',
+                          'px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer',
                           mode === 'scientific' ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-600 hover:text-slate-950'
                         )}
                       >

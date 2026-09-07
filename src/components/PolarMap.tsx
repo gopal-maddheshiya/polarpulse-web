@@ -112,6 +112,19 @@ export default function PolarMap() {
     return () => { mounted = false }
   }, [])
 
+  // Listen for automated demo tour events to cycle 3D views and highlight Bharati station
+  useEffect(() => {
+    const handleTourStep = (e: any) => {
+      if (e.detail?.stepId === 'polar-radar-map') {
+        setViewMode('global')
+        setTimeout(() => setViewMode('south'), 1800)
+        setTimeout(() => setActive('bharati'), 4000)
+      }
+    }
+    window.addEventListener('polaris:tour-step', handleTourStep as EventListener)
+    return () => window.removeEventListener('polaris:tour-step', handleTourStep as EventListener)
+  }, [])
+
   const station = stationsList.find(s => s.id === active) || stationsList[0]
   const linkedExpeditions = expeditionsList.filter(e => station.relatedExpeditions.includes(e.id))
 
@@ -216,7 +229,7 @@ export default function PolarMap() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-6 items-stretch">
         {/* Scientific Polar Map Canvas */}
-        <div className="rounded-2xl border border-slate-200 bg-[#06182a] overflow-hidden relative select-none h-[340px] sm:h-[400px] lg:h-[430px] flex items-center justify-center p-2">
+        <div data-tour="polar-map-canvas" className="rounded-2xl border border-slate-200 bg-[#06182a] overflow-hidden relative select-none h-[340px] sm:h-[400px] lg:h-[430px] flex items-center justify-center p-2">
           {/* Unified Responsive Mission Control Top Bar (No collisions on mobile) */}
           <div className="absolute top-2.5 sm:top-3.5 left-2.5 sm:left-3.5 right-2.5 sm:right-3.5 flex items-center justify-between gap-2 z-10 pointer-events-none">
             {/* Left Status Badge (Desktop & Tablet only to give mobile 100% button room) */}
@@ -241,6 +254,7 @@ export default function PolarMap() {
               </button>
               <button
                 onClick={() => setViewMode('south')}
+                data-tour="map-view-south"
                 className={cn(
                   'px-2.5 py-1 rounded-lg transition font-semibold flex items-center gap-1 text-[10px] sm:text-[11px]',
                   viewMode === 'south' ? 'bg-sky-500 text-white shadow-xs' : 'text-slate-400 hover:text-white'

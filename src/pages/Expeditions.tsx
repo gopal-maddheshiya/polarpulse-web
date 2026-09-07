@@ -199,11 +199,12 @@ export default function Expeditions() {
                   }
                 />
               ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div data-tour="expeditions-list" className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filtered.map((exp, idx) => (
                     <Reveal key={exp.id} delay={idx * 50}>
                       <Link
                         to={`/expeditions/${exp.id}`}
+                        data-tour={idx === 0 ? "expedition-card-featured" : undefined}
                         className="group flex flex-col h-full bg-white/95 rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 overflow-hidden"
                       >
                         {/* Image banner */}

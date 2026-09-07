@@ -1,9 +1,10 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Search, Menu, X, ArrowRight, Compass, Database, Globe, Sun, Moon } from 'lucide-react'
+import { Search, Menu, X, ArrowRight, Compass, Database, Globe, Sun, Moon, Play } from 'lucide-react'
 import { useSearch } from '../context/SearchContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
+import { useTour } from '../context/TourContext'
 import { cn } from '../lib/utils'
 
 interface NavItem {
@@ -28,6 +29,7 @@ export default function Header() {
   const { openSearch } = useSearch()
   const { isHindi, setLang, toggleLang, trans } = useLanguage()
   const { isDark, toggleTheme } = useTheme()
+  const { startTour } = useTour()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
@@ -175,6 +177,17 @@ export default function Header() {
             )}
           </button>
 
+          {/* 60-Second Automated Demo Tour Launch Pill */}
+          <button
+            onClick={startTour}
+            type="button"
+            className="group px-3 py-1.5 2xl:py-2 rounded-full bg-slate-950 dark:bg-sky-500/20 text-cyan-400 dark:text-sky-300 hover:text-white dark:hover:text-white border border-cyan-500/50 dark:border-sky-400/50 hover:border-cyan-400 font-semibold text-xs shadow-[0_0_14px_rgba(6,182,212,0.3)] hover:shadow-[0_0_22px_rgba(6,182,212,0.5)] hover:scale-[1.03] transition-all whitespace-nowrap inline-flex items-center gap-1.5 active:scale-95 cursor-pointer"
+            title={trans('Experience POLARIS in 60 seconds (Automated Demo)', '60 सेकंड का स्वचालित लाइव डेमो')}
+          >
+            <Play className="w-3.5 h-3.5 fill-current text-cyan-400 group-hover:scale-110 transition-transform" />
+            <span>{trans('60s Tour', '60s डेमो')}</span>
+          </button>
+
           {/* Luxury Gradient Explore CTA */}
           <Link
             to="/datasets"
@@ -187,6 +200,17 @@ export default function Header() {
 
         {/* Mobile / Tablet Header Controls (Sleek 56px height, snug-bordered buttons) */}
         <div className="flex xl:hidden items-center gap-1 sm:gap-1.5 shrink-0">
+          {/* Mobile 60s Tour Trigger */}
+          <button
+            onClick={startTour}
+            type="button"
+            aria-label="Start 60-second Demo Tour"
+            title={trans('Start 60-second Demo Tour', '60 सेकंड डेमो टूर')}
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-cyan-400/60 bg-slate-950 text-cyan-400 shadow-2xs hover:border-cyan-400 active:scale-95 transition cursor-pointer"
+          >
+            <Play className="w-3.5 h-3.5 fill-current text-cyan-400" />
+          </button>
+
           {/* Search Button with Snug Border */}
           <button
             onClick={openSearch}
@@ -276,6 +300,16 @@ export default function Header() {
                 </NavLink>
               ))}
             </div>
+
+            {/* Mobile Drawer 60s Demo Tour Banner */}
+            <button
+              onClick={() => { setOpen(false); startTour(); }}
+              type="button"
+              className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-600 to-blue-600 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition cursor-pointer"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>{trans('▶ Start 60-Second Demo Tour', '▶ 60-सेकंड लाइव डेमो शुरू करें')}</span>
+            </button>
 
             <div className="pt-1 flex items-center gap-2">
               <Link

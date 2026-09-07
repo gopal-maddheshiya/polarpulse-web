@@ -19,6 +19,9 @@ import Education from './pages/Education'
 import Communicator from './pages/Communicator'
 import About from './pages/About'
 
+import { TourProvider } from './context/TourContext'
+import TourOverlay from './components/TourOverlay'
+
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior }) }, [pathname])
@@ -27,10 +30,11 @@ function ScrollToTop() {
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#d6ecf9] dark:bg-[#0b1d2e] text-slate-900 dark:text-slate-100">
-      <ScrollToTop />
-      <Header />
-      <main className="flex-1">
+    <TourProvider>
+      <div className="min-h-screen flex flex-col bg-[#d6ecf9] dark:bg-[#0b1d2e] text-slate-900 dark:text-slate-100">
+        <ScrollToTop />
+        <Header />
+        <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
@@ -49,9 +53,11 @@ export default function App() {
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
-      <Footer />
-      <SearchModal />
-      <PolarisAI />
-    </div>
+        <Footer />
+        <SearchModal />
+        <PolarisAI />
+        <TourOverlay />
+      </div>
+    </TourProvider>
   )
 }
