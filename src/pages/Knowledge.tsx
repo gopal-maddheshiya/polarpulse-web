@@ -7,6 +7,7 @@ import { Search, Tag, X, ArrowRight, BookOpenCheck, FileText, Database, BookOpen
 import { Reveal } from '../lib/reveal'
 import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 const TYPES = ['All', 'Report', 'Article', 'Dataset', 'Publication', 'Educational', 'News', 'Field Story'] as const
 const CATEGORIES = ['All', 'Reports', 'Articles', 'Datasets', 'Publications', 'Educational', 'News', 'Field Stories'] as const
@@ -95,6 +96,16 @@ export default function Knowledge() {
 
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title={trans('Polar Knowledge Hub & Cryosphere Archive', 'ध्रुवीय ज्ञान केंद्र एवं क्रायोस्फीयर पुरालेख')}
+        description="The consolidated digital archive of polar research papers, expedition reports, educational curriculums, data catalogs, and field science dispatches under NCPOR."
+        canonical="/knowledge"
+        keywords={['Polar Knowledge Hub', 'Cryosphere Archive', 'Antarctic Research', 'Arctic Field Stories', 'NCPOR', 'MoES']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Knowledge', url: '/knowledge' }
+        ]}
+      />
       <PageHeader
         eyebrow={trans('Open Knowledge Repository', 'खुला ध्रुवीय ज्ञान भंडार')}
         title={trans('Polar Knowledge Hub', 'ध्रुवीय ज्ञान एवं अनुसंधान केंद्र')}
@@ -239,7 +250,7 @@ export default function Knowledge() {
                       <Reveal key={item.id} delay={idx * 30}>
                         <Link
                           to={`/knowledge/${item.id}`}
-                          className="group flex flex-col justify-between h-full bg-white/95 rounded-2xl border border-sky-200/90 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 p-6 hover:-translate-y-0.5"
+                          className="group flex flex-col justify-between h-full bg-white/95 rounded-2xl border border-sky-200/90 shadow-soft card-hover hover:border-cyan-400 p-6"
                         >
                           <div className="space-y-3">
                             {/* Card Top */}

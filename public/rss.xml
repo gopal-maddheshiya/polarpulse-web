@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>POLARIS · India's Polar Knowledge &amp; Mission Updates</title>
+    <link>https://polaris-sih2026.vercel.app</link>
+    <description>Official scientific dispatches from Indian Antarctic, Arctic, and Southern Ocean expeditions, open cryosphere datasets, and peer-reviewed polar publications under MoES / NCPOR.</description>
+    <language>en-in</language>
+    <lastBuildDate>Mon, 16 Nov 2026 13:31:42 GMT</lastBuildDate>
+    <atom:link href="https://polaris-sih2026.vercel.app/rss.xml" rel="self" type="application/rss+xml" />
+    <image>
+      <url>https://polaris-sih2026.vercel.app/favicon.svg</url>
+      <title>POLARIS</title>
+      <link>https://polaris-sih2026.vercel.app</link>
+    </image>
+    <item>
+      <title><![CDATA[44th Indian Scientific Expedition to Antarctica (44th IAE) Resupply and Deployment]]></title>
+      <link>https://polaris-sih2026.vercel.app/expeditions/isro-44</link>
+      <guid isPermaLink="true">https://polaris-sih2026.vercel.app/expeditions/isro-44</guid>
+      <description><![CDATA[Flagship summer voyage deploying 72 scientists aboard MV Vasiliy Golovnin to Maitri and Bharati stations, conducting firn coring, aerosol optical depth profiling, and atmospheric black carbon surveys.]]></description>
+      <pubDate>Wed, 15 Jan 2025 08:00:00 GMT</pubDate>
+      <category>Expedition</category>
+    </item>
+    <item>
+      <title><![CDATA[New Open Dataset: Maitri Atmospheric Black Carbon & Surface Meteorology]]></title>
+      <link>https://polaris-sih2026.vercel.app/datasets/ds-atm-001</link>
+      <guid isPermaLink="true">https://polaris-sih2026.vercel.app/datasets/ds-atm-001</guid>
+      <description><![CDATA[Continuous hourly time-series (CSV / NetCDF) of equivalent black carbon (EBC) mass concentration, multi-wavelength absorption coefficients, and surface micro-meteorology from Maitri Station.]]></description>
+      <pubDate>Fri, 10 Jan 2025 10:00:00 GMT</pubDate>
+      <category>Open Data</category>
+    </item>
+    <item>
+      <title><![CDATA[Southern Ocean CTD Meridional Hydrographic Transect Released]]></title>
+      <link>https://polaris-sih2026.vercel.app/datasets/ds-oce-002</link>
+      <guid isPermaLink="true">https://polaris-sih2026.vercel.app/datasets/ds-oce-002</guid>
+      <description><![CDATA[Full-depth (0–4,500m) Sea-Bird CTD casts across the 57°30′E meridian transect recording potential temperature, practical salinity, and dissolved oxygen.]]></description>
+      <pubDate>Sat, 28 Dec 2024 09:00:00 GMT</pubDate>
+      <category>Open Data</category>
+    </item>
+    <item>
+      <title><![CDATA[Indian Arctic Winter Campaign at Ny-Ålesund, Svalbard]]></title>
+      <link>https://polaris-sih2026.vercel.app/expeditions/arctic-2024</link>
+      <guid isPermaLink="true">https://polaris-sih2026.vercel.app/expeditions/arctic-2024</guid>
+      <description><![CDATA[Year-round atmospheric observation of Arctic amplification, aerosol-cloud interactions, and Kongsfjorden fjord dynamics from Himadri station.]]></description>
+      <pubDate>Wed, 20 Nov 2024 12:00:00 GMT</pubDate>
+      <category>Expedition</category>
+    </item>
+    <item>
+      <title><![CDATA[Publication: Decadal Variations in Antarctic Firn Density and Surface Mass Balance]]></title>
+      <link>https://polaris-sih2026.vercel.app/publications/pub-2025-01</link>
+      <guid isPermaLink="true">https://polaris-sih2026.vercel.app/publications/pub-2025-01</guid>
+      <description><![CDATA[Peer-reviewed study analyzing firn core records from Princess Elizabeth Land, documenting accelerated coastal accumulation and Southern Annular Mode teleconnections.]]></description>
+      <pubDate>Sun, 05 Jan 2025 14:30:00 GMT</pubDate>
+      <category>Publication</category>
+    </item>
+    <item>
+      <title><![CDATA[Himalayan Chhota Shigri Glacier Mass Balance Time-Series Updated]]></title>
+      <link>https://polaris-sih2026.vercel.app/datasets/ds-gla-003</link>
+      <guid isPermaLink="true">https://polaris-sih2026.vercel.app/datasets/ds-gla-003</guid>
+      <description><![CDATA[Glaciological specific mass balance, equilibrium line altitude (ELA), and accumulation area ratio (AAR) observations in the Chandra Basin.]]></description>
+      <pubDate>Tue, 15 Oct 2024 08:00:00 GMT</pubDate>
+      <category>Open Data</category>
+    </item>
+    <item>
+      <title><![CDATA[Smart Education Lab: Polar Science Scholar Certification Launched]]></title>
+      <link>https://polaris-sih2026.vercel.app/education</link>
+      <guid isPermaLink="true">https://polaris-sih2026.vercel.app/education</guid>
+      <description><![CDATA[Interactive curriculum calibrating Antarctic, Arctic, and Himalayan polar science modules with cryptographically verifiable scholar certificates for students.]]></description>
+      <pubDate>Sun, 01 Sep 2024 08:00:00 GMT</pubDate>
+      <category>Education</category>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,14 @@
+# ==============================================================================
+# POLARIS · India's Sovereign Polar & Cryosphere Mission Intelligence Portal
+# Smart India Hackathon 2026 · Problem ID: 26063
+# Ministry of Earth Sciences (MoES) / National Centre for Polar and Ocean Research (NCPOR)
+# RFC 9116 Compliant Security Disclosure Policy
+# ==============================================================================
+
+Contact: mailto:director@ncpor.res.in
+Contact: mailto:polar-portal@moes.gov.in
+Canonical: https://polaris-sih2026.vercel.app/.well-known/security.txt
+Policy: https://polaris-sih2026.vercel.app/about
+Preferred-Languages: en, hi
+Acknowledgments: https://polaris-sih2026.vercel.app/about
+Expires: 2027-12-31T23:59:59.000Z

@@ -19,11 +19,29 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
+      // 1. Check URL query parameter: ?lang=hi or ?lang=en (e.g. from Google Hindi/English search results)
+      const params = new URLSearchParams(window.location.search)
+      const urlLang = params.get('lang')?.toLowerCase()
+      if (urlLang === 'hi' || urlLang === 'hindi') {
+        setLangState('HI')
+        localStorage.setItem('polaris-lang', 'HI')
+        document.documentElement.lang = 'hi'
+        return
+      } else if (urlLang === 'en' || urlLang === 'english') {
+        setLangState('EN')
+        localStorage.setItem('polaris-lang', 'EN')
+        document.documentElement.lang = 'en'
+        return
+      }
+
+      // 2. Fallback to localStorage
       const stored = localStorage.getItem('polaris-lang')
       if (stored === 'HI' || stored === 'हिं') {
         setLangState('HI')
+        document.documentElement.lang = 'hi'
       } else if (stored === 'EN') {
         setLangState('EN')
+        document.documentElement.lang = 'en'
       }
     } catch {
       // Ignore localStorage errors

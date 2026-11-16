@@ -1,0 +1,25 @@
+{
+  "name": "POLARIS · India's Polar Knowledge & Outreach Platform",
+  "short_name": "POLARIS",
+  "description": "India's Sovereign Polar & Cryosphere Mission Intelligence Portal. 44 Indian Expeditions, Research Stations (Bharati, Maitri, Himadri), Open Datasets, and AI Guide.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1d2e",
+  "theme_color": "#0b1d2e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "science", "government"],
+  "lang": "en",
+  "dir": "ltr"
+}

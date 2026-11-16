@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc && vite build",
+    "build": "node scripts/generate_sitemap.cjs && node scripts/generate_rss.cjs && tsc && vite build && node scripts/prerender.cjs",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/node": "^26.6.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "autoprefixer": "^10.5.4",

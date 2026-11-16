@@ -17,6 +17,8 @@ import { Container, Section } from '../components/ui/Primitives'
 import { Reveal } from '../lib/reveal'
 import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
+import FAQSection from '../components/FAQSection'
 
 type PolarRealm = 'antarctica' | 'arctic' | 'himalayas'
 type HeroStationId = 'bharati' | 'maitri' | 'himadri'
@@ -92,6 +94,22 @@ export default function Home() {
   const [activeRealm, setActiveRealm] = useState<PolarRealm>('antarctica')
   const [eduMode, setEduMode] = useState<'simple' | 'scientific'>('simple')
   const [copiedAbstract, setCopiedAbstract] = useState(false)
+  const [now, setNow] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const stationClock = (() => {
+    const offsetHours = heroStation === 'bharati' ? 5 : heroStation === 'himadri' ? 1 : 0
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000
+    const stationDate = new Date(utc + 3600000 * offsetHours)
+    return {
+      time: stationDate.toTimeString().split(' ')[0],
+      tz: heroStation === 'bharati' ? 'UTC+5' : heroStation === 'himadri' ? 'UTC+1' : 'UTC+0',
+    }
+  })()
 
   // Listen for automated demo tour events to cycle stations & views in real-time
   useEffect(() => {
@@ -138,6 +156,28 @@ export default function Home() {
 
   return (
     <div className="bg-[#edf5fb] dark:bg-[#07131e] text-slate-900 dark:text-slate-100 selection:bg-cyan-500/20 selection:text-cyan-900 min-h-screen">
+      <SEO
+        title={trans("India's Sovereign Polar Knowledge & Outreach Platform", "भारत का संप्रभु ध्रुवीय ज्ञान एवं आउटरीच पोर्टल")}
+        description="India's sovereign polar archive connecting 44 years of Antarctic, Arctic, and Southern Ocean expeditions, live station telemetry (Bharati, Maitri, Himadri), open cryospheric data, and AI-assisted scientific dissemination."
+        canonical="/"
+        keywords={[
+          'POLARIS',
+          'Indian Antarctic Program',
+          'NCPOR',
+          'Ministry of Earth Sciences',
+          'MoES',
+          'Bharati Station',
+          'Maitri Station',
+          'Himadri Arctic Base',
+          'Dakshin Gangotri',
+          'IndARC',
+          '44th Indian Scientific Expedition to Antarctica',
+          'Smart India Hackathon 2026',
+          'Open Polar Datasets',
+          'Cryosphere'
+        ]}
+        speakableSelectors={['#hero-title', '#hero-mission-summary', '#faq-heading', '.faq-question', '.faq-answer']}
+      />
       {/* ========================================================================= */}
       {/* 1. LUXURY SPLIT HERO WITH LIVE POLAR TELEMETRY RADAR WIDGET              */}
       {/* ========================================================================= */}
@@ -199,7 +239,7 @@ export default function Home() {
                   </div>
 
                   {/* Commanding Headline */}
-                  <h1 className="font-display text-4xl sm:text-5xl lg:text-[62px] font-bold tracking-tight text-slate-950 dark:text-white leading-[1.08]">
+                  <h1 id="hero-title" className="font-display text-4xl sm:text-5xl lg:text-[62px] font-bold tracking-tight text-slate-950 dark:text-white leading-[1.08]">
                     {isHindi ? (
                       <>
                         ध्रुवों के रहस्यमयी विज्ञान का <br />
@@ -218,7 +258,7 @@ export default function Home() {
                   </h1>
 
                   {/* Subtitle with High Typography Hierarchy */}
-                  <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
+                  <p id="hero-mission-summary" className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
                     {trans(
                       "India's sovereign polar archive connecting 44 years of Antarctic, Arctic, and Southern Ocean expeditions, open cryospheric data, and AI-assisted scientific dissemination.",
                       "अंटार्कटिका, आर्कटिक और दक्षिणी महासागर में भारत के 44 वर्षों के वैज्ञानिक अभियानों, खुले क्रायोस्फेरिक डेटासेट और एआई-संचालित विज्ञान प्रसार का एकीकृत डिजिटल मंच।"
@@ -353,7 +393,7 @@ export default function Home() {
 
                   {/* DISPLAY CONTAINER: 360° Polar Radar Scanner OR Camera View */}
                   {heroViewMode === 'radar' ? (
-                    <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-b from-[#031326] via-[#081f38] to-[#041224] text-white select-none">
+                    <div key="radar" className="relative aspect-[16/10] overflow-hidden bg-gradient-to-b from-[#031326] via-[#081f38] to-[#041224] text-white select-none animate-fade-in">
                       {/* Grid background */}
                       <div className="absolute inset-0 bg-polar-grid opacity-15" />
 
@@ -499,8 +539,14 @@ export default function Home() {
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                           <span>POLAR RADAR · 9.41 GHz</span>
                         </div>
-                        <div className="bg-slate-950/80 px-2 py-0.5 rounded border border-cyan-500/30">
-                          <span>360° AZIMUTH SWEEP</span>
+                        <div className="flex items-center gap-1.5">
+                          <div className="bg-slate-950/85 px-2 py-0.5 rounded border border-cyan-500/40 text-cyan-200 font-bold">
+                            <span className="text-slate-400 text-[8px] mr-1">{stationClock.tz}</span>
+                            <span>{stationClock.time}</span>
+                          </div>
+                          <div className="bg-slate-950/80 px-2 py-0.5 rounded border border-cyan-500/30 hidden sm:block">
+                            <span>360° AZIMUTH SWEEP</span>
+                          </div>
                         </div>
                       </div>
 
@@ -517,7 +563,7 @@ export default function Home() {
                     </div>
                   ) : (
                     /* Station Photo Banner with Sleek Vignette */
-                    <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                    <div key="camera" className="relative aspect-[16/10] overflow-hidden bg-slate-900 animate-fade-in">
                       <img
                         src={st.photo}
                         alt={st.name}
@@ -531,9 +577,14 @@ export default function Home() {
                         <span className="bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/20 text-[11px]">
                           {st.coordinates}
                         </span>
-                        <span className="bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/20 text-[11px]">
-                          Elev. {st.elevation}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="bg-slate-950/80 backdrop-blur-md px-2 py-0.5 rounded-md border border-cyan-400/40 text-[10px] text-cyan-300 font-bold">
+                            {stationClock.tz} {stationClock.time}
+                          </span>
+                          <span className="bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/20 text-[11px] hidden sm:inline">
+                            Elev. {st.elevation}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="absolute bottom-3 left-4 right-4 text-white">
@@ -548,7 +599,7 @@ export default function Home() {
                   )}
 
                   {/* Telemetry Sensor Dashboard Grid */}
-                  <div className="p-5 space-y-4">
+                  <div key={heroStation} className="p-5 space-y-4 animate-fade-in">
                     <div className="grid grid-cols-2 gap-3">
                       {/* Sensor 1: Temperature */}
                       <div className="p-3 rounded-xl bg-sky-50/50 dark:bg-slate-800/80 border border-sky-200/80 dark:border-slate-700">
@@ -643,10 +694,11 @@ export default function Home() {
                 )}
               </p>
             </div>
+          </Reveal>
 
-            {/* 3 Luxury Horizontal Architectural Cards */}
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Realm 1: Antarctica */}
+          {/* 3 Luxury Horizontal Architectural Cards */}
+          <Reveal cascade cascadeStep={100} className="grid md:grid-cols-3 gap-8">
+            {/* Realm 1: Antarctica */}
               <div className="group rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-sky-500/60 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] transition-all duration-300 flex flex-col justify-between overflow-hidden">
                 <div>
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
@@ -825,8 +877,7 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-            </div>
-          </Reveal>
+            </Reveal>
         </Container>
       </Section>
 
@@ -844,9 +895,10 @@ export default function Home() {
                 {trans('Did You Know? Polar Science Secrets', 'क्या आप जानते हैं? ध्रुवों के अनसुलझे रहस्य')}
               </h2>
             </div>
+          </Reveal>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="p-7 rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_4px_16px_rgba(15,23,42,0.04)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-md transition-all flex flex-col justify-between">
+          <Reveal cascade cascadeStep={80} className="grid md:grid-cols-3 gap-6">
+            <div className="p-7 rounded-3xl bg-white/95 dark:bg-slate-900 border border-sky-200/90 dark:border-slate-800 shadow-[0_4px_16px_rgba(15,23,42,0.04)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-md transition-all flex flex-col justify-between">
                 <div>
                   <div className="text-2xl mb-3">🌧️</div>
                   <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white">
@@ -915,8 +967,7 @@ export default function Home() {
                   </a>
                 </div>
               </div>
-            </div>
-          </Reveal>
+            </Reveal>
         </Container>
       </Section>
 
@@ -1275,6 +1326,11 @@ export default function Home() {
           </Reveal>
         </Container>
       </Section>
+
+      {/* ========================================================================= */}
+      {/* 8.5. FREQUENTLY ASKED QUESTIONS (FAQ) · AEO & GOOGLE ACCORDION KNOWLEDGE   */}
+      {/* ========================================================================= */}
+      <FAQSection />
 
       {/* ========================================================================= */}
       {/* 9. MINIMALIST LUXURY INSTITUTIONAL CALL-TO-ACTION                         */}

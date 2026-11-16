@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getDatasetById, getExpeditionById, getPublicationById, type Dataset, type Expedition, type Publication } from '../services/polarisService'
-import { ArrowLeft, Database, Download, Eye, FileText, BookOpen, Check, ExternalLink, Compass } from 'lucide-react'
+import { ArrowLeft, Database, Download, Eye, FileText, BookOpen, Check, ExternalLink, Compass, Code, BarChart2, Sparkles, Copy } from 'lucide-react'
 import { Container, EmptyState, Section, SectionHeader } from '../components/ui/Primitives'
 import { downloadCsv, downloadRealFile, copyToClipboard, openDoi } from '../lib/actions'
 import { Reveal } from '../lib/reveal'
 import { LineChart } from '../components/ui/Chart'
 import { getDatasetVisualization } from '../lib/datasetVisualizations'
 import { useLanguage } from '../context/LanguageContext'
+import { cn } from '../lib/utils'
+import SEO from '../components/SEO'
 
 export default function DatasetDetail() {
   const { isHindi, trans } = useLanguage()
@@ -19,6 +21,7 @@ export default function DatasetDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const [vizTab, setVizTab] = useState<'chart' | 'stats' | 'code'>('chart')
 
   useEffect(() => {
     let mounted = true
@@ -52,11 +55,13 @@ export default function DatasetDetail() {
 
   if (loading) {
     return (
-      <Container className="py-24 text-center">
-        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-          <Compass className="w-5 h-5" />
+      <Container className="py-28 text-center">
+        <div className="w-12 h-12 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-sky-200 dark:border-slate-800 flex items-center justify-center shadow-lg shadow-sky-500/10 mx-auto mb-3">
+          <Compass className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-spin-slow" />
         </div>
-        <p className="text-sm font-medium text-slate-700">{trans('Loading polar knowledge...', 'ध्रुवीय डेटासेट लोड हो रहा है...')}</p>
+        <p className="text-xs font-mono tracking-widest uppercase text-slate-700 dark:text-slate-300 font-bold">
+          {trans('Synchronizing Dataset Telemetry...', 'ध्रुवीय डेटासेट लोड हो रहा है...')}
+        </p>
       </Container>
     )
   }
@@ -104,8 +109,51 @@ export default function DatasetDetail() {
     setTimeout(() => setToast(null), 1800)
   }
 
+  const datasetSchema = d
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Dataset',
+        name: d.title,
+        description: d.description,
+        identifier: d.id,
+        keywords: [d.area, d.region, 'Polar Data', 'Antarctica', 'Arctic', 'NCPOR', 'MoES'],
+        temporalCoverage: d.coverage,
+        spatialCoverage: d.region,
+        creator: {
+          '@type': 'GovernmentOrganization',
+          name: d.sourceLabel || 'National Centre for Polar and Ocean Research (NCPOR)',
+          url: d.sourceUrl || 'https://data.ncpor.res.in',
+        },
+        distribution: [
+          {
+            '@type': 'DataDownload',
+            encodingFormat: d.format,
+            contentUrl: d.downloadUrl
+              ? d.downloadUrl.startsWith('http')
+                ? d.downloadUrl
+                : `https://polaris-sih2026.vercel.app${d.downloadUrl}`
+              : `https://polaris-sih2026.vercel.app/datasets/${d.id}`,
+          },
+        ],
+      }
+    : undefined
+
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      {d && (
+        <SEO
+          title={`${d.title} · Open Polar Datasets`}
+          description={d.description}
+          canonical={`/datasets/${id}`}
+          keywords={[d.title, d.area, d.region, d.format, 'NPDC', 'NCPOR', 'MoES', 'Cryosphere']}
+          schema={datasetSchema}
+          breadcrumbs={[
+            { name: 'Home', url: '/' },
+            { name: 'Datasets', url: '/datasets' },
+            { name: d.title, url: `/datasets/${id}` },
+          ]}
+        />
+      )}
       <div className="bg-gradient-to-b from-[#d6ecf9] via-[#e6f3fa] to-[#edf5fb] border-b border-sky-200/80">
         <Container className="py-12 sm:py-16">
           <Reveal>
@@ -140,13 +188,26 @@ export default function DatasetDetail() {
         <Container>
           <div className="grid lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-10">
-              {/* Dynamic Scientific Visualisation */}
+              {/* Dynamic Scientific Visualisation & Analytics HUD */}
               {d && (() => {
                 const viz = getDatasetVisualization(d.id)
+                const vals = viz.data.map(p => p.value)
+                const minVal = Math.min(...vals)
+                const maxVal = Math.max(...vals)
+                const minPt = viz.data.find(p => p.value === minVal)
+                const maxPt = viz.data.find(p => p.value === maxVal)
+                const sum = vals.reduce((a, b) => a + b, 0)
+                const mean = (sum / vals.length).toFixed(1)
+                const variance = vals.reduce((a, b) => a + Math.pow(b - parseFloat(mean), 2), 0) / vals.length
+                const stdDev = Math.sqrt(variance).toFixed(2)
+                const range = (maxVal - minVal).toFixed(1)
+
+                const pythonCode = `# POLARIS Sovereign Cryospheric Archive (MoES / NCPOR)\n# Dataset ID: ${d.id.toUpperCase()} · ${d.title}\nimport pandas as pd\n\nurl = "https://polaris-sih2026.vercel.app${d.downloadUrl || `/data/${d.id}.csv`}"\ndf = pd.read_csv(url)\n\nprint("=== Observation Statistics ===")\nprint(df.describe())\nprint(df.head())`
+
                 return (
                   <Reveal>
-                    <div className="p-7 rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-xs">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                    <div className="p-6 sm:p-7 rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-xs space-y-5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-sky-100">
                         <div>
                           <div className="text-xs font-mono uppercase tracking-wider text-cyan-800 font-bold flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
@@ -156,22 +217,136 @@ export default function DatasetDetail() {
                             {trans(viz.titleEn, viz.titleHi)}
                           </div>
                         </div>
-                        <span className="self-start sm:self-auto inline-flex items-center gap-1.5 text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold shadow-2xs">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          {trans(viz.badgeEn, viz.badgeHi)}
-                        </span>
+
+                        {/* View Mode Segmented Controls */}
+                        <div className="flex items-center gap-1 bg-sky-50 p-1 rounded-xl border border-sky-200/80 self-start sm:self-auto">
+                          <button
+                            onClick={() => setVizTab('chart')}
+                            className={cn(
+                              'px-3 py-1 rounded-lg text-xs font-mono font-bold transition flex items-center gap-1.5 cursor-pointer',
+                              vizTab === 'chart' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                            )}
+                          >
+                            <BarChart2 className="w-3.5 h-3.5" />
+                            <span>{trans('Chart', 'चार्ट')}</span>
+                          </button>
+                          <button
+                            onClick={() => setVizTab('stats')}
+                            className={cn(
+                              'px-3 py-1 rounded-lg text-xs font-mono font-bold transition flex items-center gap-1.5 cursor-pointer',
+                              vizTab === 'stats' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                            )}
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>{trans('Metrics', 'आंकड़े')}</span>
+                          </button>
+                          <button
+                            onClick={() => setVizTab('code')}
+                            className={cn(
+                              'px-3 py-1 rounded-lg text-xs font-mono font-bold transition flex items-center gap-1.5 cursor-pointer',
+                              vizTab === 'code' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                            )}
+                          >
+                            <Code className="w-3.5 h-3.5" />
+                            <span>{trans('Python', 'पायथन')}</span>
+                          </button>
+                        </div>
                       </div>
-                      <LineChart
-                        title={trans(viz.titleEn, viz.titleHi)}
-                        subtitle={trans(viz.subtitleEn, viz.subtitleHi)}
-                        data={viz.data}
-                        baseline={viz.baseline}
-                        baselineLabel={viz.baselineLabel}
-                        unit={viz.unit}
-                        yLabel={viz.yLabel}
-                        accent={viz.accent}
-                        height={240}
-                      />
+
+                      {/* Content Panels */}
+                      {vizTab === 'chart' && (
+                        <div className="animate-fade-in">
+                          <LineChart
+                            title={trans(viz.titleEn, viz.titleHi)}
+                            subtitle={trans(viz.subtitleEn, viz.subtitleHi)}
+                            data={viz.data}
+                            baseline={viz.baseline}
+                            baselineLabel={viz.baselineLabel}
+                            unit={viz.unit}
+                            yLabel={viz.yLabel}
+                            accent={viz.accent}
+                            height={240}
+                          />
+                        </div>
+                      )}
+
+                      {vizTab === 'stats' && (
+                        <div className="animate-fade-in space-y-4">
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-200/80">
+                              <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">
+                                {trans('Series Mean (μ)', 'औसत मान (μ)')}
+                              </span>
+                              <div className="font-display text-2xl font-bold text-slate-950 mt-1">
+                                {mean} <span className="text-xs font-mono font-normal text-slate-500">{viz.unit}</span>
+                              </div>
+                              <span className="text-[10px] font-mono text-cyan-700 font-medium">N = {vals.length} observations</span>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-200/80">
+                              <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">
+                                {trans('Peak Maximum', 'अधिकतम (Peak)')}
+                              </span>
+                              <div className="font-display text-2xl font-bold text-slate-950 mt-1">
+                                {maxVal} <span className="text-xs font-mono font-normal text-slate-500">{viz.unit}</span>
+                              </div>
+                              <span className="text-[10px] font-mono text-cyan-700 font-medium">Recorded: {maxPt?.label}</span>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-200/80">
+                              <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">
+                                {trans('Lowest Minimum', 'न्यूनतम (Min)')}
+                              </span>
+                              <div className="font-display text-2xl font-bold text-slate-950 mt-1">
+                                {minVal} <span className="text-xs font-mono font-normal text-slate-500">{viz.unit}</span>
+                              </div>
+                              <span className="text-[10px] font-mono text-cyan-700 font-medium">Recorded: {minPt?.label}</span>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-200/80">
+                              <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">
+                                {trans('Std Deviation (σ)', 'मानक विचलन (σ)')}
+                              </span>
+                              <div className="font-display text-2xl font-bold text-slate-950 mt-1">
+                                ±{stdDev}
+                              </div>
+                              <span className="text-[10px] font-mono text-cyan-700 font-medium">Spread: {range} {viz.unit}</span>
+                            </div>
+                          </div>
+
+                          <div className="p-3 rounded-xl bg-emerald-50/80 border border-emerald-200 text-xs font-mono text-emerald-800 flex items-center justify-between">
+                            <span className="flex items-center gap-1.5 font-bold">
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                              {trans(viz.badgeEn, viz.badgeHi)}
+                            </span>
+                            <span className="text-[11px] text-emerald-700">NPDC Sovereign Data Quality Grade A</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {vizTab === 'code' && (
+                        <div className="animate-fade-in space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-mono font-bold text-slate-700">
+                              {trans('Python (Pandas) Data Loading Script', 'पायथन (Pandas) डेटा लोडिंग कोड')}
+                            </span>
+                            <button
+                              onClick={async () => {
+                                const ok = await copyToClipboard(pythonCode)
+                                setToast(ok ? trans('Python snippet copied!', 'पायथन कोड कॉपी हो गया!') : null)
+                                setTimeout(() => setToast(null), 2000)
+                              }}
+                              className="inline-flex items-center gap-1 text-xs font-mono font-bold text-cyan-800 hover:text-cyan-950 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200 cursor-pointer"
+                            >
+                              <Copy className="w-3 h-3 text-cyan-600" />
+                              <span>{trans('Copy Snippet', 'कोड कॉपी करें')}</span>
+                            </button>
+                          </div>
+                          <pre className="p-4 rounded-2xl bg-slate-950 text-cyan-300 font-mono text-xs overflow-x-auto leading-relaxed border border-cyan-900/40">
+                            {pythonCode}
+                          </pre>
+                        </div>
+                      )}
                     </div>
                   </Reveal>
                 )

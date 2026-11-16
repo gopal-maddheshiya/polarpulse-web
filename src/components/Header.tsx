@@ -71,15 +71,25 @@ export default function Header() {
           <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 dark:from-slate-850 dark:to-slate-900 text-white grid place-items-center shadow-xs border border-sky-400/50 dark:border-cyan-400/50 group-hover:border-cyan-400 dark:group-hover:border-cyan-300 group-hover:shadow-[0_0_14px_rgba(56,189,248,0.35)] transition-all duration-300">
             <svg
               viewBox="0 0 24 24"
-              className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-cyan-300 group-hover:rotate-45 transition-transform duration-500"
+              className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-cyan-300 group-hover:rotate-90 transition-transform duration-700 ease-out"
               fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
             >
-              <circle cx="12" cy="12" r="9" />
-              <line x1="12" y1="3" x2="12" y2="21" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <circle cx="12" cy="12" r="2.2" fill="#38bdf8" stroke="none" />
+              <circle cx="12" cy="12" r="9.5" stroke="#0ea5e9" strokeWidth="0.8" strokeDasharray="1.5 2" opacity="0.6" />
+              {/* Secondary Diagonal Points */}
+              <polygon points="12,12 17,7 13.5,11" fill="#38bdf8" opacity="0.75" />
+              <polygon points="12,12 7,7 11,13.5" fill="#0284c7" opacity="0.75" />
+              <polygon points="12,12 17,17 11,13.5" fill="#0284c7" opacity="0.75" />
+              <polygon points="12,12 7,17 13.5,11" fill="#38bdf8" opacity="0.75" />
+              {/* Primary Cardinal Rays (North Star Polaris) */}
+              <polygon points="12,2 13.5,10.5 12,12" fill="#ffffff" />
+              <polygon points="12,2 10.5,10.5 12,12" fill="#38bdf8" />
+              <polygon points="12,22 13.5,13.5 12,12" fill="#38bdf8" />
+              <polygon points="12,22 10.5,13.5 12,12" fill="#0284c7" />
+              <polygon points="22,12 13.5,13.5 12,12" fill="#ffffff" />
+              <polygon points="22,12 13.5,10.5 12,12" fill="#38bdf8" />
+              <polygon points="2,12 10.5,13.5 12,12" fill="#38bdf8" />
+              <polygon points="2,12 10.5,10.5 12,12" fill="#0284c7" />
+              <circle cx="12" cy="12" r="1.8" fill="#ffffff" />
             </svg>
           </div>
 
@@ -279,7 +289,7 @@ export default function Header() {
 
       {/* Mobile Navigation Drawer */}
       {open && (
-        <div className="pointer-events-auto mt-2 mx-auto w-full max-w-[1560px] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 bg-white/98 dark:bg-slate-950/98 backdrop-blur-xl shadow-2xl animate-fade-in overflow-hidden">
+        <div className="pointer-events-auto mt-2 mx-auto w-full max-w-[1560px] rounded-2xl border border-sky-200/90 dark:border-slate-800/90 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl shadow-2xl animate-slide-down overflow-hidden">
           <div className="px-4 py-4 space-y-3">
             <div className="grid grid-cols-2 gap-1 pb-2 border-b border-slate-100 dark:border-slate-850">
               {NAV_ITEMS.map(n => (

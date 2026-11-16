@@ -7,6 +7,7 @@ import { ArrowRight, Compass, Filter, X, Calendar, MapPin, Anchor, Users, Shield
 import { Reveal } from '../lib/reveal'
 import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 const REGIONS = ['All', 'Antarctic', 'Arctic', 'Southern Ocean', 'Himalaya'] as const
 const AREAS = ['All', 'Atmospheric Sciences', 'Oceanography', 'Glaciology', 'Geology', 'Biodiversity', 'Climate'] as const
@@ -57,6 +58,16 @@ export default function Expeditions() {
 
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title={trans("44 Indian Polar Expeditions Archive (1981–2025)", "44 भारतीय ध्रुवीय अभियानों का पुरालेख (1981–2025)")}
+        description="The sovereign operational record of 44 Indian Scientific Expeditions to Antarctica (ISEA), Arctic campaigns at Ny-Ålesund, Southern Ocean cruises, and Himalayan expeditions."
+        canonical="/expeditions"
+        keywords={['Indian Antarctic Expedition', 'ISEA', '44th IAE', 'Ny-Alesund', 'Southern Ocean Cruise', 'NCPOR', 'MoES', 'Bharati', 'Maitri']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Expeditions', url: '/expeditions' }
+        ]}
+      />
       <PageHeader
         eyebrow={trans('National Polar Expeditions', 'राष्ट्रीय ध्रुवीय अभियान')}
         title={trans("India's Polar Expedition Registry", 'भारत का ध्रुवीय अभियान रजिस्टर')}
@@ -205,7 +216,7 @@ export default function Expeditions() {
                       <Link
                         to={`/expeditions/${exp.id}`}
                         data-tour={idx === 0 ? "expedition-card-featured" : undefined}
-                        className="group flex flex-col h-full bg-white/95 rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 overflow-hidden"
+                        className="group flex flex-col h-full bg-white/95 rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] card-hover hover:border-cyan-400 overflow-hidden"
                       >
                         {/* Image banner */}
                         <div className="aspect-[16/10] relative overflow-hidden bg-slate-900">

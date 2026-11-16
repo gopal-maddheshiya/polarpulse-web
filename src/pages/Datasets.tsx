@@ -8,6 +8,7 @@ import { copyToClipboard, downloadCsv, downloadRealFile } from '../lib/actions'
 import { Reveal } from '../lib/reveal'
 import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 const AREAS = ['All', 'Atmospheric Sciences', 'Oceanography', 'Glaciology', 'Biodiversity', 'Geology', 'Climate']
 const FORMATS = ['All', 'CSV', 'NetCDF', 'CSV / NetCDF']
@@ -63,6 +64,16 @@ export default function Datasets() {
 
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title={trans('Open Polar Datasets Repository (CSV & NetCDF)', 'ओपन ध्रुवीय डेटासेट रिपॉजिटरी (CSV एवं NetCDF)')}
+        description="Download verified in-situ datasets, automated weather station feeds, CTD ocean transects, and cryosphere time-series collected across India’s polar campaigns under NPDC / NCPOR."
+        canonical="/datasets"
+        keywords={['Open Polar Datasets', 'Antarctic Black Carbon', 'Southern Ocean CTD', 'Glacier Mass Balance', 'NetCDF', 'NPDC', 'NCPOR', 'MoES']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Datasets', url: '/datasets' }
+        ]}
+      />
       <PageHeader
         eyebrow={trans('Open Scientific Data', 'खुला वैज्ञानिक डेटा')}
         title={trans('Polar Dataset Registry', 'ध्रुवीय डेटासेट रजिस्ट्री')}
@@ -216,7 +227,7 @@ export default function Datasets() {
                     <Reveal key={d.id} delay={idx * 40}>
                       <div
                         data-tour={idx === 0 ? "dataset-card-featured" : undefined}
-                        className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-6px_rgba(15,23,42,0.12)] hover:border-cyan-400 transition-all duration-300 p-7"
+                        className="group flex flex-col justify-between h-full bg-white/95 backdrop-blur-md rounded-3xl border border-sky-200/90 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] card-hover hover:border-cyan-400 p-7"
                       >
                         <Link to={`/datasets/${d.id}`} className="space-y-3 block">
                           {/* Top Badges */}
@@ -281,12 +292,12 @@ export default function Datasets() {
       {/* Live Tabular Data Inspector Modal */}
       {inspectDataset && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-up"
+          className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
           onClick={() => { setInspectDataset(null); setParamSearch('') }}
         >
           <div
             data-tour="dataset-inspect-modal"
-            className="max-w-3xl w-full bg-white/98 backdrop-blur-md border border-sky-200 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col max-h-[88vh] relative overflow-hidden"
+            className="max-w-3xl w-full bg-white/98 backdrop-blur-md border border-sky-200 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col max-h-[88vh] relative overflow-hidden animate-scale-in"
             onClick={e => e.stopPropagation()}
           >
             {/* Modal Header */}

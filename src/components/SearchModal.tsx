@@ -139,8 +139,8 @@ export default function SearchModal() {
 
   return (
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-slate-950/50 dark:bg-black/75 backdrop-blur-sm" onClick={closeSearch} />
-      <div className="relative mx-auto mt-16 sm:mt-24 w-[min(720px,calc(100vw-32px))] rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-polar-100 dark:border-slate-800 text-slate-900 dark:text-slate-100 overflow-hidden">
+      <div className="absolute inset-0 bg-slate-950/60 dark:bg-black/80 backdrop-blur-md animate-fade-in" onClick={closeSearch} />
+      <div className="relative mx-auto mt-16 sm:mt-24 w-[min(720px,calc(100vw-32px))] rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-sky-200/80 dark:border-slate-800 text-slate-900 dark:text-slate-100 overflow-hidden animate-scale-in">
         <div className="flex items-center gap-3 px-4 py-3 border-b border-polar-100 dark:border-slate-800">
           <Search className="w-5 h-5 text-polar-500 dark:text-slate-400" />
           <input

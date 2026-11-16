@@ -88,3 +88,40 @@ export function buildApaCitation(input: { authors: string[]; year: number; title
   const doi = input.doi ? ` https://doi.org/${input.doi}` : ''
   return `${a} (${input.year}). ${input.title}. ${input.journal}.${doi}`
 }
+
+export function buildBibtexCitation(input: {
+  id?: string
+  authors: string[]
+  year: number
+  title: string
+  journal: string
+  doi?: string
+}) {
+  const citeKey = input.id || `polaris_${input.year}_${(input.authors[0] || 'ncpor').split(' ').pop()?.toLowerCase()}`
+  const authorStr = input.authors.join(' and ') || 'National Centre for Polar and Ocean Research'
+  return `@article{${citeKey},
+  author    = {${authorStr}},
+  title     = {{${input.title}}},
+  journal   = {${input.journal}},
+  year      = {${input.year}},${input.doi ? `\n  doi       = {${input.doi}},` : ''}
+  publisher = {National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences}
+}`
+}
+
+export function buildRisCitation(input: {
+  authors: string[]
+  year: number
+  title: string
+  journal: string
+  doi?: string
+}) {
+  const lines: string[] = ['TY  - JOUR']
+  lines.push(`TI  - ${input.title}`)
+  input.authors.forEach(a => lines.push(`AU  - ${a}`))
+  lines.push(`JO  - ${input.journal}`)
+  lines.push(`PY  - ${input.year}`)
+  if (input.doi) lines.push(`DO  - ${input.doi}`)
+  lines.push('PB  - National Centre for Polar and Ocean Research (NCPOR)')
+  lines.push('ER  - ')
+  return lines.join('\n')
+}

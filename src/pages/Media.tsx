@@ -7,6 +7,7 @@ import { X, Play, Image as ImageIcon, FileBarChart2, ChevronLeft, ChevronRight, 
 import { cn } from '../lib/utils'
 import { Reveal } from '../lib/reveal'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 export default function Media() {
   const { isHindi, trans } = useLanguage()
@@ -70,6 +71,16 @@ export default function Media() {
 
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title={trans('Photographic & Field Media Gallery', 'ध्रुवीय छायाचित्र एवं फ़ील्ड मीडिया गैलरी')}
+        description="A visual documentary of Indian polar science: expedition ice-sheet operations, atmospheric instrumentation at Maitri, oceanic hydrography, and High Arctic fjord dynamics."
+        canonical="/media"
+        keywords={['Polar Photography', 'Antarctica Photos', 'Maitri Station Images', 'Bharati Station Images', 'Arctic Ny-Alesund Photos', 'NCPOR Media']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Media Gallery', url: '/media' }
+        ]}
+      />
       <PageHeader
         eyebrow={trans('Visual Science Archive', 'दृश्य विज्ञान संग्रह')}
         title={trans('Photographic & Field Media Gallery', 'ध्रुवीय छायाचित्र एवं फ़ील्ड मीडिया गैलरी')}
@@ -137,7 +148,7 @@ export default function Media() {
                     <Reveal key={item.id} delay={idx * 30}>
                       <div
                         onClick={() => setLightbox(mediaList.indexOf(item))}
-                        className="group cursor-pointer rounded-2xl overflow-hidden bg-white/95 border border-sky-200/90 shadow-soft hover:shadow-xl hover:border-sky-300 transition-all duration-300 flex flex-col h-full hover:-translate-y-1"
+                        className="group cursor-pointer rounded-2xl overflow-hidden bg-white/95 border border-sky-200/90 shadow-soft card-hover hover:border-cyan-400 flex flex-col h-full"
                       >
                         <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
                           <img
@@ -192,11 +203,11 @@ export default function Media() {
       {lightbox !== null && mediaList[lightbox] && (
         <div
           onClick={() => setLightbox(null)}
-          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-up"
+          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in"
         >
           <div
             onClick={e => e.stopPropagation()}
-            className="relative max-w-4xl w-full bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 shadow-2xl flex flex-col max-h-[90vh]"
+            className="relative max-w-4xl w-full bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 shadow-2xl flex flex-col max-h-[90vh] animate-scale-in"
           >
             {/* Modal Header */}
             <div className="p-4 sm:px-6 border-b border-slate-800 flex items-center justify-between text-white">

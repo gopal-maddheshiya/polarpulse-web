@@ -1,4 +1,5 @@
 import { defineConfig, loadEnv } from 'vite'
+import type { IncomingMessage, ServerResponse } from 'http'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -12,7 +13,7 @@ export default defineConfig(({ mode }) => {
       {
         name: 'polaris-ai-backend',
         configureServer(server) {
-          server.middlewares.use('/api/chat', async (req, res) => {
+          server.middlewares.use('/api/chat', async (req: IncomingMessage, res: ServerResponse & { flush?: () => void; flushHeaders?: () => void }) => {
             if (req.method !== 'POST') {
               res.statusCode = 405
               res.end(JSON.stringify({ error: 'Method Not Allowed' }))
@@ -20,7 +21,7 @@ export default defineConfig(({ mode }) => {
             }
 
             let body = ''
-            req.on('data', chunk => {
+            req.on('data', (chunk: any) => {
               body += chunk
             })
 
@@ -217,5 +218,23 @@ AUDIENCE LENS: ${audience.toUpperCase()}`
         },
       },
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id: string): string | void {
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
+              return 'vendor-react'
+            }
+            if (id.includes('node_modules/lucide-react')) {
+              return 'vendor-icons'
+            }
+            if (id.includes('node_modules/@supabase')) {
+              return 'vendor-supabase'
+            }
+          },
+        },
+      },
+      chunkSizeWarningLimit: 800,
+    },
   }
 })

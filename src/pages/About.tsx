@@ -9,6 +9,7 @@ import { IMG } from '../data/images'
 import { Reveal } from '../lib/reveal'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 export default function About() {
   const { isHindi, trans } = useLanguage()
@@ -145,6 +146,17 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title={trans('About POLARIS · MoES, NCPOR & SIH 2026 Mission', 'POLARIS के बारे में · MoES, NCPOR एवं SIH 2026 मिशन')}
+        description="POLARIS is India’s integrated digital gateway to polar expeditions, open scientific datasets, peer publications, media archives, and educational outreach. Developed for Smart India Hackathon 2026 under the Ministry of Earth Sciences and NCPOR."
+        canonical="/about"
+        keywords={['About POLARIS', 'Smart India Hackathon 2026', 'Problem Statement 26063', 'Ministry of Earth Sciences', 'MoES', 'NCPOR Goa', 'Bharati', 'Maitri', 'Himadri']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'About POLARIS', url: '/about' }
+        ]}
+        speakableSelectors={['#mission h2', '#mission p', '#contact']}
+      />
       <PageHeader
         eyebrow={trans('Institutional Mission', 'संस्थागत मिशन एवं संकल्प')}
         title={trans('From India’s Polar Research to Public Knowledge', 'भारत के ध्रुवीय अनुसंधान से जन-साधारण तक ज्ञान')}
@@ -182,7 +194,7 @@ export default function About() {
                   {MISSION.map(m => {
                     const Icon = m.icon
                     return (
-                      <div key={m.title} className="p-4 rounded-2xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-soft">
+                      <div key={m.title} className="p-4 rounded-2xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-soft card-hover hover:border-cyan-400">
                         <div className="flex items-center gap-2.5">
                           <div className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 grid place-items-center font-bold shadow-xs">
                             <Icon className="w-4.5 h-4.5 text-sky-600" />
@@ -235,8 +247,8 @@ export default function About() {
 
             <div className="relative border-l-2 border-sky-200 ml-4 md:ml-6 space-y-8 my-6">
               {TIMELINE.map(t => (
-                <div key={t.year} className="pl-6 md:pl-8 relative">
-                  <span className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-sky-600 border-4 border-white shadow-xs" />
+                <div key={t.year} className="pl-6 md:pl-8 relative group hover:translate-x-1 transition-transform duration-200">
+                  <span className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-sky-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform duration-200" />
                   <div className="flex flex-wrap items-baseline gap-2">
                     <span className="font-mono text-sm font-bold text-sky-950 bg-sky-100/90 px-2.5 py-0.5 rounded-md border border-sky-300 shadow-xs">
                       {t.year}
@@ -270,7 +282,7 @@ export default function About() {
 
             <div className="grid md:grid-cols-3 gap-6">
               {STATIONS.map(s => (
-                <div key={s.name} className="rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-soft hover:shadow-xl hover:border-sky-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div key={s.name} className="rounded-3xl border border-sky-200/90 bg-white/95 backdrop-blur-md shadow-soft card-hover hover:border-cyan-400 flex flex-col justify-between overflow-hidden">
                   <div>
                     <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
                       <img src={s.img} alt={s.name} className="w-full h-full object-cover" />

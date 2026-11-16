@@ -3,9 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="POLARIS Search" />
+    <link rel="alternate" type="application/rss+xml" title="POLARIS Scientific Updates RSS Feed" href="/rss.xml" />
+    <link rel="canonical" href="https://polaris-sih2026.vercel.app/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="POLARIS - India's Sovereign Polar & Cryosphere Mission Intelligence Portal. 44 Indian Expeditions, Research Stations (Bharati, Maitri, Himadri), Open Datasets, and AI Mission Guide." />
+    <meta name="theme-color" content="#0b1d2e" />
+
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
     <title>POLARIS · India's Polar Knowledge & Outreach Platform</title>
+    <meta name="description" content="POLARIS - India's Sovereign Polar & Cryosphere Mission Intelligence Portal. 44 Indian Expeditions, Research Stations (Bharati, Maitri, Himadri), Open Datasets, and AI Mission Guide." />
+    <meta name="keywords" content="POLARIS, Indian Polar Research, NCPOR, Ministry of Earth Sciences, MoES, Antarctica, Arctic, Bharati Station, Maitri Station, Himadri Station, Dakshin Gangotri, IndARC, Himansh, Smart India Hackathon 2026, 44th Indian Antarctic Expedition, Southern Ocean, Open Polar Datasets, Cryosphere, Glaciology" />
+    <meta name="author" content="National Centre for Polar and Ocean Research (NCPOR) & Ministry of Earth Sciences (MoES)" />
 
     <!-- Open Graph / WhatsApp / Facebook / LinkedIn Meta Tags -->
     <meta property="og:type" content="website" />
@@ -27,11 +40,93 @@
     <meta name="twitter:image" content="https://polaris-sih2026.vercel.app/og-image.jpg" />
     <meta name="twitter:image:alt" content="POLARIS - India's Sovereign Polar Science Gateway" />
 
+    <!-- Global JSON-LD Schema: WebSite, SearchAction, Organization & DataCatalog -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://polaris-sih2026.vercel.app/#website",
+          "url": "https://polaris-sih2026.vercel.app/",
+          "name": "POLARIS · India's Polar Knowledge & Outreach Platform",
+          "description": "India's Sovereign Polar & Cryosphere Mission Intelligence Portal documenting 44 years of polar scientific exploration.",
+          "inLanguage": ["en", "hi"],
+          "publisher": {
+            "@type": "GovernmentOrganization",
+            "name": "National Centre for Polar and Ocean Research (NCPOR)",
+            "alternateName": "Ministry of Earth Sciences, Government of India",
+            "url": "https://ncpor.res.in",
+            "logo": "https://polaris-sih2026.vercel.app/favicon.svg"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://polaris-sih2026.vercel.app/explore?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "GovernmentOrganization",
+          "@id": "https://polaris-sih2026.vercel.app/#organization",
+          "name": "National Centre for Polar and Ocean Research (NCPOR)",
+          "alternateName": "NCPOR Goa · MoES",
+          "url": "https://ncpor.res.in",
+          "parentOrganization": {
+            "@type": "GovernmentOrganization",
+            "name": "Ministry of Earth Sciences, Government of India",
+            "url": "https://moes.gov.in"
+          },
+          "sameAs": [
+            "https://twitter.com/ncporesearch",
+            "https://www.facebook.com/NCPORGoa",
+            "https://en.wikipedia.org/wiki/National_Centre_for_Polar_and_Ocean_Research"
+          ]
+        },
+        {
+          "@type": "DataCatalog",
+          "@id": "https://polaris-sih2026.vercel.app/#datacatalog",
+          "name": "POLARIS Open Cryosphere Data Repository",
+          "url": "https://polaris-sih2026.vercel.app/datasets",
+          "description": "Open access repository of atmospheric black carbon, ocean CTD transects, glacier mass balance, and polar satellite observations.",
+          "provider": {
+            "@id": "https://polaris-sih2026.vercel.app/#organization"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Core Web Vitals & Preconnect Optimizations -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="image" href="/favicon.svg" fetchpriority="high" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Accessibility and Search Engine Crawler Fallback for Zero-JavaScript Bots -->
+    <noscript>
+      <div style="padding: 24px; font-family: sans-serif; background: #0b1d2e; color: #f8fafc; line-height: 1.6;">
+        <h1>POLARIS · India's Polar Knowledge & Outreach Platform</h1>
+        <p>India's Sovereign Polar & Cryosphere Mission Intelligence Portal, developed for Smart India Hackathon 2026 (Problem Statement ID: 26063) under the Ministry of Earth Sciences (MoES) and National Centre for Polar and Ocean Research (NCPOR).</p>
+        <h2>Key Platform Sections:</h2>
+        <ul>
+          <li><a href="/explore" style="color: #38bdf8;">Interactive 3D Polar Map & Real-time Station Telemetry</a></li>
+          <li><a href="/expeditions" style="color: #38bdf8;">Chronology of 44 Indian Expeditions to Antarctica, Arctic, and Southern Ocean</a></li>
+          <li><a href="/datasets" style="color: #38bdf8;">Open Polar Datasets (Maitri Black Carbon, Ocean CTD, Glacier Mass Balance)</a></li>
+          <li><a href="/publications" style="color: #38bdf8;">Peer-Reviewed Polar Science Publications & Research Papers</a></li>
+          <li><a href="/knowledge" style="color: #38bdf8;">Polar Knowledge Hub & Cryosphere Science</a></li>
+          <li><a href="/education" style="color: #38bdf8;">Interactive Curriculum & Verified Polar Scholar Certification</a></li>
+          <li><a href="/about" style="color: #38bdf8;">About POLARIS, NCPOR, and SIH 2026</a></li>
+        </ul>
+        <p>Please enable JavaScript to enjoy the full interactive 3D geospatial visualizations and live telemetry downlinks.</p>
+      </div>
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

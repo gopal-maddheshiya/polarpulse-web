@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getPublicationById, getExpeditionById, getDatasetById, type Publication, type Expedition, type Dataset } from '../services/polarisService'
-import { ArrowLeft, BookOpen, FileText, Database, Check, ExternalLink, Copy, Compass } from 'lucide-react'
+import { ArrowLeft, BookOpen, FileText, Database, Check, ExternalLink, Copy, Compass, Download } from 'lucide-react'
 import { Container, EmptyState, Section, SectionHeader } from '../components/ui/Primitives'
-import { copyToClipboard, openDoi, buildApaCitation } from '../lib/actions'
+import { copyToClipboard, openDoi, buildApaCitation, buildBibtexCitation, buildRisCitation, downloadTextFile } from '../lib/actions'
 import { Reveal } from '../lib/reveal'
+import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 export default function PublicationDetail() {
   const { isHindi, trans } = useLanguage()
@@ -17,6 +19,7 @@ export default function PublicationDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const [citeFormat, setCiteFormat] = useState<'apa' | 'bibtex' | 'ris'>('apa')
 
   useEffect(() => {
     let mounted = true
@@ -50,11 +53,13 @@ export default function PublicationDetail() {
 
   if (loading) {
     return (
-      <Container className="py-24 text-center">
-        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-          <Compass className="w-5 h-5" />
+      <Container className="py-28 text-center">
+        <div className="w-12 h-12 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-sky-200 dark:border-slate-800 flex items-center justify-center shadow-lg shadow-sky-500/10 mx-auto mb-3">
+          <Compass className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-spin-slow" />
         </div>
-        <p className="text-sm font-medium text-slate-700">{trans('Loading polar knowledge...', 'ध्रुवीय शोध पत्र लोड हो रहा है...')}</p>
+        <p className="text-xs font-mono tracking-widest uppercase text-slate-700 dark:text-slate-300 font-bold">
+          {trans('Synchronizing Research Publications...', 'ध्रुवीय शोध पत्र लोड हो रहा है...')}
+        </p>
       </Container>
     )
   }
@@ -88,15 +93,74 @@ export default function PublicationDetail() {
     openDoi(p.doi)
   }
 
-  const handleCite = async () => {
-    const text = buildApaCitation(p)
+  const getCitationText = () => {
+    if (!p) return ''
+    if (citeFormat === 'bibtex') return buildBibtexCitation({ id: p.id, authors: p.authors, year: p.year, title: p.title, journal: p.journal, doi: p.doi })
+    if (citeFormat === 'ris') return buildRisCitation({ authors: p.authors, year: p.year, title: p.title, journal: p.journal, doi: p.doi })
+    return buildApaCitation(p)
+  }
+
+  const handleCiteCopy = async () => {
+    const text = getCitationText()
     const ok = await copyToClipboard(text)
-    setToast(ok ? trans('Citation copied', 'उद्धरण क्लिपबोर्ड पर कॉपी हुआ') : trans('Copy failed', 'कॉपी विफल रहा'))
+    setToast(ok ? trans(`Copied ${citeFormat.toUpperCase()} citation!`, `${citeFormat.toUpperCase()} उद्धरण कॉपी हुआ!`) : trans('Copy failed', 'कॉपी विफल रहा'))
     setTimeout(() => setToast(null), 1800)
   }
 
+  const handleCiteDownload = () => {
+    if (!p) return
+    const text = getCitationText()
+    const ext = citeFormat === 'bibtex' ? 'bib' : citeFormat === 'ris' ? 'ris' : 'txt'
+    downloadTextFile(`${p.id}-citation.${ext}`, text)
+  }
+
+  const handleCite = handleCiteCopy
+
+  const scholarlySchema = p
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ScholarlyArticle',
+        headline: p.title,
+        description: p.abstract,
+        author: (p.authors || []).map(name => ({ '@type': 'Person', name })),
+        datePublished: `${p.year}-01-01`,
+        publisher: {
+          '@type': 'Organization',
+          name: p.journal,
+        },
+        identifier: p.doi,
+        url: p.doi
+          ? p.doi.startsWith('http')
+            ? p.doi
+            : `https://doi.org/${p.doi}`
+          : undefined,
+      }
+    : undefined
+
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      {p && (
+        <SEO
+          title={`${p.title} · Polar Research Publications`}
+          description={p.abstract}
+          canonical={`/publications/${id}`}
+          keywords={[
+            p.title,
+            ...(p.authors || []),
+            p.journal,
+            p.area,
+            'Polar Research Paper',
+            'NCPOR',
+            'MoES',
+          ]}
+          schema={scholarlySchema}
+          breadcrumbs={[
+            { name: 'Home', url: '/' },
+            { name: 'Publications', url: '/publications' },
+            { name: p.title, url: `/publications/${id}` },
+          ]}
+        />
+      )}
       {/* Luxury Hero Banner */}
       <div className="bg-gradient-to-b from-sky-100/80 via-sky-50/50 to-[#edf5fb] border-b border-sky-200/90 relative overflow-hidden">
         {/* Slow-rotating celestial orbit watermark */}
@@ -148,10 +212,57 @@ export default function PublicationDetail() {
               </Reveal>
 
               <Reveal>
-                <div className="p-6 rounded-2xl bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft space-y-3">
-                  <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold">{trans('Bibliographic Citation', 'ग्रंथ सूची उद्धरण (Bibliographic Citation)')}</div>
-                  <div className="text-sm font-mono text-slate-800 bg-sky-50/50 p-4 rounded-xl border border-sky-100 break-words leading-relaxed">
-                    {buildApaCitation(p)}
+                <div className="p-6 rounded-2xl bg-white/95 backdrop-blur-md border border-sky-200/90 shadow-soft space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-sky-100 pb-3">
+                    <div className="text-xs font-mono uppercase tracking-wider text-sky-900 font-bold">
+                      {trans('Bibliographic Citation Export', 'ग्रंथ सूची उद्धरण निर्यात (Citation Export)')}
+                    </div>
+
+                    {/* Format Selector Pills */}
+                    <div className="flex items-center gap-1 bg-sky-50 p-1 rounded-xl border border-sky-200/80">
+                      {(['apa', 'bibtex', 'ris'] as const).map(fmt => (
+                        <button
+                          key={fmt}
+                          onClick={() => setCiteFormat(fmt)}
+                          className={cn(
+                            'px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition cursor-pointer',
+                            citeFormat === fmt
+                              ? 'bg-slate-950 text-white shadow-xs'
+                              : 'text-slate-600 hover:text-slate-900'
+                          )}
+                        >
+                          {fmt === 'apa' ? 'APA' : fmt === 'bibtex' ? 'BibTeX' : 'RIS / EndNote'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <pre className="text-xs font-mono text-slate-800 bg-sky-50/50 p-4 rounded-xl border border-sky-100 whitespace-pre-wrap break-words leading-relaxed overflow-x-auto">
+                    {getCitationText()}
+                  </pre>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleCiteCopy}
+                        className="btn-primary !py-2 !px-4 text-xs font-semibold rounded-xl inline-flex items-center gap-1.5"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>{trans(`Copy ${citeFormat.toUpperCase()}`, `${citeFormat.toUpperCase()} कॉपी करें`)}</span>
+                      </button>
+                      <button
+                        onClick={handleCiteDownload}
+                        className="btn-light !py-2 !px-4 text-xs font-semibold rounded-xl inline-flex items-center gap-1.5"
+                      >
+                        <Download className="w-3.5 h-3.5 text-cyan-600" />
+                        <span>{trans(`Download .${citeFormat === 'bibtex' ? 'bib' : citeFormat === 'ris' ? 'ris' : 'txt'}`, `फ़ाइल डाउनलोड करें`)}</span>
+                      </button>
+                    </div>
+                    {toast && (
+                      <span className="text-xs font-mono text-emerald-700 font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 animate-fade-in">
+                        {toast}
+                      </span>
+                    )}
                   </div>
                 </div>
               </Reveal>

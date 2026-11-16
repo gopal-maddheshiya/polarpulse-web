@@ -357,18 +357,24 @@ export default function PolarisAI() {
 
       {/* 2. CHAT PANEL / BOTTOM SHEET (FROSTED GLASS COMMAND CENTER) */}
       {isOpen && (
-        <div
-          data-tour="polaris-ai-drawer"
-          role="dialog"
-          aria-label="POLARIS AI Chat Panel"
-          className={cn(
-            'fixed z-50 flex flex-col bg-white/95 dark:bg-[#081523]/95 backdrop-blur-2xl shadow-2xl border border-sky-200/70 dark:border-cyan-900/50 overflow-hidden animate-fade-in',
-            // Mobile full-width bottom sheet (below 640px) with safe top margin to breathe below navbar
-            'max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-16 max-sm:rounded-t-3xl max-sm:border-b-0',
-            // Tablet & Desktop: floating window strictly anchored to bottom-right
-            'sm:bottom-6 sm:right-6 sm:left-auto sm:top-auto sm:w-[430px] sm:h-[640px] sm:max-h-[86vh] sm:rounded-3xl shadow-2xl shadow-cyan-950/30'
-          )}
-        >
+        <>
+          <div
+            className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-40 sm:hidden animate-fade-in"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            data-tour="polaris-ai-drawer"
+            role="dialog"
+            aria-label="POLARIS AI Chat Panel"
+            className={cn(
+              'fixed z-50 flex flex-col bg-white/95 dark:bg-[#081523]/95 backdrop-blur-2xl shadow-2xl border border-sky-200/70 dark:border-cyan-900/50 overflow-hidden',
+              // Mobile full-width bottom sheet (below 640px) with safe top margin to breathe below navbar
+              'max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-16 max-sm:rounded-t-3xl max-sm:border-b-0 max-sm:animate-slide-up',
+              // Tablet & Desktop: floating window strictly anchored to bottom-right
+              'sm:bottom-6 sm:right-6 sm:left-auto sm:top-auto sm:w-[430px] sm:h-[640px] sm:max-h-[86vh] sm:rounded-3xl shadow-2xl shadow-cyan-950/30 sm:animate-scale-in'
+            )}
+          >
           {/* Mobile pull indicator */}
           <div className="sm:hidden w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto my-1.5 shrink-0" />
 
@@ -693,6 +699,7 @@ export default function PolarisAI() {
             </div>
           </div>
         </div>
+        </>
       )}
     </>
   )

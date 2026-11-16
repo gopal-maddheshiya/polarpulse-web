@@ -44,6 +44,9 @@ const SITEMAP: FooterColumn[] = [
       { to: 'https://ncpor.res.in', en: 'NCPOR Portal', hi: 'एनसीपीओआर पोर्टल', external: true },
       { to: 'https://moes.gov.in', en: 'Ministry of Earth Sciences', hi: 'पृथ्वी विज्ञान मंत्रालय', external: true },
       { to: 'https://data.ncpor.res.in', en: 'National Polar Data Centre', hi: 'राष्ट्रीय ध्रुवीय डेटा केंद्र', external: true },
+      { to: '/sitemap.xml', en: 'XML Sitemap', hi: 'एक्सएमएल साइटमैप', external: true },
+      { to: '/rss.xml', en: 'RSS Updates Feed', hi: 'आरएसएस फ़ीड', external: true },
+      { to: '/llms.txt', en: 'AI Search Manifest (llms.txt)', hi: 'एआई सर्च मेनिफेस्ट (llms.txt)', external: true },
     ],
   },
 ]
@@ -58,9 +61,23 @@ export default function Footer() {
           {/* Institutional Identification */}
           <div className="lg:col-span-2 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-sky-400 to-sky-600 text-slate-950 grid place-items-center font-display font-bold text-xs shadow-md">
-                <div className="absolute inset-0 rounded-xl border border-sky-300/40 animate-[spin_24s_linear_infinite]" />
-                <span className="text-white font-extrabold tracking-wider">P</span>
+              <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-sky-400/50 text-white grid place-items-center shadow-md">
+                <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 text-cyan-300" fill="none">
+                  <circle cx="12" cy="12" r="9.5" stroke="#0ea5e9" strokeWidth="0.8" strokeDasharray="1.5 2" opacity="0.6" />
+                  <polygon points="12,12 17,7 13.5,11" fill="#38bdf8" opacity="0.75" />
+                  <polygon points="12,12 7,7 11,13.5" fill="#0284c7" opacity="0.75" />
+                  <polygon points="12,12 17,17 11,13.5" fill="#0284c7" opacity="0.75" />
+                  <polygon points="12,12 7,17 13.5,11" fill="#38bdf8" opacity="0.75" />
+                  <polygon points="12,2 13.5,10.5 12,12" fill="#ffffff" />
+                  <polygon points="12,2 10.5,10.5 12,12" fill="#38bdf8" />
+                  <polygon points="12,22 13.5,13.5 12,12" fill="#38bdf8" />
+                  <polygon points="12,22 10.5,13.5 12,12" fill="#0284c7" />
+                  <polygon points="22,12 13.5,13.5 12,12" fill="#ffffff" />
+                  <polygon points="22,12 13.5,10.5 12,12" fill="#38bdf8" />
+                  <polygon points="2,12 10.5,13.5 12,12" fill="#38bdf8" />
+                  <polygon points="2,12 10.5,10.5 12,12" fill="#0284c7" />
+                  <circle cx="12" cy="12" r="1.8" fill="#ffffff" />
+                </svg>
               </div>
               <div className="leading-tight">
                 <span className="font-display text-base font-bold tracking-[0.14em] text-white">

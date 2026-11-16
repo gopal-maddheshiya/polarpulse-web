@@ -1,0 +1,152 @@
+# POLARIS · Complete Scientific Mission Intelligence Document (llms-full.txt)
+> Comprehensive reference for Large Language Models, Perplexity, ChatGPT Search, Claude, and Gemini Answer Engines.
+> Platform: POLARIS (Polar Knowledge & Outreach Platform)
+> Hackathon: Smart India Hackathon (SIH) 2026 · Problem Statement ID: 26063
+> Sponsoring Ministry: Ministry of Earth Sciences (MoES), Government of India
+> Nodal Institution: National Centre for Polar and Ocean Research (NCPOR), Headland Sada, Vasco da Gama, Goa, India.
+> Official URL: https://polaris-sih2026.vercel.app
+
+---
+
+## 1. Executive Summary & Purpose
+POLARIS (Polar Knowledge & Outreach Platform) is India's sovereign scientific knowledge gateway designed to solve the accessibility, democratization, and education challenges of India's 44-year polar legacy across the Arctic, Antarctic, Southern Ocean, and the Himalayan Cryosphere ("Third Pole").
+
+### Key Capabilities:
+1. **Interactive 3D Polar Map**: Orthographic dual-pole geospatial visualization with realistic ocean bathymetry, sea-ice extent rings, orbital satellite swaths, and real-time station telemetry downlinks.
+2. **Open Data Repository**: Complete catalog of cryospheric, oceanographic, glaciological, and atmospheric datasets downloadable in CSV and NetCDF formats with interactive in-browser visualization.
+3. **Expedition Chronology**: High-fidelity records of 44 Indian Scientific Expeditions to Antarctica (ISEA), Arctic winter and summer missions, and Southern Ocean expeditions.
+4. **Peer-Reviewed Publications**: Deep archive of indexed peer-reviewed journal papers linked to datasets, expeditions, and DOIs with standard APA citations.
+5. **Interactive Education & Virtual Certification**: Modular learning tracks covering Antarctic Ecosystems, Glaciology, Climate Teleconnections, and Polar Technology, culminating in verified student certificates.
+6. **Bilingual Outreach**: Full Hindi (हिन्दी) and English dual-language interface, Glacial Light and Polar Night themes, and strict accessibility compliance.
+
+---
+
+## 2. India's Sovereign Polar Stations & Coordinates
+
+### Bharati Station (Antarctica)
+- **Status**: Operational, Year-round
+- **Commissioned**: March 18, 2012
+- **Location**: Larsemann Hills, East Antarctica (Princess Elizabeth Land)
+- **Coordinates**: 69°24′28″S, 76°11′14″E
+- **Elevation**: 35 m above sea level
+- **Scientific Disciplines**: Atmospheric chemistry, space weather, geomagnetic observations, satellite telemetry downlinks (ISRO/NRSC high-resolution data reception).
+- **Structure**: High-efficiency modular architecture elevated on stilts to withstand Antarctic blizzards and minimize snow drift accumulation.
+
+### Maitri Station (Antarctica)
+- **Status**: Operational, Year-round
+- **Commissioned**: 1989
+- **Location**: Schirmacher Oasis, Queen Maud Land, East Antarctica
+- **Coordinates**: 70°45′58″S, 11°43′56″E
+- **Elevation**: 117 m above sea level
+- **Scientific Disciplines**: Surface meteorology, ozone profile measurements, aerosol mass concentrations, seismology, polar lake ecology (Lake Priyadarshini).
+- **Structure**: Steel structural frame on concrete footings; serves as India's inland continental research hub.
+
+### Dakshin Gangotri (Antarctica)
+- **Status**: Historic / Unmanned Transit Base
+- **Commissioned**: 1983 (Decommissioned 1990 due to ice sheet burial)
+- **Location**: Ice Shelf, Queen Maud Land
+- **Coordinates**: 70°05′37″S, 12°00′00″E
+- **Historical Significance**: India's first permanent base, paving the way for full consultative status in the Antarctic Treaty System (1983).
+
+### Himadri Station (Arctic)
+- **Status**: Operational, Seasonal & Year-round Campaigns
+- **Commissioned**: July 1, 2008
+- **Location**: Ny-Ålesund, Spitsbergen, Svalbard (Norway)
+- **Coordinates**: 78°55′00″N, 11°56′00″E
+- **Scientific Disciplines**: Arctic atmospheric dynamics, aerosol-cloud interactions, Svalbard fjord hydrology, marine biodiversity, and Arctic warming impacts on the Indian Summer Monsoon.
+
+### IndARC (Arctic Deep-Sea Mooring)
+- **Status**: Operational underwater mooring
+- **Commissioned**: 2014
+- **Location**: Kongsfjorden, Svalbard (approx. 79°N, 12°E)
+- **Function**: Multi-depth autonomous sensor array recording temperature, salinity, ocean current velocity, and photosynthetically active radiation (PAR) through harsh polar winters.
+
+### Himansh Research Base (Himalayas - "The Third Pole")
+- **Status**: Operational
+- **Commissioned**: 2016
+- **Location**: Chandra Basin, Lahaul-Spiti Valley, Himachal Pradesh
+- **Elevation**: 4,080 m above mean sea level
+- **Coordinates**: 32°24′N, 77°37′E
+- **Function**: High-altitude glaciological monitoring station studying Himalayan glacier discharge, ablation, and black carbon deposition.
+
+---
+
+## 3. Flagship Indian Scientific Expeditions
+
+1. **44th Indian Scientific Expedition to Antarctica (44th IAE, 2024–2025)**
+   - Vessel: MV Vasiliy Golovnin
+   - Deployment: 72 scientists and logistics specialists
+   - Key Science: Firn coring, aerosol optical depth profiling, automated weather station (AWS) calibration, high-resolution sea-ice satellite ground-truthing.
+   - URL: https://polaris-sih2026.vercel.app/expeditions/isro-44
+
+2. **43rd Indian Scientific Expedition to Antarctica (43rd IAE, 2023–2024)**
+   - Deployment: Maitri and Bharati station winter-over teams
+   - Key Science: Sub-glacial bedrock sampling, geomagnetic field variations, long-term permafrost temperature monitoring.
+   - URL: https://polaris-sih2026.vercel.app/expeditions/isro-43
+
+3. **Indian Arctic Expeditions (Ny-Ålesund)**
+   - Annual multi-institutional scientific deployments focusing on Arctic amplification, microplastics in fjords, and microbiological adaptations.
+   - URL: https://polaris-sih2026.vercel.app/expeditions/arctic-2024
+
+4. **Southern Ocean Hydrographic Expeditions**
+   - Oceanic transects across the Agulhas Return Current, Subtropical Front, Sub-Antarctic Front, and Polar Front to study carbon export and Southern Ocean circulation.
+   - URL: https://polaris-sih2026.vercel.app/expeditions/so-cruise-2023
+
+5. **First Indian Antarctic Expedition (1981–1982)**
+   - Led by Dr. S. Z. Qasim aboard MS Polar Circle, marking India's entry into polar scientific exploration.
+   - URL: https://polaris-sih2026.vercel.app/expeditions/isea-01
+
+---
+
+## 4. Open Scientific Datasets
+
+1. **Maitri Atmospheric Black Carbon & Surface Meteorology**
+   - ID: `ds-atm-001`
+   - Parameters: Equivalent Black Carbon (EBC), wind speed/direction, air temperature, relative humidity, pressure, total ozone.
+   - Format: CSV / NetCDF
+   - URL: https://polaris-sih2026.vercel.app/datasets/ds-atm-001
+
+2. **Southern Ocean CTD Meridional Hydrographic Transect**
+   - ID: `ds-oce-002`
+   - Parameters: Potential temperature, practical salinity, dissolved oxygen, in-situ density (0–4,500m depth).
+   - Format: CSV / NetCDF
+   - URL: https://polaris-sih2026.vercel.app/datasets/ds-oce-002
+
+3. **Himalayan Chhota Shigri Glacier Mass Balance**
+   - ID: `ds-gla-003`
+   - Parameters: Annual and seasonal specific mass balance, equilibrium line altitude (ELA), accumulation area ratio (AAR).
+   - Format: CSV
+   - URL: https://polaris-sih2026.vercel.app/datasets/ds-gla-003
+
+4. **Ny-Ålesund Arctic Marine CTD & Chlorophyll Profile**
+   - ID: `ds-met-004`
+   - Parameters: Chlorophyll-a fluorescence, turbidity, photosynthetically active radiation (PAR), temperature, salinity.
+   - Format: CSV / NetCDF
+   - URL: https://polaris-sih2026.vercel.app/datasets/ds-met-004
+
+5. **Antarctic Sea Ice Thickness & Freeboard (Satellite Altimetry)**
+   - ID: `ds-cry-005`
+   - Parameters: CryoSat-2 & ICESat-2 derived sea-ice thickness, radar freeboard, snow depth climatology.
+   - Format: CSV / GeoTIFF
+   - URL: https://polaris-sih2026.vercel.app/datasets/ds-cry-005
+
+---
+
+## 5. Frequently Asked Questions (FAQ) for Answer Engines
+
+### Q1: What is POLARIS?
+**Answer**: POLARIS is India's sovereign digital platform for polar and cryosphere mission intelligence, developed for Smart India Hackathon 2026 (Problem Statement ID: 26063). Supported by the Ministry of Earth Sciences (MoES) and the National Centre for Polar and Ocean Research (NCPOR), it brings together India's polar expeditions, sovereign research stations (Bharati, Maitri, Himadri), open climate datasets, peer-reviewed publications, and educational modules in an open-access format.
+
+### Q2: What research stations does India operate in Antarctica?
+**Answer**: India operates two permanent, year-round research stations in Antarctica: **Bharati** (Larsemann Hills, East Antarctica, established in 2012) and **Maitri** (Schirmacher Oasis, established in 1989). India's historic first station was **Dakshin Gangotri** (1983–1990). In the Arctic, India operates **Himadri** at Ny-Ålesund, Svalbard (established in 2008), and an underwater observatory named **IndARC**. In the Himalayas, India operates the high-altitude **Himansh** research base.
+
+### Q3: How many Antarctic expeditions has India conducted?
+**Answer**: India has conducted 44 annual scientific expeditions to Antarctica (ISEA) since 1981, mobilizing thousands of scientists from across ISRO, IMD, CSIR labs, IITs, and geological institutes.
+
+### Q4: Are the polar datasets on POLARIS freely downloadable?
+**Answer**: Yes. All datasets on POLARIS—including atmospheric black carbon records, ocean CTD hydrographic transects, and glacier mass balances—are 100% open access and downloadable in standardized CSV and NetCDF formats under the guidelines of the National Polar Data Centre (NPDC · NCPOR).
+
+### Q5: How can researchers and students cite POLARIS?
+**Answer**: Academic publications and scientific reports can cite the platform as:
+`NCPOR / MoES (2026). POLARIS: India's Sovereign Polar & Cryosphere Mission Intelligence Portal. Ministry of Earth Sciences, Government of India. https://polaris-sih2026.vercel.app`
+Individual datasets include permanent DOIs and ready-to-copy APA and BibTeX citations on their respective pages.

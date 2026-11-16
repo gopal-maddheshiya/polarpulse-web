@@ -7,6 +7,7 @@ import { PageHeader } from '../components/ui/Page'
 import { Section, Container, SectionHeader } from '../components/ui/Primitives'
 import PolarMap from '../components/PolarMap'
 import { Reveal } from '../lib/reveal'
+import SEO from '../components/SEO'
 
 const SECTIONS = [
   { title: 'Expeditions Registry', desc: 'Sovereign Indian expeditions to the Arctic, Antarctic, Southern Ocean and Himalayas since 1981.', to: '/expeditions', icon: Compass, badge: '44 MISSIONS' },
@@ -22,6 +23,16 @@ const SECTIONS = [
 export default function Explore() {
   return (
     <div className="min-h-screen bg-[#edf5fb] dark:bg-[#07131e]">
+      <SEO
+        title="Interactive 3D Polar Map & Station Navigator"
+        description="Explore India's sovereign research bases (Bharati, Maitri, Himadri), real-time station telemetry, dual-pole cartography, and open polar science architecture."
+        canonical="/explore"
+        keywords={['Polar Map', 'Antarctica Map', 'Bharati Station', 'Maitri Station', 'Himadri Station', 'NCPOR', 'Polar Telemetry']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Explore & Polar Map', url: '/explore' }
+        ]}
+      />
       <PageHeader
         eyebrow="Platform Sitemap & Architecture"
         title="Interactive Platform Navigator"
@@ -60,15 +71,16 @@ export default function Explore() {
               title="Explore POLARIS by Domain"
               sub="Access every core functional pillar designed for researchers, students, educators, and science communicators."
             />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {SECTIONS.map(s => {
-                const Icon = s.icon
-                return (
-                  <Link
-                    key={s.title}
-                    to={s.to}
-                    className="p-6 bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 rounded-2xl hover:border-sky-400 dark:hover:border-sky-500/60 hover:shadow-lg dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.5)] transition-all duration-300 group flex flex-col justify-between hover:-translate-y-1 relative overflow-hidden"
-                  >
+          </Reveal>
+          <Reveal cascade cascadeStep={50} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {SECTIONS.map(s => {
+              const Icon = s.icon
+              return (
+                <Link
+                  key={s.title}
+                  to={s.to}
+                  className="p-6 bg-white/95 dark:bg-slate-900 backdrop-blur-md border border-sky-200/90 dark:border-slate-800 rounded-2xl card-hover hover:border-sky-400 dark:hover:border-sky-500/60 shadow-soft group flex flex-col justify-between relative overflow-hidden"
+                >
                     <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-sky-100/50 dark:from-sky-500/10 to-transparent rounded-bl-full pointer-events-none" />
                     <div className="relative z-10">
                       <div className="flex items-center justify-between gap-2 mb-4">
@@ -95,8 +107,7 @@ export default function Explore() {
                   </Link>
                 )
               })}
-            </div>
-          </Reveal>
+            </Reveal>
         </Container>
       </Section>
     </div>

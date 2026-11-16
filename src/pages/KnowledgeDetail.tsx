@@ -5,6 +5,7 @@ import { ArrowLeft, Tag, FileText, Database, BookOpen, Compass, Calendar, User2,
 import { Container, EmptyState, Section, SectionHeader } from '../components/ui/Primitives'
 import { Reveal } from '../lib/reveal'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 const ICONS: Record<string, any> = {
   Report: FileText,
@@ -61,11 +62,13 @@ export default function KnowledgeDetail() {
 
   if (loading) {
     return (
-      <Container className="py-24 text-center">
-        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-          <Compass className="w-5 h-5" />
+      <Container className="py-28 text-center">
+        <div className="w-12 h-12 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-sky-200 dark:border-slate-800 flex items-center justify-center shadow-lg shadow-sky-500/10 mx-auto mb-3">
+          <Compass className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-spin-slow" />
         </div>
-        <p className="text-sm font-medium text-slate-700">{trans('Loading polar knowledge...', 'ध्रुवीय संसाधन लोड हो रहा है...')}</p>
+        <p className="text-xs font-mono tracking-widest uppercase text-slate-700 dark:text-slate-300 font-bold">
+          {trans('Synchronizing Knowledge Repository...', 'ध्रुवीय संसाधन लोड हो रहा है...')}
+        </p>
       </Container>
     )
   }
@@ -96,8 +99,49 @@ export default function KnowledgeDetail() {
 
   const Icon = ICONS[k.type] || BookOpen
 
+  const articleSchema = k
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: k.title,
+        description: k.excerpt,
+        datePublished: `${k.year}-01-01`,
+        publisher: {
+          '@type': 'GovernmentOrganization',
+          name: 'National Centre for Polar and Ocean Research (NCPOR)',
+          url: 'https://ncpor.res.in',
+        },
+        author: {
+          '@type': 'Organization',
+          name: 'NCPOR / POLARIS Polar Knowledge Editorial',
+        },
+      }
+    : undefined
+
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      {k && (
+        <SEO
+          title={`${k.title} · Polar Knowledge`}
+          description={k.excerpt}
+          canonical={`/knowledge/${id}`}
+          keywords={[
+            k.title,
+            k.type,
+            k.category,
+            ...(k.tags || []),
+            'Polar Science',
+            'NCPOR',
+            'MoES',
+          ]}
+          schema={articleSchema}
+          breadcrumbs={[
+            { name: 'Home', url: '/' },
+            { name: 'Knowledge', url: '/knowledge' },
+            { name: k.title, url: `/knowledge/${id}` },
+          ]}
+        />
+      )}
       {/* Luxury Hero Banner */}
       <div className="bg-gradient-to-b from-sky-100/80 via-sky-50/50 to-[#edf5fb] border-b border-sky-200/90 relative overflow-hidden">
         {/* Slow-rotating celestial orbit watermark */}

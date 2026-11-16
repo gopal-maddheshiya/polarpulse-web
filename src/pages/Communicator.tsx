@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { Reveal } from '../lib/reveal'
+import SEO from '../components/SEO'
 
 const AUDIENCES: { id: Audience; label: string; desc: string; readingLevel: string }[] = [
   { id: 'Student', label: 'School Student', desc: '8th–10th grade reading level, conceptual analogies', readingLevel: 'Grade 8–10' },
@@ -115,6 +116,16 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
 
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title="AI Polar Science Communicator & Outreach Engine"
+        description="Transform complex Antarctic and Arctic research findings into student lessons, press releases, video scripts, and social outreach narratives."
+        canonical="/communicator"
+        keywords={['AI Science Communicator', 'Polar Science Outreach', 'Dissemination Engine', 'NCPOR', 'MoES', 'Smart India Hackathon 2026']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'AI Communicator', url: '/communicator' }
+        ]}
+      />
       <PageHeader
         eyebrow="AI Science Communicator"
         title="From Peer Review to Public Outreach"
@@ -298,7 +309,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
 
                 {/* Generated Multi-Channel Workspace */}
                 {draft && !loading && (
-                  <div className="p-0 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft overflow-hidden">
+                  <div className="p-0 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft overflow-hidden animate-fade-in">
                     {/* Channel Selector Header */}
                     <div className="flex items-center justify-between border-b border-sky-100 p-4 bg-sky-50/60">
                       <div className="flex items-center gap-1.5 overflow-x-auto">
@@ -360,7 +371,7 @@ Disclaimer: AI-assisted draft — verify scientific accuracy before publication.
                     </div>
 
                     {/* Channel Content Body */}
-                    <div className="p-6">
+                    <div key={activeTab} className="p-6 animate-fade-in">
                       {activeTab === 'article' && (
                         <ChannelCard
                           title="Portal Web Article & Press Release"

@@ -8,6 +8,7 @@ import { Reveal } from '../lib/reveal'
 import { buildApaCitation, copyToClipboard, openDoi } from '../lib/actions'
 import { cn } from '../lib/utils'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 const AREAS = ['All', 'Atmospheric Sciences', 'Oceanography', 'Glaciology', 'Biodiversity', 'Geology', 'Climate']
 
@@ -75,6 +76,16 @@ export default function Publications() {
 
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title={trans('Peer-Reviewed Polar Publications & Papers', 'सहकर्मी-समीक्षित ध्रुवीय शोध प्रकाशन एवं शोध पत्र')}
+        description="Index of peer-reviewed journal papers, expedition monographs, and technical reports authored by Indian polar scientists across NCPOR, IITs, IMD, and partner institutes."
+        canonical="/publications"
+        keywords={['Polar Research Papers', 'NCPOR Publications', 'Antarctic Glaciology Papers', 'Southern Ocean Marine Science', 'APA Citation', 'MoES']}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Publications', url: '/publications' }
+        ]}
+      />
       <PageHeader
         eyebrow={trans('Scholarly Research Library', 'विद्वत्तापूर्ण शोध पुस्तकालय')}
         title={trans('Peer-Reviewed Publications', 'सहकर्मी-समीक्षित शोध प्रकाशन')}
@@ -225,7 +236,7 @@ export default function Publications() {
                 <div className="space-y-4">
                   {filtered.map((pub, idx) => (
                     <Reveal key={pub.id} delay={idx * 30}>
-                      <div className="group bg-white/95 rounded-2xl border border-sky-200/90 p-5 sm:p-6 shadow-soft hover:shadow-lg hover:border-sky-300 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-5">
+                      <div className="group bg-white/95 rounded-2xl border border-sky-200/90 p-5 sm:p-6 shadow-soft card-hover hover:border-cyan-400 flex flex-col md:flex-row md:items-center justify-between gap-5">
                         <div className="space-y-2 flex-1">
                           {/* Badges */}
                           <div className="flex flex-wrap items-center gap-2">

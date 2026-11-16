@@ -7,6 +7,7 @@ import { Container, EmptyState, Section, SectionHeader } from '../components/ui/
 import { Reveal } from '../lib/reveal'
 import { downloadRealFile } from '../lib/actions'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 export default function ExpeditionDetail() {
   const { isHindi, trans } = useLanguage()
@@ -48,11 +49,13 @@ export default function ExpeditionDetail() {
 
   if (loading) {
     return (
-      <Container className="py-24 text-center">
-        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-sky-50 border border-sky-200 text-sky-600 animate-spin mb-3">
-          <Compass className="w-5 h-5" />
+      <Container className="py-28 text-center">
+        <div className="w-12 h-12 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-sky-200 dark:border-slate-800 flex items-center justify-center shadow-lg shadow-sky-500/10 mx-auto mb-3">
+          <Compass className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-spin-slow" />
         </div>
-        <p className="text-sm font-medium text-slate-700">{trans('Loading polar knowledge...', 'ध्रुवीय अभियान लोड हो रहा है...')}</p>
+        <p className="text-xs font-mono tracking-widest uppercase text-slate-700 dark:text-slate-300 font-bold">
+          {trans('Synchronizing Expedition Telemetry...', 'ध्रुवीय अभियान डेटा लोड हो रहा है...')}
+        </p>
       </Container>
     )
   }
@@ -92,8 +95,52 @@ export default function ExpeditionDetail() {
     setTimeout(() => setToast(null), 2200)
   }
 
+  const expeditionSchema = exp
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ResearchProject',
+        name: exp.title,
+        alternateName: exp.shortTitle,
+        description: exp.overview,
+        startDate: `${exp.year}-01-01`,
+        endDate: `${exp.year}-12-31`,
+        sponsor: {
+          '@type': 'GovernmentOrganization',
+          name: 'National Centre for Polar and Ocean Research (NCPOR)',
+          url: 'https://ncpor.res.in',
+        },
+        location: {
+          '@type': 'Place',
+          name: `${exp.region} (${exp.stations.join(', ')})`,
+        },
+      }
+    : undefined
+
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      {exp && (
+        <SEO
+          title={`${exp.shortTitle} · ${exp.title}`}
+          description={exp.overview}
+          canonical={`/expeditions/${id}`}
+          ogImage={exp.image}
+          keywords={[
+            exp.title,
+            exp.shortTitle,
+            exp.region,
+            ...(exp.stations || []),
+            ...(exp.researchAreas || []),
+            'NCPOR',
+            'MoES',
+          ]}
+          schema={expeditionSchema}
+          breadcrumbs={[
+            { name: 'Home', url: '/' },
+            { name: 'Expeditions', url: '/expeditions' },
+            { name: exp.shortTitle, url: `/expeditions/${id}` },
+          ]}
+        />
+      )}
       <div className="relative">
         <div className="aspect-[21/9] sm:aspect-[21/8] overflow-hidden bg-slate-900">
           <img src={exp.image} alt={exp.title} className="w-full h-full object-cover" />

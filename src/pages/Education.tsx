@@ -11,6 +11,7 @@ import {
 import { cn } from '../lib/utils'
 import { Reveal } from '../lib/reveal'
 import { useLanguage } from '../context/LanguageContext'
+import SEO from '../components/SEO'
 
 type Mode = 'simple' | 'scientific'
 
@@ -298,8 +299,75 @@ export default function Education() {
     setAnswers(prev => ({ ...prev, [topic.id]: [] }))
   }
 
+  // Schema.org Course & Quiz Structured Data for Google Education rich snippets
+  const courseSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: "POLARIS: India's Sovereign Polar Science & Cryosphere Curriculum",
+    description:
+      'Comprehensive open educational curriculum on Antarctic ice sheets, Arctic climate amplification, Himalayan glaciology, and polar research technologies.',
+    provider: {
+      '@type': 'GovernmentOrganization',
+      name: 'National Centre for Polar and Ocean Research (NCPOR)',
+      url: 'https://ncpor.res.in',
+    },
+    educationalLevel: 'Secondary School, High School, and Undergraduate',
+    inLanguage: ['en', 'hi'],
+    isAccessibleForFree: true,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'INR',
+      category: 'Free Open Education',
+    },
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'Online',
+      courseWorkload: 'PT2H',
+    },
+  }
+
+  const quizSchema = topic
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Quiz',
+        name: `${topic.title} · Polar Science Verification Quiz`,
+        description: `Verified knowledge check on ${topic.title} based on Indian Polar Expeditions (MoES / NCPOR).`,
+        about: {
+          '@type': 'Thing',
+          name: topic.title,
+        },
+        hasPart: (topic.quiz || []).map(q => ({
+          '@type': 'Question',
+          name: q.q,
+          suggestedAnswer: q.options.map((opt, idx) => ({
+            '@type': 'Answer',
+            position: idx + 1,
+            text: opt,
+          })),
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: q.options[q.answer],
+          },
+        })),
+      }
+    : undefined
+
+  const educationSchemas = quizSchema ? [courseSchema, quizSchema] : [courseSchema]
+
   return (
     <div className="min-h-screen bg-[#edf5fb]">
+      <SEO
+        title={trans('Polar Science Education & Virtual Certification Lab', 'ध्रुवीय विज्ञान शिक्षा एवं वर्चुअल प्रमाणन लैब')}
+        description="Interactive Polar Science Laboratory: Explore Antarctic ecology, Arctic amplification, Himalayan cryosphere, complete quizzes, and earn your verified Polar Science Scholar Certificate."
+        canonical="/education"
+        keywords={['Polar Education', 'Antarctica Curriculum', 'Smart India Hackathon 2026', 'NCPOR Certificate', 'Glaciology Learning', 'Cryosphere Education']}
+        schema={educationSchemas}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Smart Education', url: '/education' }
+        ]}
+      />
       <PageHeader
         eyebrow={trans('Smart Education Platform', 'स्मार्ट शिक्षा मंच')}
         title={trans('Interactive Polar Science Laboratory', 'इंटरएक्टिव ध्रुवीय विज्ञान प्रयोगशाला')}
@@ -459,7 +527,7 @@ export default function Education() {
 
                 {/* Core Content Presentation */}
                 <Reveal>
-                  <div className="p-6 sm:p-8 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4">
+                  <div key={`${topic.id}-${mode}`} className="p-6 sm:p-8 bg-white/95 backdrop-blur-md border border-sky-200/90 rounded-2xl shadow-soft space-y-4 animate-fade-in">
                     <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-sky-800 font-bold border-b border-sky-100 pb-3">
                       <BookOpenCheck className="w-4 h-4 text-sky-600" />
                       <span>
